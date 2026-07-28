@@ -1,8 +1,9 @@
 # Server-side paper figure: paleoclimate background of important variables
 #
 # This script needs the original TEYF bioclimatic rasters/nc files, which are
-# not stored in the local project checkout. Run it on the server that contains:
-#   /home/cedrus/data/shz/data/from linlin/teyf-mask-nc-5min/
+# NOT shipped with this repo (only the derived suitability projections are).
+# Run it on a server that holds the TEYF masked 5-min climate dataset, and set
+# `rstudio_teyf_climate_dir` below (or pass --teyf-climate-dir) to that directory.
 #
 # RStudio use:
 #   1. Open this file on the server.
@@ -11,8 +12,8 @@
 #
 # Command-line example:
 # Rscript scripts/visualization/04_server_important_variable_paleoclimate_background.R \
-#   --teyf-climate-dir "/home/cedrus/data/shz/data/from linlin/teyf-mask-nc-5min" \
-#   --project-root "/home/cedrus/path/to/proj_sargentodoxa_niche_sim" \
+#   --teyf-climate-dir "<TEYF masked 5-min climate data dir>" \
+#   --project-root "<absolute path to this repo on the server>" \
 #   --top-n 4 \
 #   --threshold 0.7
 
@@ -28,16 +29,18 @@ library(terra)
 # ============================================================================
 
 # Leave project_root blank to auto-detect it from the current working directory
-# or from the folder containing this script. Existing scripts/config.R uses:
-#   project_dir <- "/home/staff/shz/proj_sargentodoxa"
-# If auto-detection fails, set this to the absolute server project path.
+# or from the folder containing this script. If auto-detection fails, set this
+# to the absolute path of this repo on the server.
 rstudio_project_root <- ""
 
-# Server directory containing the original TEYF Bio nc/tif files.
-rstudio_teyf_climate_dir <- "/home/cedrus/data/shz/data/from linlin/teyf-mask-nc-5min"
+# Server directory holding the original TEYF Bio nc/tif files (one subdir per
+# period, e.g. teyfo/, teyfa/, ...). This dataset is NOT shipped with the repo;
+# set it to your local/server TEYF masked 5-min climate directory.
+rstudio_teyf_climate_dir <- ""
 
-# Existing scripts/config.R uses this simulation table path.
-rstudio_teyf_simulations_file <- "/home/cedrus/data/shz/data/from linlin/teyf_simulations.csv"
+# TEYF simulation metadata. Leave blank to use the copy shipped with the repo
+# at data/teyf_simulations.csv.
+rstudio_teyf_simulations_file <- ""
 
 # Leave blank to auto-search common projection folders under project_root.
 # If needed, set this to the directory that contains files like:
@@ -115,7 +118,7 @@ args <- parse_args(commandArgs(trailingOnly = TRUE))
 if (isTRUE(args$help)) {
   cat("Usage from command line:\n")
   cat("  Rscript scripts/visualization/04_server_important_variable_paleoclimate_background.R \\\n")
-  cat("    --teyf-climate-dir \"/home/cedrus/data/shz/data/from linlin/teyf-mask-nc-5min\" \\\n")
+  cat("    --teyf-climate-dir \"<TEYF masked 5-min climate data dir>\" \\\n")
   cat("    --project-root \"/path/to/proj_sargentodoxa_niche_sim\" \\\n")
   cat("    --top-n 4 --threshold 0.7\n\n")
   cat("Usage from RStudio:\n")
@@ -136,7 +139,9 @@ teyf_climate_dir <- if (!is.null(args[["teyf-climate-dir"]])) {
 } else if (nzchar(rstudio_teyf_climate_dir)) {
   rstudio_teyf_climate_dir
 } else {
-  "/home/cedrus/data/shz/data/from linlin/teyf-mask-nc-5min"
+  stop("TEYF climate directory not set. Set rstudio_teyf_climate_dir at the top ",
+       "of this script (server dir with the original TEYF Bio nc/tif files) or ",
+       "pass --teyf-climate-dir.")
 }
 teyf_climate_dir <- normalizePath(teyf_climate_dir, mustWork = TRUE)
 
