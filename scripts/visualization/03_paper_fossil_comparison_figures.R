@@ -144,7 +144,7 @@ extract_fossil_suitability <- function(fossil_row) {
 }
 
 teyf_simulations <- read_csv(path_here("documents", "teyf_simulations.csv"), show_col_types = FALSE)
-fossil_records <- read_csv(path_here("data", "fossil_record", "FossilRecord-paleocor-v2.0.csv"), show_col_types = FALSE) %>%
+fossil_records <- read_csv(path_here("data", "fossil_record", "FossilRecord-paleocor-v2.1.csv"), show_col_types = FALSE) %>%
   mutate(
     number = as.integer(number),
     organ = factor(organ),

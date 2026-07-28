@@ -14,7 +14,7 @@ Priority inputs:
 - `output/08_projection/`
 - `output/09_paleoclimate_teyf/`
 - `output/10_visualization_teyf/`
-- `data/fossil_record/FossilRecord-paleocor-v2.0.csv`
+- `data/fossil_record/FossilRecord-paleocor-v2.1.csv`
 - `output/03_variable_select/`
 - `output/06_evaluation/`
 - `output/07_ensemble/`

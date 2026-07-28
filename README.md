@@ -19,7 +19,7 @@ variables.
 | `scripts/get_paleocoordinates.R` | Generates palaeo-coordinates for fossil records via the GPlates PALEOMAP service |
 | `scripts/visualization/` | Paper-figure scripts (M1–M4, R1–R8) that produce the article's code-generated figures |
 | `data/occ_data_cvh/` | Occurrence data (CVH) |
-| `data/fossil_record/` | Fossil record tables incl. palaeo-coordinates (`FossilRecord-paleocor-v2.0.csv`) |
+| `data/fossil_record/` | Fossil record tables incl. palaeo-coordinates (`FossilRecord-paleocor-v2.1.csv`) |
 | `documents/` | TEYF period metadata, variable-selection methods, reproducibility & figure-mapping notes |
 | `output/` | Frozen model/projection outputs that let the figure scripts reproduce every article figure locally |
 
@@ -65,7 +65,7 @@ enabled; see that file for how to add a strict lockfile.)
 
 ## Note on fossil taxonomy
 
-The analysis file `data/fossil_record/FossilRecord-paleocor-v2.0.csv` labels
+The analysis file `data/fossil_record/FossilRecord-paleocor-v2.1.csv` labels
 the Tajimi (Japan) record as *Sargentodoxa cuneata*, consistent with the
 taxonomic naming at the time of modelling. The manuscript (v5.3) subsequently
 revises this record to *Sargentodoxa tajimiensis* sp. nov. This is a taxonomic

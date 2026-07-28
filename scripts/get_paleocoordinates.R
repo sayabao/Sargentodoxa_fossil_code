@@ -1,17 +1,16 @@
 # Generate paleocoordinates for Sargentodoxa fossil records
 #
 # Input:
-#   data/fossil_record/Fossil_Record_Formal_v2.0_for_coding.csv
+#   data/fossil_record/Fossil_Record_Formal_v2.1_for_coding.csv
 #
 # Output:
-#   data/fossil_record/FossilRecord-paleocor-v2.0.csv
+#   data/fossil_record/FossilRecord-paleocor-v2.1.csv
 #
-# Required input columns:
-#   No., Species, Organ, Locality, Country/Region, Latitude, Longitude, Age,
-#   Age (Ma), Reference, Fig./Page
+# Required input columns (v2.1, trimmed):
+#   No., Species, Organ, Country/Region, Latitude, Longitude, Age, Age (Ma)
 #
-# The output keeps the legacy columns used by scripts/10_visualization.R:
-#   paleoLong, paleoLat, age
+# Output columns (only those used by the visualization scripts):
+#   number, fossil_sp, organ, country_region, Age_stage, Age, paleoLong, paleoLat, age, simulation_name
 
 library(dplyr)
 library(readr)
@@ -23,9 +22,9 @@ if (basename(project_root) == "scripts" && dir.exists(file.path(dirname(project_
   project_root <- dirname(project_root)
 }
 
-input_file <- file.path(project_root, "data", "fossil_record", "Fossil_Record_Formal_v2.0_for_coding.csv")
+input_file <- file.path(project_root, "data", "fossil_record", "Fossil_Record_Formal_v2.1_for_coding.csv")
 simulation_file <- file.path(project_root, "documents", "teyf_simulations.csv")
-output_file <- file.path(project_root, "data", "fossil_record", "FossilRecord-paleocor-v2.0.csv")
+output_file <- file.path(project_root, "data", "fossil_record", "FossilRecord-paleocor-v2.1.csv")
 
 if (!file.exists(input_file)) {
   stop("Input fossil record not found: ", input_file)
@@ -37,8 +36,8 @@ if (!file.exists(simulation_file)) {
 cat("Reading fossil records:", input_file, "\n")
 fossil_raw <- read_csv(input_file, show_col_types = FALSE)
 
-required_cols <- c("No.", "Species", "Organ", "Locality", "Country/Region",
-                   "Latitude", "Longitude", "Age", "Age (Ma)", "Reference", "Fig./Page")
+required_cols <- c("No.", "Species", "Organ", "Country/Region",
+                   "Latitude", "Longitude", "Age", "Age (Ma)")
 missing_cols <- setdiff(required_cols, names(fossil_raw))
 if (length(missing_cols) > 0) {
   stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
@@ -49,14 +48,11 @@ fossil_for_reconstruction <- fossil_raw %>%
     number = `No.`,
     fossil_sp = Species,
     organ = Organ,
-    locality = Locality,
     country_region = `Country/Region`,
     decimalLongitude = as.numeric(Longitude),
     decimalLatitude = as.numeric(Latitude),
     Age_stage = Age,
-    Age = as.numeric(`Age (Ma)`),
-    reference = Reference,
-    figure_page = `Fig./Page`
+    Age = as.numeric(`Age (Ma)`)
   )
 
 if (any(!is.finite(fossil_for_reconstruction$decimalLongitude)) ||
@@ -90,7 +86,7 @@ reconstruct_point_gws <- function(lon, lat, age, model = "PALEOMAP") {
     # Some Windows/R setups fail the default rgplates SSL handshake even when
     # the GPlates endpoint is reachable. These options keep the script runnable.
     req_options(ssl_verifypeer = 0L, ssl_verifyhost = 0L)
-  
+
   resp <- req_perform(req)
   body <- fromJSON(resp_body_string(resp))
   as.numeric(body$coordinates[1, ])
@@ -121,10 +117,11 @@ nearest_idx <- vapply(
 
 fossil_paleocor <- bind_cols(fossil_for_reconstruction, paleo_coords) %>%
   mutate(
-    reconstruction_age = reconstruction_age,
     age = teyf_simulations$Ma[nearest_idx],
     simulation_name = teyf_simulations$`Simulation Name`[nearest_idx]
-  )
+  ) %>%
+  select(number, fossil_sp, organ, country_region, Age_stage, Age,
+         paleoLong, paleoLat, age, simulation_name)
 
 cat("Writing paleocoordinate CSV:", output_file, "\n")
 write_csv(fossil_paleocor, output_file)

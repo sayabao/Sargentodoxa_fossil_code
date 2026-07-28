@@ -101,7 +101,7 @@ land_file <- NULL
 # 主要用于古气候投影结果与化石证据的对照展示。
 fossil_dir <- file.path(project_dir, "data/fossil_record")
 # fossil_record_file 至少需要包含：paleoLong, paleoLat, age, simulation_name
-fossil_record_file <- file.path(fossil_dir, "FossilRecord-paleocor-v2.0.csv")
+fossil_record_file <- file.path(fossil_dir, "FossilRecord-paleocor-v2.1.csv")
 
 # 高级：古气候时期顺序信息文件
 # 随仓库提供（documents/teyf_simulations.csv）。
