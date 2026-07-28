@@ -34,8 +34,8 @@ Rscript scripts/visualization/00_paper_occurrence_sampling_map.R    # Fig S1 (M1
 Rscript scripts/visualization/01_paper_model_and_trend_figures.R    # Fig 3 (M4), Fig 4 (R3,R3b), Fig S2 (M2), Fig S3 (M3)
 Rscript scripts/visualization/02_paper_suitability_maps.R           # Fig 4 (R2b)
 Rscript scripts/visualization/03_paper_fossil_comparison_figures.R  # Fig 5 (R4,R5)
-Rscript scripts/visualization/07_redraw_r7_contrast_heatmap_trends.R # Fig 3 (R7 contrast)
-Rscript scripts/visualization/09_fossil_suitability_significance.R  # Fig S11 (R8)
+Rscript scripts/visualization/05_redraw_r7_contrast_heatmap_trends.R # Fig 3 (R7 contrast)
+Rscript scripts/visualization/06_fossil_suitability_significance.R  # Fig S11 (R8)
 ```
 
 `Fig S4` is taken from `output/08_projection/projection_modern_map.pdf` (produced
@@ -54,30 +54,13 @@ palaeoclimate rasters; `04_server_*.R` (R7) needs the raw TEYF Bio variables.
 These scripts are kept for methodology; their frozen outputs ship in `output/`
 so downstream figures reproduce without re-running them.
 
-To re-run the pipeline on the server, point the climate directories at the
-server data via environment variables (defaults are the original server paths, so
-on the original server it runs as-is):
-
-```bash
-export SARGENTO_MODERN_CLIM_DIR="/home/cedrus/data/shz/data/wc2.1_5m_bio"
-export SARGENTO_TEYF_CLIM_DIR="/home/cedrus/data/shz/data/from linlin/teyf-mask-nc-5min"
-export SARGENTO_TEWT_CLIM_DIR="/home/cedrus/data/shz/data/tewt_0_3600ka/masked_landsea"   # optional
-```
-
 **Random seeds:** spatial thinning / CV use `thinning_seed = 42` and
 `seed_val = 123` (see `scripts/config.R`); model training, ensembling, and
 projection are bound by these, so results are reproducible.
 
-**Not shipped (regenerable / unused / too large):** old `09_paleoclimate/` and
-`10_visualization*/` outputs, `05_models_random/`, the large
-`04_formatted/biomod2_formatted_data.RData` and `05_models/model_results.RData`
-(extracted CSVs ship instead), R6 fossil-geographic-shift script/outputs, and
-all `.RData`/`.Rhistory`.
-
 ## R environment
 
-R 4.5.1 (ucrt, Windows). renv is **not** enabled - versions are recorded here.
+R 4.5.1 (ucrt, Windows). versions are recorded here.
 Key packages: biomod2 4.3.4.5, terra 1.9.1, raster 3.6.32, sf 1.1.0, dplyr 1.2.0,
 readr 2.1.6, ggplot2 4.0.1, patchwork 1.3.2, tidyterra 1.1.0, viridis 0.6.5,
-corrplot 0.95, usdm 2.1.7. (To add a strict lockfile later:
-`install.packages("renv")` then `renv::init()` + `renv::snapshot()`.)
+corrplot 0.95, usdm 2.1.7.

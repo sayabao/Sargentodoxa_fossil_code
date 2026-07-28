@@ -26,10 +26,8 @@ Current scripts:
 - `01_paper_model_and_trend_figures.R`: M2 variable filtering/VIF (Fig S2), M3 model evaluation (Fig S3), M4 variable importance (Fig 3 A), R3 suitability area trend (Fig 4 B), and R3b high-suitability (`0.7-1`) latitudinal area heatmap (Fig 4 C) from 69 Ma to present.
 - `02_paper_suitability_maps.R`: R2b all-period TEYF suitability panels from 69 Ma to present (Fig 4 A) using the shared 0-0.1 / 0.1-0.3 / 0.3-0.7 / 0.7-1 classes.
 - `03_paper_fossil_comparison_figures.R`: R4 fossil-projection panels (Fig 5 A) and R5 fossil-point suitability extraction (Fig 5 B) using the same suitability classes.
-- `04_server_important_variable_paleoclimate_background.R`: server-side R7 script summarizing important Bio variables within high-suitability (`>= 0.7`) cells through time. RStudio-friendly: edit the settings block at the top and click Source. Requires the original TEYF Bio nc/tif files, e.g. `/home/cedrus/data/shz/data/from linlin/teyf-mask-nc-5min/`. Its output CSV is the input to `07_…`.
-- `07_redraw_r7_contrast_heatmap_trends.R`: redraws the R7 high-suitability vs background contrast heatmap locally from the R7 CSV (Fig 3 B).
-- `09_fossil_suitability_significance.R`: R8 fossil-point suitability significance test (Monte Carlo + binomial) and figure (Fig S11).
-
-Removed (2026-07-28 slim-down): `05_…` (R6, unused), `06_…` (R7 heatmap variant, unused), `08_combine_paper_figure_plates.R` (combined plates - author uses manual PS assembly).
+- `04_server_important_variable_paleoclimate_background.R`: server-side R7 script summarizing important Bio variables within high-suitability (`>= 0.7`) cells through time. RStudio-friendly: edit the settings block at the top and click Source. Requires the original TEYF Bio nc/tif files. Its output CSV is the input to `05_…`.
+- `05_redraw_r7_contrast_heatmap_trends.R`: redraws the R7 high-suitability vs background contrast heatmap locally from the R7 CSV (Fig 3 B).
+- `06_fossil_suitability_significance.R`: R8 fossil-point suitability significance test (Monte Carlo + binomial) and figure (Fig S11).
 
 See the repo `README.md` for the article-figure ↔ script mapping and reproducibility notes.
