@@ -23,7 +23,7 @@ if (basename(project_root) == "scripts" && dir.exists(file.path(dirname(project_
 }
 
 input_file <- file.path(project_root, "data", "fossil_record", "Fossil_Record_Formal_v2.1_for_coding.csv")
-simulation_file <- file.path(project_root, "documents", "teyf_simulations.csv")
+simulation_file <- file.path(project_root, "data", "teyf_simulations.csv")
 output_file <- file.path(project_root, "data", "fossil_record", "FossilRecord-paleocor-v2.1.csv")
 
 if (!file.exists(input_file)) {

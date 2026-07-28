@@ -32,4 +32,4 @@ Current scripts:
 
 Removed (2026-07-28 slim-down): `05_…` (R6, unused), `06_…` (R7 heatmap variant, unused), `08_combine_paper_figure_plates.R` (combined plates - author uses manual PS assembly).
 
-See `documents/FIGURE_MAPPING.md` for the article-figure ↔ script ↔ output mapping.
+See the repo `README.md` for the article-figure ↔ script mapping and reproducibility notes.

@@ -144,7 +144,7 @@ plot_global_suitability <- function(plot_data) {
     theme_map()
 }
 
-teyf_simulations <- read_csv(path_here("documents", "teyf_simulations.csv"), show_col_types = FALSE)
+teyf_simulations <- read_csv(path_here("data", "teyf_simulations.csv"), show_col_types = FALSE)
 
 all_periods <- teyf_simulations %>%
   transmute(

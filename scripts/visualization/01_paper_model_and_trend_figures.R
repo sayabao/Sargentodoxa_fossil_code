@@ -337,7 +337,7 @@ save_figure(
 # R3. Suitability area trend from earliest fossil period onward
 # -------------------------------------------------------------------------
 
-teyf_simulations <- read_csv(path_here("documents", "teyf_simulations.csv"), show_col_types = FALSE)
+teyf_simulations <- read_csv(path_here("data", "teyf_simulations.csv"), show_col_types = FALSE)
 fossil_records <- read_csv(path_here("data", "fossil_record", "FossilRecord-paleocor-v2.1.csv"), show_col_types = FALSE)
 
 earliest_fossil_ma <- max(fossil_records$age, na.rm = TRUE)

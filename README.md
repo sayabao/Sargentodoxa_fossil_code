@@ -21,7 +21,7 @@ assembles the final article figures in Photoshop.
 | `scripts/visualization/` | Paper-figure component scripts (M1-M4, R2b, R3, R3b, R4, R5, R7, R8) |
 | `data/occ_data_cvh/` | Occurrence data (CVH) |
 | `data/fossil_record/` | Fossil record tables incl. palaeo-coordinates (`FossilRecord-paleocor-v2.1.csv`) |
-| `documents/` | TEYF period metadata, variable-selection methods, reproducibility & figure-mapping notes |
+| `data/teyf_simulations.csv` | TEYF period metadata (Simulation Name, Ma) used to match fossils/projections to periods |
 | `output/` | Frozen model/projection outputs that let the figure scripts reproduce every article figure locally |
 
 ## Quickstart - reproduce the article component figures
@@ -41,36 +41,43 @@ Rscript scripts/visualization/09_fossil_suitability_significance.R  # Fig S11 (R
 `Fig S4` is taken from `output/08_projection/projection_modern_map.pdf` (produced
 by `scripts/08_projection.R`): panel A = page 1, panel B = page 6
 ("Presence vs Background: Ensemble (EMwmean)"), with a green dashed line added
-manually by the author. Outputs are written under `output/figures_paper/`. See
-`documents/FIGURE_MAPPING.md` for the exact article-figure <-> script <->
-output mapping.
+manually by the author. Outputs are written under `output/figures_paper/`.
 
-## Reproducibility boundary (summary)
+## Reproducibility
 
-- **Locally reproducible from frozen outputs:** all `scripts/visualization/`
-  figure scripts (and the Presence-vs-Background page of `08_projection.R`).
-- **Requires server data (not shipped):** the upstream pipeline `01-07` needs
-  the full WorldClim 2.1 bioclim stack; `09_paleoclimate_projection.R` needs the
-  TEYF palaeoclimate rasters; `04_server_*.R` (R7) needs the raw TEYF Bio
-  variables. These scripts are kept for methodology; their frozen outputs ship
-  in `output/` so downstream figures reproduce without re-running them.
+**Locally reproducible from frozen outputs:** all `scripts/visualization/`
+figure scripts (and the Presence-vs-Background page of `08_projection.R`).
 
-See `documents/REPRODUCIBILITY.md` for full detail (server paths, env vars,
-seeds, and what was excluded).
+**Requires server data (not shipped):** the upstream pipeline `01-07` needs the
+full WorldClim 2.1 bioclim stack; `09_paleoclimate_projection.R` needs the TEYF
+palaeoclimate rasters; `04_server_*.R` (R7) needs the raw TEYF Bio variables.
+These scripts are kept for methodology; their frozen outputs ship in `output/`
+so downstream figures reproduce without re-running them.
+
+To re-run the pipeline on the server, point the climate directories at the
+server data via environment variables (defaults are the original server paths, so
+on the original server it runs as-is):
+
+```bash
+export SARGENTO_MODERN_CLIM_DIR="/home/cedrus/data/shz/data/wc2.1_5m_bio"
+export SARGENTO_TEYF_CLIM_DIR="/home/cedrus/data/shz/data/from linlin/teyf-mask-nc-5min"
+export SARGENTO_TEWT_CLIM_DIR="/home/cedrus/data/shz/data/tewt_0_3600ka/masked_landsea"   # optional
+```
+
+**Random seeds:** spatial thinning / CV use `thinning_seed = 42` and
+`seed_val = 123` (see `scripts/config.R`); model training, ensembling, and
+projection are bound by these, so results are reproducible.
+
+**Not shipped (regenerable / unused / too large):** old `09_paleoclimate/` and
+`10_visualization*/` outputs, `05_models_random/`, the large
+`04_formatted/biomod2_formatted_data.RData` and `05_models/model_results.RData`
+(extracted CSVs ship instead), R6 fossil-geographic-shift script/outputs, and
+all `.RData`/`.Rhistory`.
 
 ## R environment
 
-R 4.5.1. Package versions are recorded in `documents/R_ENVIRONMENT.md`. Key
-packages: biomod2, terra, sf, ggplot2, patchwork, tidyterra, usdm. (renv not
-enabled; see that file for how to add a strict lockfile.)
-
-## Note on fossil taxonomy
-
-The fossil record files (`data/fossil_record/FossilRecord-paleocor-v2.1.csv`
-and `Fossil_Record_Formal_v2.1_for_coding.csv`) carry the final manuscript
-taxonomy, including *Sargentodoxa tajimiensis* sp. nov. (Tajimi, Japan),
-*S. guipingensis* sp. nov. (Guiping, China), and *S. cretaceum* comb. nov.
-(formal authors). Earlier modelling-stage versions used placeholder names
-(e.g. *cuneata* for the Tajimi record); these are label-only updates -
-coordinates, ages, and TEYF period assignments are unchanged, so the niche
-model and all figures are unaffected.
+R 4.5.1 (ucrt, Windows). renv is **not** enabled - versions are recorded here.
+Key packages: biomod2 4.3.4.5, terra 1.9.1, raster 3.6.32, sf 1.1.0, dplyr 1.2.0,
+readr 2.1.6, ggplot2 4.0.1, patchwork 1.3.2, tidyterra 1.1.0, viridis 0.6.5,
+corrplot 0.95, usdm 2.1.7. (To add a strict lockfile later:
+`install.packages("renv")` then `renv::init()` + `renv::snapshot()`.)

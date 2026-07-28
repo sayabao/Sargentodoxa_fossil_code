@@ -78,7 +78,7 @@ parse_args <- function(args) {
 find_project_root <- function(start_dir = getwd()) {
   current <- normalizePath(start_dir, mustWork = TRUE)
   markers <- c(
-    file.path("documents", "teyf_simulations.csv"),
+    file.path("data", "teyf_simulations.csv"),
     file.path("output", "07_ensemble", "ensemble_variable_importance.csv")
   )
 
@@ -162,7 +162,7 @@ teyf_simulations_file <- if (!is.null(args[["teyf-simulations-file"]])) {
 } else if (nzchar(rstudio_teyf_simulations_file)) {
   rstudio_teyf_simulations_file
 } else {
-  file.path(project_root, "documents", "teyf_simulations.csv")
+  file.path(project_root, "data", "teyf_simulations.csv")
 }
 teyf_simulations_file <- normalizePath(teyf_simulations_file, mustWork = TRUE)
 

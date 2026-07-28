@@ -104,8 +104,8 @@ fossil_dir <- file.path(project_dir, "data/fossil_record")
 fossil_record_file <- file.path(fossil_dir, "FossilRecord-paleocor-v2.1.csv")
 
 # 高级：古气候时期顺序信息文件
-# 随仓库提供（documents/teyf_simulations.csv）。
-teyf_simulations_file <- file.path(project_dir, "documents/teyf_simulations.csv")
+# 随仓库提供（data/teyf_simulations.csv）。
+teyf_simulations_file <- file.path(project_dir, "data/teyf_simulations.csv")
 simulations_file <- teyf_simulations_file
 
 # ==================== 2. 物种与输入数据 ====================
