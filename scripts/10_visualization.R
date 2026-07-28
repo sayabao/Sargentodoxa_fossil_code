@@ -1,13 +1,13 @@
 # ============================================================================
-# 10_visualization.R - 结果可视化
+# 10_visualization.R - Result visualization
 # ============================================================================
-# 功能：
-#   - 可视化古气候投影结果
-#   - 生成静态图和动画
-#   - 对比化石记录与模型预测
+# Functionality:
+#   - Visualize paleoclimate projection results
+#   - Generate static figures and animation
+#   - Compare fossil records with model predictions
 # ============================================================================
 
-# 加载配置
+# Load config
 source("config.R")
 
 cat("\n")
@@ -16,7 +16,7 @@ cat("  10 Visualization - Starting\n")
 cat("=================================================================\n")
 
 # ============================================================================
-# 1. 设置输出目录
+# 1. Set output directory
 # ============================================================================
 
 viz_dir <- output_dirs$visualization
@@ -28,17 +28,17 @@ dir.create(file.path(viz_dir, "comparison"), showWarnings = FALSE)
 cat("  Output directory:", viz_dir, "\n")
 
 # ============================================================================
-# 2. 加载古气候投影结果
+# 2. Load paleoclimate projection results
 # ============================================================================
 
 paleo_proj_dir <- output_dirs$paleoclimate
 
-# 检查输出目录
+# Check output directory
 if (!dir.exists(paleo_proj_dir)) {
   stop("Error: Paleoclimate projection output not found. Run 09 first.")
 }
 
-# 获取所有 tif 文件
+# Get all tif files
 tif_files <- list.files(
   file.path(paleo_proj_dir, "projections"),
   pattern = "\\.tif$",
@@ -49,8 +49,8 @@ if (length(tif_files) == 0) {
   stop("Error: No projection TIF files found.")
 }
 
-# 一个时期通常会输出多张集成图（例如 EMwmeanByTSS / AUCroc / AUCprg / BOYCE）。
-# 可视化阶段只保留每个时期的一张代表性结果，避免同一时期名称重复导致栅格图层重名。
+# One period usually yields several ensemble rasters (e.g. EMwmeanByTSS / AUCroc / AUCprg / BOYCE).
+# Keep one representative raster per period to avoid duplicate names causing layer-name clashes.
 extract_period_name <- function(file_path, species_name) {
   pattern_to_remove <- paste0("_", species_name, ".*")
   gsub(pattern_to_remove, "", basename(file_path))
@@ -160,7 +160,7 @@ build_period_metadata <- function(period_names, simulations_file_path = NULL) {
   )
 }
 
-# --- 动态提取时期名称 (不再硬编码 "_Sargentodoxa") ---
+# --- Dynamically extract period names (no hardcoded "_Sargentodoxa") ---
 period_names <- vapply(tif_files, extract_period_name, FUN.VALUE = character(1), species_name = species_name)
 period_meta <- build_period_metadata(
   period_names = period_names,
@@ -195,23 +195,23 @@ suitability_palette <- c(
   "#f7f7f7", "#e9f2c9", "#cde48b", "#94c95b", "#4ea34a", "#1f6b2d"
 )
 
-# 加载投影结果为栅格栈
+# Load projections as a raster stack
 proj_stack <- rast(tif_files)
 proj_stack <- normalize_prediction_raster(proj_stack)
 
-# --- 关键修复：在这里手动为 proj_stack 的图层命名 ---
+# --- Key fix: manually name proj_stack layers here ---
 names(proj_stack) <- period_names
-# --- 修复结束 ---
+# --- end fix ---
 
 cat("  Loaded projection stack:", nrow(proj_stack), "x", ncol(proj_stack), 
     "x", nlyr(proj_stack), "\n")
 
-# (可选) 添加一个验证步骤，确保名称已正确设置
+# (Optional) verify the names are set correctly
 cat("  Verifying layer names. First 5 names in stack are:\n")
 print(head(names(proj_stack)))
 
 
-# 加载统计摘要
+# Load the statistics summary
 stats_dir <- file.path(paleo_proj_dir, "stats")
 if (dir.exists(stats_dir)) {
   stats_files <- list.files(stats_dir, pattern = "summary\\.csv$", full.names = TRUE)
@@ -221,7 +221,7 @@ if (dir.exists(stats_dir)) {
 }
 
 # ============================================================================
-# 3. 加载现代投影结果（用于对比）
+# 3. Load modern projection (for comparison)
 # ============================================================================
 
 modern_proj_file <- file.path(output_dirs$projection, "projection_modern_map.pdf")
@@ -230,14 +230,14 @@ if (file.exists(modern_proj_file)) {
 }
 
 # ============================================================================
-# 4. 加载化石记录（用于验证）
+# 4. Load fossil records (for validation)
 # ============================================================================
 
-# 检查化石记录文件
+# Check the fossil record file
 fossil_data <- NULL
 if (file.exists(fossil_record_file)) {
   fossil_data <- read.csv(fossil_record_file)
-  # 检查必要的列：paleoLong, paleoLat, age
+  # Check required columns: paleoLong, paleoLat, age
   required_cols <- c("paleoLong", "paleoLat", "age")
   if (all(required_cols %in% names(fossil_data))) {
     cat("  Loaded fossil records:", nrow(fossil_data), "records\n")
@@ -250,12 +250,12 @@ if (file.exists(fossil_record_file)) {
 }
 
 # ============================================================================
-# 5. 可视化函数 (全面支持真实 Ma 年代)
+# 5. Visualization functions (full support for real Ma ages)
 # ============================================================================
 
-# 5.1 单时期分布图
+# 5.1 Single-period distribution map
 plot_single_period <- function(r, period_name, output_file, 
-                               period_label = period_name, # <-- 新增：接收真实的 Ma 标签
+                               period_label = period_name, # <-- new: accept real Ma label
                                add_fossil = FALSE, fossil_data = NULL,
                                threshold = 0.5, ...) {
   r_df <- as.data.frame(r, xy = TRUE)
@@ -279,7 +279,7 @@ plot_single_period <- function(r, period_name, output_file,
     ) +
     coord_sf(crs = "EPSG:4326") +
     labs(
-      title = paste(species_name, "-", period_label), # <-- 关键：标题使用真实 Ma 标签
+      title = paste(species_name, "-", period_label), # <-- key: title uses real Ma label
       subtitle = "Species Distribution Model Projection",
       x = "Longitude", y = "Latitude"
     ) +
@@ -293,10 +293,10 @@ plot_single_period <- function(r, period_name, output_file,
   return(p)
 }
 
-# 5.2 多时期对比图 (内存极致优化版)
+# 5.2 Multi-period comparison (memory-optimized)
 plot_multi_period_comparison <- function(proj_stack, periods, output_file, 
                                          period_labels, ncol = 4, 
-                                         downsample_factor = 3) { # <-- 新增降采样参数
+                                         downsample_factor = 3) { # <-- new: downsample parameter
   plot_data <- list()
   
   cat("    Extracting and downsampling raster layers (factor=", downsample_factor, ")...\n", sep="")
@@ -305,8 +305,8 @@ plot_multi_period_comparison <- function(proj_stack, periods, output_file,
     if (periods[i] %in% names(proj_stack)) {
       r <- proj_stack[[periods[i]]]
       
-      # --- 💡核心内存优化：降低空间分辨率 ---
-      # 如果 factor = 3，数据量直接变成原来的 1/9！
+      # --- Core memory optimization: lower spatial resolution ---
+      # With factor = 3, data volume drops to 1/9!
       if (downsample_factor > 1) {
         r <- terra::aggregate(r, fact = downsample_factor, fun = mean, na.rm = TRUE)
       }
@@ -326,7 +326,7 @@ plot_multi_period_comparison <- function(proj_stack, periods, output_file,
   cat("    Merging data and rendering ggplot (this may still take a moment)...\n")
   combined_df <- do.call(rbind, plot_data)
   
-  # 根据面板数量动态调整图片高度 (一行大概占 2.5 inch)
+  # Scale image height by panel count (~2.5 inch per row)
   n_panels <- length(periods)
   n_rows <- ceiling(n_panels / ncol)
   dynamic_height <- max(10, n_rows * 2.5) 
@@ -347,7 +347,7 @@ plot_multi_period_comparison <- function(proj_stack, periods, output_file,
   
   ggsave(output_file, p, width = 14, height = dynamic_height, dpi = 300)
   
-  # --- 💡主动释放内存 ---
+  # --- Actively free memory ---
   rm(combined_df, plot_data)
   gc()
   # ----------------------
@@ -355,8 +355,8 @@ plot_multi_period_comparison <- function(proj_stack, periods, output_file,
   return(p)
 }
 
-# 5.3 栖息地面积变化图 (数值型真实年代 X 轴)
-plot_area_trend <- function(stats_all, period_order, period_ma_numeric, output_file) { # <-- 新增：数值字典
+# 5.3 Habitat area trend (numeric real-age X axis)
+plot_area_trend <- function(stats_all, period_order, period_ma_numeric, output_file) { # <-- new: numeric age dictionary
   
   valid_periods <- intersect(period_order, names(stats_all))
   ordered_stats <- stats_all[valid_periods]
@@ -367,18 +367,18 @@ plot_area_trend <- function(stats_all, period_order, period_ma_numeric, output_f
     sd = sapply(ordered_stats, function(x) x$sd)
   )
   
-  # --- 关键：将 X 轴映射为真实的数值年代 ---
+  # --- Key: map X axis to real numeric ages ---
   area_data$Ma <- period_ma_numeric[valid_periods]
   
-  p <- ggplot(area_data, aes(x = Ma, y = mean)) +  # <-- 使用数值 Ma 作为 X 轴
+  p <- ggplot(area_data, aes(x = Ma, y = mean)) +  # <-- use numeric Ma as X axis
     geom_line(color = "steelblue", linewidth = 1) +
     geom_ribbon(aes(ymin = mean - sd, ymax = mean + sd), alpha = 0.2, fill = "steelblue") +
     geom_point(color = "darkblue", size = 2) +
-    scale_x_reverse() + # --- 关键：X轴反转，97.2 在左边，0 在右边 ---
+    scale_x_reverse() + # --- key: reverse X axis (97.2 left, 0 right) ---
     labs(
       title = paste0(species_name, " - Habitat Suitability Trend"),
       subtitle = "Trend over geological time",
-      x = "Age (Ma)", # <-- 坐标轴改名为 Age (Ma)
+      x = "Age (Ma)", # <-- axis renamed to Age (Ma)
       y = "Mean Suitability Score"
     ) +
     theme_minimal()
@@ -387,31 +387,31 @@ plot_area_trend <- function(stats_all, period_order, period_ma_numeric, output_f
   return(p)
 }
 
-# 5.4 单时期化石记录对比图
+# 5.4 Single-period fossil comparison map
 plot_fossil_comparison <- function(proj_stack, period_name, fossil_data, 
                                    period_ma, output_file, threshold = 0.5) {
-  # 获取对应时期的栅格
+  # Get the raster for the corresponding period
   if (!period_name %in% names(proj_stack)) {
     cat("    Warning: period", period_name, "not found in proj_stack\n")
     return(NULL)
   }
   r <- proj_stack[[period_name]]
   
-  # 筛选该时期的化石记录
+  # Filter fossil records for this period
   fossil_subset <- fossil_data[fossil_data$age == period_ma, ]
   if (nrow(fossil_subset) == 0) {
     cat("    Warning: no fossil records for period", period_name, "at", period_ma, "Ma\n")
     return(NULL)
   }
   
-  # 转换为 SpatVector (使用 paleoLong, paleoLat)
+  # Convert to SpatVector (using paleoLong, paleoLat)
   fossil_vect <- vect(fossil_subset, geom = c("paleoLong", "paleoLat"), crs = "EPSG:4326")
   
-  # 转换为数据框用于 ggplot
+  # Convert to data frame for ggplot
   r_df <- as.data.frame(r, xy = TRUE)
   names(r_df)[3] <- "value"
   
-  # 获取时期标签
+  # Get the period label
   period_label <- if (!is.null(period_labels[[period_name]])) {
     period_labels[[period_name]]
   } else {
@@ -442,18 +442,18 @@ plot_fossil_comparison <- function(proj_stack, period_name, fossil_data,
   return(p)
 }
 
-# 5.5 多时期化石对比拼图 (终极修复版 - 化石点精准匹配)
+# 5.5 Multi-period fossil comparison panel (final version - precise fossil matching)
 plot_fossil_multi_comparison <- function(proj_stack, period_names, fossil_data,
                                          period_ma_numeric, output_file, 
                                          ncol = 5, downsample_factor = 4) {
   
-  # --- 1. 数据准备阶段 ---
+  # --- 1. Data preparation ---
   
-  # 准备两个列表，一个装栅格数据，一个装化石数据
+  # Prepare two lists: rasters and fossil data
   raster_data_list <- list()
   fossil_data_list <- list()
   
-  # 只保留有化石记录的时期
+  # Keep only periods with fossil records
   valid_periods <- c()
   for (p in period_names) {
     ma_val <- period_ma_numeric[p]
@@ -469,13 +469,13 @@ plot_fossil_multi_comparison <- function(proj_stack, period_names, fossil_data,
   
   cat("    Plotting", length(valid_periods), "periods with fossil records\n")
   
-  # 循环处理每个有效时期
+  # Loop over each valid period
   for (i in seq_along(valid_periods)) {
     p_name <- valid_periods[i]
     ma_val <- period_ma_numeric[p_name]
     label <- period_labels[p_name]
     
-    # 准备栅格数据
+    # Prepare raster data
     r <- proj_stack[[p_name]]
     if (downsample_factor > 1) {
       r <- aggregate(r, fact = downsample_factor)
@@ -485,7 +485,7 @@ plot_fossil_multi_comparison <- function(proj_stack, period_names, fossil_data,
     r_df$period_label <- factor(label, levels = period_labels[valid_periods])
     raster_data_list[[i]] <- r_df
     
-    # --- 关键：准备对应时期的化石数据 ---
+    # --- Key: prepare fossil data for the corresponding period ---
     fossil_subset <- fossil_data[fossil_data$age == ma_val, ]
     if(nrow(fossil_subset) > 0) {
       fossil_subset$period_label <- factor(label, levels = period_labels[valid_periods])
@@ -493,24 +493,24 @@ plot_fossil_multi_comparison <- function(proj_stack, period_names, fossil_data,
     }
   }
   
-  # 合并成两个大数据框
+  # Merge into two large data frames
   combined_raster_df <- do.call(rbind, raster_data_list)
   combined_fossil_df <- do.call(rbind, fossil_data_list)
   
-  # --- 2. 绘图阶段 ---
+  # --- 2. Plotting ---
   
   p <- ggplot() +
-    # 第一层：画降采样后的栅格底图
+    # Layer 1: downsampled raster base map
     geom_tile(data = combined_raster_df, aes(x = x, y = y, fill = value)) +
     
-    # 第二层：画精准匹配的化石点！
+    # Layer 2: precisely matched fossil points
     geom_point(data = combined_fossil_df, aes(x = paleoLong, y = paleoLat), 
                color = "red", size = 2, shape = 1, stroke = 1.2) +
     
-    # 第三层：切分面板
+    # Layer 3: facet panels
     facet_wrap(~ period_label, ncol = ncol) +
     
-    # 第四层：美化
+    # Layer 4: styling
     scale_fill_gradientn(
       name = "Habitat suitability (0-1)",
       colors = suitability_palette,
@@ -532,7 +532,7 @@ plot_fossil_multi_comparison <- function(proj_stack, period_names, fossil_data,
       panel.background = element_blank()
     )
   
-  # 根据面板数量动态调整图片高度
+  # Scale image height by panel count
   dynamic_height <- max(8, 2.5 * ceiling(length(valid_periods) / ncol))
   
   ggsave(output_file, p, width = 16, height = dynamic_height, dpi = 300)
@@ -540,7 +540,7 @@ plot_fossil_multi_comparison <- function(proj_stack, period_names, fossil_data,
   return(p)
 }
 
-# 5.6 化石点 suitability 柱状图
+# 5.6 Fossil-point suitability bar chart
 plot_fossil_suitability_bars <- function(proj_stack, fossil_data, period_ma_numeric,
                                          period_labels, output_file) {
   fossil_records <- list()
@@ -597,7 +597,7 @@ plot_fossil_suitability_bars <- function(proj_stack, fossil_data, period_ma_nume
   return(p)
 }
 
-# 5.7 化石点 vs 背景 suitability 分布对比
+# 5.7 Fossil vs background suitability distribution
 plot_fossil_vs_background <- function(proj_stack, fossil_data, period_ma_numeric,
                                       period_labels, output_file,
                                       background_n = 5000, seed_value = 123) {
@@ -715,19 +715,19 @@ plot_fossil_vs_background <- function(proj_stack, fossil_data, period_ma_numeric
 }
 
 # ============================================================================
-# 6. 生成可视化
+# 6. Generate visualizations
 # ============================================================================
 
 cat("\n  Generating visualizations...\n")
 
-# 6.1 单时期分布图
+# 6.1 Single-period distribution maps
 cat("  Generating high-resolution static maps for all periods...\n")
 for (period in period_names) {
   output_file <- file.path(viz_dir, "static", paste0(period, "_distribution.png"))
   if (!file.exists(output_file)) {
     if (period %in% names(proj_stack)) {
       r <- proj_stack[[period]]
-      # --- 传参：将对应时期的年代标签传进去 ---
+      # --- Pass the corresponding period age label ---
       plot_single_period(r, period, output_file, period_label = period_labels[period])
       cat("    Created:", basename(output_file), "\n")
     }
@@ -735,39 +735,39 @@ for (period in period_names) {
 }
 cat("  All static maps are up to date.\n")
 
-# 6.2 多时期对比图 (全时期展示)
+# 6.2 Multi-period comparison (all periods)
 if (length(period_names) >= 4) {
   output_file <- file.path(viz_dir, "comparison", "multi_period_comparison.png")
   
   cat("  Generating multi-period comparison map...\n")
   
-  # downsample_factor = 3 或 4 可以极大地拯救内存
+  # downsample_factor = 3 or 4 saves a lot of memory
   plot_multi_period_comparison(proj_stack, period_names[1:length(period_names)], 
                                output_file, ncol = 4, 
                                period_labels = period_labels,
-                               downsample_factor = 3) # <-- 调整此参数来平衡速度与清晰度
+                               downsample_factor = 3) # <-- tune to balance speed vs clarity
   
   cat("    Created: multi_period_comparison.png\n")
 }
 
-# 6.3 栖息地面积变化趋势
+# 6.3 Habitat area trend
 if (exists("stats_all")) {
   output_file <- file.path(viz_dir, "static", "area_trend.png")
-  # --- 传参：把提取好的年代数值字典传进去 ---
+  # --- Pass the extracted numeric age dictionary ---
   plot_area_trend(stats_all, period_names, period_ma_numeric, output_file)
   cat("    Created: area_trend.png\n")
 }
 
-# 6.4 与化石记录对比
+# 6.4 Compare with fossil records
 if (!is.null(fossil_data) && "paleoLong" %in% names(fossil_data) && "paleoLat" %in% names(fossil_data)) {
   cat("\n  Generating fossil comparison plots...\n")
   
-  # 6.4.1 单时期化石对比图
+  # 6.4.1 Single-period fossil comparison
   for (period in period_names) {
     ma_val <- period_ma_numeric[period]
     if (is.na(ma_val)) next
     
-    # 检查该时期是否有化石记录
+    # Check whether this period has fossil records
     fossil_subset <- fossil_data[fossil_data$age == ma_val, ]
     if (nrow(fossil_subset) == 0) next
     
@@ -777,7 +777,7 @@ if (!is.null(fossil_data) && "paleoLong" %in% names(fossil_data) && "paleoLat" %
     }
   }
   
-  # 6.4.2 多时期化石对比拼图
+  # 6.4.2 Multi-period fossil comparison panel
   output_file_multi <- file.path(viz_dir, "comparison", "fossil_multi_period_comparison.png")
   if (!file.exists(output_file_multi)) {
     plot_fossil_multi_comparison(proj_stack, period_names, fossil_data,
@@ -809,13 +809,13 @@ if (!is.null(fossil_data) && "paleoLong" %in% names(fossil_data) && "paleoLat" %
 }
 
 # ============================================================================
-# 7. 生成 GIF 动画 (从高分辨率文件降维)
+# 7. Generate GIF animation (downscaled from high-res files)
 # ============================================================================
 cat("\n  Generating animation from high-resolution files...\n")
 
 if (require(magick)) {
   
-  # 1. 按正确的顺序获取所有高分辨率PNG文件的路径
+  # 1. Collect all high-res PNG paths in the right order
   high_res_pngs <- file.path(viz_dir, "static", paste0(period_names, "_distribution.png"))
   high_res_pngs <- high_res_pngs[file.exists(high_res_pngs)]
   
@@ -824,24 +824,24 @@ if (require(magick)) {
     cat("  Found", length(high_res_pngs), "images to process.\n")
     cat("  Resizing images for animation (this may take a moment)...\n")
     
-    # 2. 读取每个高分辨率文件，将其缩小，然后存入一个列表
-    #    image_scale 的 "800x" 语法会按比例将宽度缩放到800像素
+    # 2. Read each high-res file, downscale, and store in a list
+    #    image_scale "800x" scales width proportionally to 800 px
     images_resized <- image_read(high_res_pngs) %>%
       image_scale("600x")
     
-    # 打印新尺寸以供验证
+    # Print new size for verification
     cat("  Images resized to:\n")
     print(image_info(images_resized)[, 1:3])
     
-    # 3. 将缩小后的图像列表合并成动画
-    animation <- image_animate(images_resized, fps = 2) # fps=2 表示每秒2帧
+    # 3. Combine the downscaled images into an animation
+    animation <- image_animate(images_resized, fps = 2) # fps=2 means 2 frames per second
     
-    # 4. 保存GIF
+    # 4. Save the GIF
     output_file <- file.path(viz_dir, "animation", "paleoclimate_timeline.gif")
     image_write(animation, output_file)
     cat("    Successfully created animation:", basename(output_file), "\n")
     
-    # 5. 清理内存 (重要！)
+    # 5. Free memory (important!)
     rm(images_resized, animation)
     gc()
     
@@ -854,7 +854,7 @@ if (require(magick)) {
 }
 
 # ============================================================================
-# 8. 保存元数据
+# 8. Save metadata
 # ============================================================================
 
 viz_metadata <- list(

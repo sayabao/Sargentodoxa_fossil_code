@@ -1,37 +1,37 @@
 # ============================================================================
 # config.R
-# Sargentodoxa SDM 项目的全局配置文件
+# Global configuration for the Sargentodoxa SDM project
 #
-# 物种：大血藤 (Sargentodoxa cuneata)
-# 主要流程：
-#   1. 出现点清洗与空间稀疏化
-#   2. 伪缺失点生成
-#   3. 环境变量筛选
-#   4. 空间交叉验证
-#   5. 单模型训练、筛选与集成
-#   6. 现代 / 古气候投影与可视化
+# Species: Sargentodoxa cuneata
+# Main pipeline:
+#   1. Occurrence cleaning and spatial thinning
+#   2. Pseudo-absence generation
+#   3. Environmental variable selection
+#   4. Spatial cross-validation
+#   5. Single-model training, filtering, and ensemble
+#   6. Modern / paleoclimate projection and visualization
 #
-# 使用建议：
-#   - 优先修改参数值，不要随意改动下方辅助函数。
-#   - 参数分区按分析流程排列，建议按区块顺序检查。
-#   - 若切换服务器目录、古气候数据源或投影版本，优先检查路径配置。
-#   - 每个分区内进一步分为：
-#       常用：第一次跑流程时最可能需要改
-#       高级：有明确建模目的时再调整
-#       一般不用动：除非排错或重构流程，否则保持默认
+# Tips:
+#   - Prefer changing parameter values; avoid editing helper functions below.
+#   - Sections follow the analysis order; review top to bottom.
+#   - When switching climate data source or projection version, check path config first.
+#   - Each section tags parameters as:
+#       Common: likely to change on first run
+#       Advanced: tune only with a clear modeling goal
+#       Leave default: keep unless debugging or refactoring
 # ============================================================================
 
-# ==================== 1. 路径配置 ====================
-# 本仓库已去服务器化：
-#   - 本地输入数据（出现点 / 化石记录 / TEYF 时期元数据）随仓库提供，走相对路径；
-#   - 服务器端气候栅格（WorldClim / TEYF）通过环境变量配置，默认值保留服务器原始
-#     路径供参考；本地不随仓库提供。
-#   - 出图脚本 scripts/visualization/ 自带 project_root 推断，不依赖本节路径；
-#     本节主要供管线脚本 01-09 在服务器端重跑时使用。
-# 约定：管线脚本从仓库根目录运行，例如 Rscript scripts/01_data_preparation.R。
+# ==================== 1. Path configuration ====================
+# This repo is de-servered:
+#   - Local inputs (occurrence / fossil / TEYF metadata) ship with the repo via relative paths.
+#   - Server-side climate rasters (WorldClim / TEYF) are configured via env vars; defaults
+#     are empty. Local copies are not bundled with the repo.
+#   - Plotting scripts in scripts/visualization/ infer project_root themselves and do not
+#     depend on this section; it mainly serves pipeline scripts 01-09.
+# Convention: run pipeline scripts from the repo root, e.g. Rscript scripts/01_data_preparation.R
 
-# 推断仓库根目录（兼容 source() 与 Rscript，且不依赖 cwd）。
-# config.R 位于 scripts/config.R，故根为其上一级。
+# Infer repo root (works with both source() and Rscript, independent of cwd).
+# config.R lives at scripts/config.R, so the root is one level up.
 project_dir <- tryCatch({
   ofiles <- vapply(sys.frames(), function(f) f$ofile, character(1))
   ofile <- ofiles[length(ofiles)]
@@ -50,41 +50,41 @@ project_dir <- tryCatch({
 
 data_dir <- file.path(project_dir, "data")
 
-# 常用：出现点数据（CVH / GBIF）
-# 如果要切换数据来源，通常只需要改后面的 sp_file。
+# Common: occurrence data (CVH / GBIF)
+# To switch data source, usually just change sp_file below.
 sp_file_cvh <- file.path(project_dir, "data/occ_data_cvh/sargentodoxa_occ_cvh_counties_filtered.csv")
 sp_file_gbif <- file.path(project_dir, "data/occ_data_cvh/sargentodoxa_occ_filtered.csv")
 
-# 一般不用动：现代气候数据目录（WorldClim 2.1，5 arc-min）
-# 服务器：/home/cedrus/data/shz/data/wc2.1_5m_bio
-# 本地未随仓库提供；如需重跑 01-08，设置环境变量 SARGENTO_MODERN_CLIM_DIR 指向本地 WorldClim 目录。
+# Leave default: modern climate directory (WorldClim 2.1, 5 arc-min)
+# Set the SARGENTO_MODERN_CLIM_DIR env var to your climate data directory.
+# Not bundled; set the env var to rerun steps 01-08 locally.
 modern_clim_dir <- Sys.getenv(
   "SARGENTO_MODERN_CLIM_DIR",
-  unset = "/home/cedrus/data/shz/data/wc2.1_5m_bio"
+  unset = ""
 )
 modern_clim_pattern <- "*.tif$"
 
-# 常用：古气候数据来源
-# 如果只是在两套古气候数据之间切换，通常只改 current_past_clim 即可。
-# 1. TEWT 0-3600 ka（服务器：/home/cedrus/data/shz/data/tewt_0_3600ka/masked_landsea）
+# Common: paleoclimate data source
+# To switch between the two paleoclimate datasets, usually just change current_past_clim.
+# 1. TEWT 0-3600 ka (set the SARGENTO_TEWT_CLIM_DIR env var to your climate data directory)
 past_clim_dir_tewt <- Sys.getenv(
   "SARGENTO_TEWT_CLIM_DIR",
-  unset = "/home/cedrus/data/shz/data/tewt_0_3600ka/masked_landsea"
+  unset = ""
 )
-past_clim_subdir_tewt <- TRUE  # TRUE = 每个时期一个子目录
+past_clim_subdir_tewt <- TRUE  # TRUE = one subdir per period
 
-# 2. TEYF-mask-nc-5min（服务器：/home/cedrus/data/shz/data/from linlin/teyf-mask-nc-5min）
+# 2. TEYF (set the SARGENTO_TEYF_CLIM_DIR env var to your climate data directory)
 past_clim_dir_teyf <- Sys.getenv(
   "SARGENTO_TEYF_CLIM_DIR",
-  unset = "/home/cedrus/data/shz/data/from linlin/teyf-mask-nc-5min"
+  unset = ""
 )
-past_clim_subdir_teyf <- TRUE  # TRUE = 每个时期一个子目录
+past_clim_subdir_teyf <- TRUE  # TRUE = one subdir per period
 
-# 常用：当前启用的古气候数据源
-# 可选："tewt" / "teyf"
+# Common: currently active paleoclimate source
+# Options: "tewt" / "teyf"
 current_past_clim <- "teyf"
 
-# 根据 current_past_clim 自动选择实际使用的古气候目录
+# Auto-select the active paleoclimate directory based on current_past_clim
 if (current_past_clim == "tewt") {
   past_clim_dir <- past_clim_dir_tewt
   past_clim_subdir <- past_clim_subdir_tewt
@@ -93,47 +93,47 @@ if (current_past_clim == "tewt") {
   past_clim_subdir <- past_clim_subdir_teyf
 }
 
-# 高级：陆地边界（可选，仅用于可视化）
-# 没有 shapefile 时可设为 NULL
+# Advanced: land boundary (optional, visualization only)
+# Set to NULL if no shapefile is available
 land_file <- NULL
 
-# 常用：化石记录
-# 主要用于古气候投影结果与化石证据的对照展示。
+# Common: fossil records
+# Used to compare paleoclimate projections against fossil evidence.
 fossil_dir <- file.path(project_dir, "data/fossil_record")
-# fossil_record_file 至少需要包含：paleoLong, paleoLat, age, simulation_name
+# fossil_record_file must contain at least: paleoLong, paleoLat, age, simulation_name
 fossil_record_file <- file.path(fossil_dir, "FossilRecord-paleocor-v2.1.csv")
 
-# 高级：古气候时期顺序信息文件
-# 随仓库提供（data/teyf_simulations.csv）。
+# Advanced: paleoclimate period ordering file
+# Bundled with the repo (data/teyf_simulations.csv).
 teyf_simulations_file <- file.path(project_dir, "data/teyf_simulations.csv")
 simulations_file <- teyf_simulations_file
 
-# ==================== 2. 物种与输入数据 ====================
+# ==================== 2. Species and input data ====================
 
 species_name <- "Sargentodoxa"
 resp_name <- "Sargentodoxa"
 
-# 常用：默认使用的出现点数据源
-# 第一次跑流程时，这通常是最先需要确认的输入文件。
+# Common: default occurrence data source
+# On a first run this is usually the first input to confirm.
 sp_file <- sp_file_cvh
 
-# ==================== 3. 兼容性别名 ====================
-# 这一段主要给旧脚本兼容使用；新脚本若统一用 modern_clim_dir / past_clim_dir，
-# 通常不需要再改这里。
+# ==================== 3. Compatibility aliases ====================
+# This section mainly supports older scripts; new scripts that use modern_clim_dir /
+# past_clim_dir uniformly usually need no changes here.
 
-# 一般不用动：现代气候目录别名
+# Leave default: modern climate directory alias
 wc2_clim_dir <- modern_clim_dir
 
-# 一般不用动：古气候目录别名
+# Leave default: paleoclimate directory alias
 tewt_dir <- past_clim_dir
 
-# ==================== 4. 输出目录 ====================
+# ==================== 4. Output directories ====================
 
 output_base <- "./output"
 dir.create(output_base, showWarnings = FALSE)
 
-# 一般不用动：各流程步骤的输出目录
-# 如果你只是正常运行流程，通常不需要改；除非想调整项目输出结构。
+# Leave default: per-step output directories
+# Usually no change needed unless restructuring project outputs.
 output_dirs <- list(
   data_prep = "./output/01_data_prep",
   pseudo_absence = "./output/02_pseudo_absence",
@@ -145,111 +145,110 @@ output_dirs <- list(
   projection = "./output/08_projection",
   paleoclimate = "./output/09_paleoclimate",
   visualization = "./output/10_visualization"
-  
+
 )
 
-# 启动时自动创建输出目录
+# Auto-create output directories on startup
 for (dir_name in output_dirs) {
   dir.create(dir_name, showWarnings = FALSE, recursive = TRUE)
 }
 
-# ==================== 5. 空间稀疏化 ====================
+# ==================== 5. Spatial thinning ====================
 
-# 常用：是否在 `01_data_preparation` 中对 presence 做空间稀疏化
-# 对存在明显采样聚集的数据，通常建议保持为 TRUE。
+# Common: spatially thin presence points in `01_data_preparation`?
+# Keep TRUE for data with obvious sampling aggregation.
 enable_spatial_thinning <- TRUE
 
-# 常用：稀疏化方式
-# 第一次使用时，`hybrid` 往往是最稳妥的选择。
-# "cell"     = 每个气候栅格单元只保留 1 个点
-# "distance" = 仅按最小距离阈值稀疏化
-# "hybrid"   = 先按栅格去冗余，再按距离约束进一步筛选
+# Common: thinning method
+# `hybrid` is usually the safest first choice.
+# "cell"     = keep 1 point per climate raster cell
+# "distance" = thin by minimum distance only
+# "hybrid"   = cell dedup, then distance constraint
 thinning_method <- "hybrid"
 
-# 高级：做 cell 稀疏化时，是否使用现代气候栅格作为网格参照
-# 若希望 occurrence 与预测栅格严格对齐，可保持 TRUE。
+# Advanced: use modern climate raster as the grid for cell thinning?
+# Keep TRUE to align occurrences with predictor rasters.
 thinning_use_predictor_cell <- TRUE
 
-# 常用：距离阈值来源
-# "auto"   = 根据现代气候栅格分辨率自动估算
-# "manual" = 直接使用 thinning_distance_km
+# Common: distance threshold source
+# "auto"   = derive from modern climate raster resolution
+# "manual" = use thinning_distance_km directly
 thinning_distance_mode <- "manual"
 
-# 高级：自动阈值计算公式
-# 现代气候栅格分辨率（km） * thinning_distance_factor
+# Advanced: auto threshold formula
+# modern raster resolution (km) * thinning_distance_factor
 thinning_distance_factor <- 1.0
 
-# 常用：手动指定最小保留距离（km）
-# 这是控制 occurrence 稀疏程度的核心参数之一。
+# Common: manual minimum retained distance (km)
+# Core parameter controlling thinning intensity.
 thinning_distance_km <- 20
 
-# 高级：当多个点相互冲突时，按什么顺序决定“保留谁”
-# "random" = 随机顺序贪心保留（推荐，可降低输入顺序偏差）
-# "first"  = 按原始输入顺序保留
+# Advanced: when points conflict, which order decides "who stays"
+# "random" = greedy random order (recommended; reduces input-order bias)
+# "first"  = keep by original input order
 thinning_keep <- "random"
 
-# 一般不用动：稀疏化随机种子（保证可重复）
+# Leave default: thinning random seed (for reproducibility)
 thinning_seed <- 42
 
-# 高级：诊断输出中统计的最近邻距离阈值（km）
-# 仅影响诊断表和图，不改变实际稀疏化结果。
+# Advanced: nearest-neighbor distance thresholds reported in diagnostics (km)
+# Affects diagnostic tables/plots only, not the thinning result.
 thinning_diagnostic_thresholds_km <- c(10, 20, 30)
 
-# 高级：最近邻距离直方图的横轴上限（km）
+# Advanced: x-axis upper limit for nearest-neighbor distance histogram (km)
 thinning_histogram_xlim_km <- 100
 
-# ==================== 6. 伪缺失点 ====================
+# ==================== 6. Pseudo-absence ====================
 
-# 常用：伪缺失点生成策略
-# 第一次接触本流程时，通常直接使用 `kde` 即可。
-# "kde"    = 基于 occurrence 密度的加权抽样
-# "disk"   = 在 presence 周围给定距离范围内抽样
-# "random" = 随机抽样
-# "sre"    = 基于表面范围包络（Surface Range Envelope）
+# Common: pseudo-absence generation strategy
+# `kde` is fine for a first run.
+# "kde"    = weighted sampling by occurrence density
+# "disk"   = sample within a distance band around presence
+# "random" = random sampling
+# "sre"    = Surface Range Envelope
 pa_strategy <- "kde"
 
-# 高级：KDE 基本参数（仅在 pa_strategy = "kde" 时生效）
-# 这里主要控制核密度估计的数学细节；第一次使用一般不用改。
-kde_sigma <- "Scott"  # 带宽选择: "Scott", "Stoyan", "Diggle", "likelihood", "geometry"
-kde_window <- "hull"  # 窗口类型: "hull" (凸包), "rect" (矩形)
+# Advanced: KDE base params (only when pa_strategy = "kde")
+# Controls kernel density estimation details; usually unchanged on first use.
+kde_sigma <- "Scott"  # bandwidth: "Scott", "Stoyan", "Diggle", "likelihood", "geometry"
+kde_window <- "hull"  # window type: "hull" (convex hull), "rect" (rectangle)
 
-# 常用：自定义 KDE 实现参数（兼容较低版本 R 环境）
-# 带宽（km）：控制 occurrence 热点向外扩散的平滑尺度
-# 带宽越大，伪缺失点分布越平滑、越分散；越小则越贴近 occurrence 聚集区。
+# Common: custom KDE implementation params (for older R versions)
+# Bandwidth (km): smoothing scale spreading occurrence hotspots
+# Larger = smoother, more dispersed pseudo-absence; smaller = closer to occurrence clusters.
 kde_bandwidth_km <- 2500
 
-# 高级：KDE 权重图的计算分辨率（km）
-# 数值越大，计算越快但越粗；设为 NULL 时使用原始气候栅格分辨率
+# Advanced: KDE weight-map computation resolution (km)
+# Larger = faster but coarser; NULL uses the native climate raster resolution
 kde_compute_resolution_km <- 60
 
-# 高级：是否在 KDE 粗网格内加入随机抖动，以减弱“块状感”
+# Advanced: add random jitter within KDE coarse cells to reduce blockiness
 kde_jitter_within_cell <- T
 
-# 高级：候选点过采样倍数
-# 数值越大，越容易满足最小距离约束，但运行也会更慢
+# Advanced: candidate oversampling factor
+# Larger = easier to satisfy min-distance constraints, but slower
 kde_candidate_multiplier <- 8
 
-# 高级：最大重采样次数
+# Advanced: maximum resampling iterations
 kde_max_iter <- 10
 
-# 高级：SRE 参数（仅在 pa_strategy = "sre" 时生效）
-sre_quant <- 0.1      # 半分位数
+# Advanced: SRE params (only when pa_strategy = "sre")
+sre_quant <- 0.1      # half-quantile
 
-# 常用：伪缺失点与 presence 的距离限制（单位：经纬度度数）
-# 这两个参数直接决定伪缺失点离已知 occurrence 有多近、多远。
-# 主要对 `disk` 策略生效；在当前实现里也会被 `kde` 方案用于距离约束。
-pa_dist_min <- 5  # 1 度 ≈ 111 km
-pa_dist_max <- 60 # KDE/disk 伪缺失点距 presence 的最大距离（度）
+# Common: distance limits between pseudo-absence and presence (degrees)
+# These directly control how near/far pseudo-absences sit from known occurrences.
+# Mainly affects `disk`; in the current implementation `kde` also uses them as constraints.
+pa_dist_min <- 5  # 1 degree ~ 111 km
+pa_dist_max <- 60 # max distance (degrees) from presence for KDE/disk pseudo-absence
 
-# 高级：伪缺失点抽样范围限制
-# 用于剔除高纬区域，避免抽到明显不合理的全球极区样本
-pa_lat_limit_north <- 75   # 剔除北纬 75°N 以北 (如北极点周边)
-pa_lat_limit_south <- -60  # 剔除南纬 60°S 以南 (如南极洲)
+# Advanced: pseudo-absence sampling latitude limits
+# Exclude high latitudes to avoid unreasonable polar samples
+pa_lat_limit_north <- 75   # drop north of 75N (e.g. near the North Pole)
+pa_lat_limit_south <- -60  # drop south of 60S (e.g. Antarctica)
 
-# 常用：伪缺失点方案 1：1:1 比例
-# presence 数量与 pseudo-absence 数量相同，适合先做基线测试。
-# 注意：这里的数量不是写死的；`nb.absences = "equal"` 会根据
-# 当前 presence 数量自动设置为相同数量的 pseudo-absence。
+# Common: pseudo-absence scheme 1: 1:1 ratio
+# Pseudo-absence count equals presence count; good for a baseline test.
+# Note: the count is not hardcoded; `nb.absences = "equal"` auto-matches presence count.
 pa_scheme1 <- list(
   name = "scheme_1to1",
   nb.absences = "equal",
@@ -257,10 +256,10 @@ pa_scheme1 <- list(
   desc = "1:1 ratio (equal to presence)"
 )
 
-# 常用：伪缺失点方案 2：约 1:3 比例
-# 当希望增加背景约束、提高模型区分能力时可尝试。
-# 注意：`1000` 只是当前手动设定的示例值，不代表通用推荐值；
-# 实际需要根据 presence 数量和研究设计手动调整。
+# Common: pseudo-absence scheme 2: ~1:3 ratio
+# Try this when you want stronger background constraint and discrimination.
+# Note: the count is a manual example, not a universal recommendation;
+# adjust manually based on presence count and study design.
 pa_scheme2 <- list(
   name = "scheme_1000",
   nb.absences = 2000,
@@ -268,288 +267,288 @@ pa_scheme2 <- list(
   desc = "1:10 ratio (2000 points)"
 )
 
-# ==================== 7. 数据格式化 ====================
+# ==================== 7. Data formatting ====================
 
-# 常用：选择用于后续建模的数据方案
-# 主流程目前只保留两种方案，便于初次使用时理解和维护。
-# "scheme_1to1" = 与 presence 等量
-# "scheme_1000" = 固定 1000 个伪缺失点
+# Common: data scheme for downstream modeling
+# The main pipeline keeps two schemes for clarity and maintenance.
+# "scheme_1to1" = equal to presence
+# "scheme_1000" = fixed-count pseudo-absence points
 pa_scheme_to_use <- "scheme_1000"
 
-# ==================== 8. 变量筛选 ====================
+# ==================== 8. Variable selection ====================
 
-# 常用：相关性筛选阈值（初筛）
-# 值越低，筛选越严格；值越高，保留变量越多。
+# Common: correlation filter threshold (initial screening)
+# Lower = stricter; higher = keeps more variables.
 corr_threshold <- 0.8
 
-# 常用：VIF 阈值（终筛）
-# 用于进一步控制多重共线性，是变量筛选的核心参数之一。
+# Common: VIF threshold (final screening)
+# Controls multicollinearity; a core variable-selection parameter.
 vif_threshold <- 11
 
-# 常用：是否执行 VIF 逐步剔除
+# Common: run stepwise VIF removal?
 use_vif_step <- TRUE
 
-# 常用：手动预设的候选变量
-# 设为 NULL 表示完全依赖“相关性 + VIF”自动筛选
-# BioClim 常用变量释义：
-# 如果你对物种生态学有明确判断，可以先在这里限定候选变量范围。
-#   Bio1 = 年均温, Bio2 = 昼夜温差月均值, Bio3 = 等温性, Bio4 = 温度季节性
-#   Bio5 = 最暖月最高温, Bio6 = 最冷月最低温, Bio7 = 温度年较差
-#   Bio8 = 最湿季度均温, Bio9 = 最干季度均温, Bio10 = 最暖季度均温, Bio11 = 最冷季度均温
-#   Bio12 = 年降水, Bio13 = 最湿月降水, Bio14 = 最干月降水, Bio15 = 降水季节性
-#   Bio16 = 最湿季度降水, Bio17 = 最干季度降水, Bio18 = 最暖季度降水, Bio19 = 最冷季度降水
+# Common: manually preset candidate variables
+# NULL = rely entirely on auto "correlation + VIF" selection
+# BioClim variable meanings:
+# If you have clear ecological judgement, restrict candidates here first.
+#   Bio1 = Annual mean temp, Bio2 = Mean diurnal range, Bio3 = Isothermality, Bio4 = Temperature seasonality
+#   Bio5 = Max temp of warmest month, Bio6 = Min temp of coldest month, Bio7 = Temp annual range
+#   Bio8 = Mean temp of wettest quarter, Bio9 = Mean temp of driest quarter, Bio10 = Mean temp of warmest quarter, Bio11 = Mean temp of coldest quarter
+#   Bio12 = Annual precipitation, Bio13 = Precip of wettest month, Bio14 = Precip of driest month, Bio15 = Precip seasonality
+#   Bio16 = Precip of wettest quarter, Bio17 = Precip of driest quarter, Bio18 = Precip of warmest quarter, Bio19 = Precip of coldest quarter
 manual_var_select <- c(#'Bio1',
                        'Bio2', 'Bio5','Bio6',#'Bio7','Bio3','Bio4',
                        'Bio8','Bio9',# 'Bio10', 'Bio11',
                        #'Bio12',#
                        'Bio13','Bio14','Bio15'#'Bio16','Bio17','Bio18','Bio19'
                        )
-# ==================== 9. 数据划分与交叉验证 ====================
+# ==================== 9. Data split and cross-validation ====================
 
-# 常用：是否启用交叉验证
-# 对正式建模，通常建议保持 TRUE。
+# Common: enable cross-validation?
+# Keep TRUE for formal modeling.
 use_cv <- TRUE
 
-# 常用：交叉验证策略
-# 本流程主要面向空间交叉验证，因此通常推荐 `user.defined`。
-# "kfold"        = 常规 k 折交叉验证
-# "strat"        = 分层抽样
-# "random"       = 随机划分
-# "user.defined" = 使用 `04_data_formatting.R` 生成的自定义空间折
+# Common: cross-validation strategy
+# This pipeline targets spatial CV, so `user.defined` is recommended.
+# "kfold"        = standard k-fold CV
+# "strat"        = stratified sampling
+# "random"       = random split
+# "user.defined" = custom spatial folds from `04_data_formatting.R`
 cv_strategy <- "user.defined"
 
-cv_nb_rep <- 3        # 常用：重复次数；在 user.defined 下表示生成几套平移网格
-cv_k <- 5             # 常用：每套网格划分成多少折
-cv_perc <- 0.8        # 一般不用动：仅非 user.defined 策略使用
+cv_nb_rep <- 3        # Common: repeats; under user.defined = number of shifted grids
+cv_k <- 5             # Common: folds per grid
+cv_perc <- 0.8        # Leave default: used only by non-user.defined strategies
 
-# 常用：空间 CV 具体方法
-# "checkerboard" = 基于空间网格的交错分配
+# Common: spatial CV method
+# "checkerboard" = checkerboard assignment on a spatial grid
 spatial_cv_method <- "checkerboard"
 
-# 常用：空间块大小（km）
-# 通常建议明显大于稀疏化距离，否则训练 / 验证空间分离不充分
-# 这是空间交叉验证中最值得优先理解和调整的参数之一。
+# Common: spatial block size (km)
+# Should clearly exceed the thinning distance, else train/test separation is weak.
+# A key parameter to understand and tune in spatial CV.
 spatial_cv_block_size_km <- 500
 
-# 高级：空间分块时使用的投影 CRS（单位需为米）
+# Advanced: projection CRS for spatial blocking (units must be meters)
 spatial_cv_projection_crs <- "EPSG:3857"
 
-# 高级：若某些折缺少 presence 或 pseudo-absence，自动放大 block size 重试
+# Advanced: if some folds lack presence/pseudo-absence, auto-grow block size and retry
 spatial_cv_auto_retry <- TRUE
 spatial_cv_retry_factor <- 1.5
 spatial_cv_max_tries <- 4
 
-# ==================== 10. 模型算法 ====================
+# ==================== 10. Model algorithms ====================
 
-# 常用：单模型算法列表
-# 第一次接触流程时，不必追求算法越多越好；先保证流程稳定更重要。
-# 可选："ANN", "CTA", "FDA", "GAM", "GBM", "GLM", "MARS", "MAXNET", "RF", "RFd"
+# Common: single-model algorithm list
+# On first contact, prioritize a stable pipeline over many algorithms.
+# Options: "ANN", "CTA", "FDA", "GAM", "GBM", "GLM", "MARS", "MAXNET", "RF", "RFd"
 model_list <- c( "CTA", "FDA", "GAM", "GBM", "GLM", "MARS", "MAXNET", "RF")
 # model_list <- c("MAXNET")
-# 如果部分算法在当前环境不可用，可临时删减
+# If some algorithms are unavailable in your environment, trim the list temporarily
 # model_list <- c("GAM", "GBM", "GLM", "MAXNET", "RF")
 
-# 常用：快速测试配置（只跑 2 个模型）
-# 用于排查流程是否能完整跑通。
+# Common: quick-test config (2 models only)
+# Use to check the pipeline runs end to end.
 model_list_test <- c("MAXNET", "RF")
 
-# ==================== 11. 模型训练 ====================
+# ==================== 11. Model training ====================
 
-# 常用：参数优化策略
-# "bigboss" = biomod2 推荐参数
-# "user"    = 使用用户自定义参数
-# "none"    = 使用包默认参数
+# Common: parameter optimization strategy
+# "bigboss" = biomod2 recommended params
+# "user"    = user-defined params
+# "none"    = package defaults
 opt_strategy <- "bigboss"
 
-# 常用：模型评估指标
-# 这些指标既影响单模型评估，也会影响后续筛选与集成。
+# Common: model evaluation metrics
+# Affect single-model evaluation, downstream filtering, and ensembling.
 metric_eval <- c("TSS", "AUCroc", "AUCprg", "BOYCE")
 
-# 高级：变量重要性置换次数
-# 数值越大越稳，但耗时也越高。
+# Advanced: variable-importance permutation repeats
+# Larger = more stable but slower.
 var_importance_rep <- 5
 
-# 常用：并行使用的 CPU 核数
+# Common: CPU cores for parallel runs
 nb_cpu <- 8
 
-# 一般不用动：全局随机种子（保证可重复）
+# Leave default: global random seed (for reproducibility)
 seed_val <- 123
 
-# ==================== 12. 集成模型 ====================
+# ==================== 12. Ensemble models ====================
 
-# 常用：集成算法
-# 第一次跑流程时，通常只保留 EMwmean 即可。
-# "EMmedian" = 中位数集成
-# "EMmean"   = 平均值集成
-# "EMwmean"  = 加权平均集成（当前推荐）
-# "EMca"     = 委员会平均
-# "EMci"     = 置信区间
-# "EMcv"     = 交叉验证集成
-# 若目标是得到最简洁、稳定的结果，通常只保留 EMwmean 即可
+# Common: ensemble algorithm
+# On a first run, EMwmean alone is usually enough.
+# "EMmedian" = median ensemble
+# "EMmean"   = mean ensemble
+# "EMwmean"  = weighted mean ensemble (currently recommended)
+# "EMca"     = committee averaging
+# "EMci"     = confidence interval
+# "EMcv"     = cross-validation ensemble
+# For the simplest, stable result, keep EMwmean only.
 ensemble_algo <- c("EMwmean")
 
-# 常用：模型筛选指标
-# 只有同时满足这些指标阈值的模型，才会进入后续集成。
-# 可选："TSS", "AUCroc", "AUCprg", "BOYCE"
+# Common: model filtering metrics
+# Only models meeting all these thresholds enter the ensemble.
+# Options: "TSS", "AUCroc", "AUCprg", "BOYCE"
 metric_select <- c("TSS", "AUCroc","AUCprg", "BOYCE")
 
-# 常用：模型筛选阈值
-# 顺序必须与 metric_select 一一对应
-# 当前规则：
+# Common: model filtering thresholds
+# Order must correspond one-to-one with metric_select
+# Current rules:
 #   TSS >= 0.8
 #   AUCroc >= 0.8
 #   AUCprg >= 0.8
 #   BOYCE >= 0.6
 metric_select_thresh <- c(0.8, 0.8, 0.8, 0.6)
 
-# 高级：集成方式
-# "all"     = 全部模型合并为一个集成模型（推荐）
-# "algo"    = 按算法分别集成
-# "all_run" = 按重复 run 分别集成
+# Advanced: ensemble grouping
+# "all"     = merge all models into one ensemble (recommended)
+# "algo"    = ensemble per algorithm
+# "all_run" = ensemble per repeat run
 em.by <- "all"
 
-# ==================== 13. 单模型筛选 ====================
+# ==================== 13. Single-model filtering ====================
 
-# 常用：模型筛选模式
-# 初学者如果还不确定阈值是否合理，先用 manual 能更直观看结果。
-# "auto"   = 按阈值自动筛选
-# "manual" = 手动指定保留模型
+# Common: model selection mode
+# If unsure whether thresholds are reasonable, start with `manual` for clearer results.
+# "auto"   = filter by thresholds
+# "manual" = manually specify kept models
 model_selection_mode <- "manual"
 
-# 常用：手动模式下保留的模型名称（可写一个或多个）
-# 例如: manual_selected_models <- c("MAXNET", "RF", "GLM")
+# Common: model names to keep under manual mode (one or more)
+# e.g.: manual_selected_models <- c("MAXNET", "RF", "GLM")
 manual_selected_models <- c("CTA", "GAM", "GLM", "MARS", "MAXNET", "RF")
 
-# 高级：自动模式下最多保留前 N 个模型
+# Advanced: max top-N models to keep under auto mode
 top_n_models <- 5
 
-# 高级：EMwmean 权重衰减方式
-# "proportional" = 按指标成比例加权
-# "exponential"  = 指数放大高分模型权重
+# Advanced: EMwmean weight decay
+# "proportional" = weight proportional to metric
+# "exponential"  = exponentially boost high-score models
 emwmean_decay <- "proportional"
 
-# ==================== 14. 投影设置 ====================
+# ==================== 14. Projection settings ====================
 
-# 常用：投影版本标签
-# 用于区分不同运行结果；会直接影响输出目录和文件命名
-# 例如："v1_modern", "v2_teyf", "v3_tewt_petm"
+# Common: projection version label
+# Distinguishes runs; directly affects output dir and file naming
+# e.g. "v1_modern", "v2_teyf", "v3_tewt_petm"
 projection_name <- "v10_test_sudo_number"
 
-# 常用：需要投影的古气候时期
-# 设为 NULL 时自动从数据目录扫描并投影全部时期。
-# 也可以手动指定：
-#   1. 字符向量，如 c("tewta_0k", "tewtb_1k")
-#   2. 时间范围，如 list(time_range = c(0, 100))
-#      表示只投影 0-100 ka（含边界）的时期
-# 当前 09_paleoclimate_projection.R 会从时期名称中提取数字来做范围筛选。
-# 对 TEWT 数据，试跑 100 ka 以内可写：
+# Common: paleoclimate periods to project
+# NULL = scan the data dir and project all periods.
+# Or specify manually:
+#   1. character vector, e.g. c("tewta_0k", "tewtb_1k")
+#   2. time range, e.g. list(time_range = c(0, 100))
+#      = project only periods within 0-100 ka (inclusive)
+# 09_paleoclimate_projection.R extracts numbers from period names for range filtering.
+# For TEWT data, to test within 100 ka:
 #   projection_periods <- list(time_range = c(0, 100))
-projection_periods <- list(time_range = c(3602, 999999)) # 动态读取，设为 NULL 自动扫描
+projection_periods <- list(time_range = c(3602, 999999)) # dynamic; NULL = auto-scan all
 
-# 一般不用动：投影栅格输出格式
-# ".tif" = GeoTIFF（推荐）
-# ".grd" = Raster 原生格式
+# Leave default: projection raster output format
+# ".tif" = GeoTIFF (recommended)
+# ".grd" = Raster native format
 output_format <- ".tif"
 
-# 常用：连续适宜度转二值分布图时使用的阈值规则
-# "TSS" = 基于最大 TSS
-# "ROC" = 基于最大 ROC
-# "all" = 输出所有可用规则
+# Common: threshold rule for converting continuous suitability to binary maps
+# "TSS" = max TSS
+# "ROC" = max ROC
+# "all" = output all available rules
 metric_binary <- "TSS"
 
-# ==================== 15. 可视化 ====================
+# ==================== 15. Visualization ====================
 
-# 常用：地图显示范围
-# 只影响绘图显示，不影响建模本身。
-map_extent <- c(-180, 180, -45, 35)  # 经度 min, max; 纬度 min, max
+# Common: map display extent
+# Affects plotting only, not modeling.
+map_extent <- c(-180, 180, -45, 35)  # lon min, max; lat min, max
 
-# 高级：适宜度颜色带
+# Advanced: suitability color ramp
 suitability_palette <- colorRampPalette(c("white", "yellow", "orange", "red"))(100)
 
-# 高级：出现点样式
+# Advanced: presence point style
 presence_color <- "#336600"
 presence_pch <- 19
 
-# 高级：伪缺失点样式
+# Advanced: pseudo-absence point style
 pseudoabsence_color <- "#FF6B6B"
 
-# 常用：可视化时优先使用哪一种集成 metric 对应的投影图
-# 可选："TSS", "AUCroc", "AUCprg", "BOYCE"
-# 10_visualization.R 会优先为每个时期选择 `EMwmeanBy<metric>` 对应的 tif；
-# 如果该 metric 不存在，再自动回退到其他可用结果。
+# Common: which ensemble metric's projection to prefer for visualization
+# Options: "TSS", "AUCroc", "AUCprg", "BOYCE"
+# 10_visualization.R prefers the `EMwmeanBy<metric>` tif per period;
+# if that metric is missing, it falls back to other available results.
 visualization_projection_metric <- "TSS"
 
-# 高级：标题字号
+# Advanced: title font size
 title_size <- 14
 
-# ==================== 16. 地理参数 ====================
+# ==================== 16. Geographic parameters ====================
 
-# 一般不用动：默认地理坐标系
+# Leave default: default geographic CRS
 target_crs <- "EPSG:4326"  # WGS84
 
-# 高级：默认缓冲区大小（度）
+# Advanced: default buffer size (degrees)
 buffer_degree <- 0.5
 
-# ==================== 17. 其他设置 ====================
+# ==================== 17. Other settings ====================
 
-# 常用：是否保存中间结果
-# 第一次跑流程时建议保持 TRUE，方便排错和回溯。
+# Common: save intermediate results?
+# Keep TRUE on a first run for easier debugging and traceback.
 save_intermediate <- TRUE
 
-# 常用：是否输出详细日志
+# Common: verbose logging?
 verbose <- TRUE
 
-# 高级：内存管理
-# 每处理若干时期后触发一次 gc()，主要影响长时间批量投影时的稳定性。
-gc_trigger <- 20  # 每处理 N 个时期后调用 gc()
+# Advanced: memory management
+# Trigger gc() after every N periods; mainly stabilizes long batch projections.
+gc_trigger <- 20  # call gc() after every N periods
 
 # ============================================================================
-# 依赖包
+# Dependencies
 # ============================================================================
 
 required_packages <- c(
-  # 核心建模 / 空间数据
+  # Core modeling / spatial data
   "biomod2",
   "terra",
   "raster",
   "sf",
-  
-  # 数据整理
+
+  # Data wrangling
   "dplyr",
   "stringr",
   "tidyr",
   "readr",
-  "gtools",        # mixedsort 函数
-  
-  # 可视化
+  "gtools",        # mixedsort
+
+  # Visualization
   "ggplot2",
   "plotly",
   "tidyterra",
-  "viridis",      # 颜色映射
+  "viridis",      # color maps
   "corrplot",
   "magick",
-  
-  # 统计与辅助建模
-  "usdm",          # VIF 计算
-  # "spatialEco",    # pseudo.absence 版本不对
+
+  # Statistics and auxiliary modeling
+  "usdm",          # VIF
+  # "spatialEco",    # pseudo.absence version mismatch
   "gamlss",
-  
-  # 并行
+
+  # Parallel
   "doParallel",
   "foreach",
-  
-  # 其他工具
+
+  # Other tools
   "reshape",
   "ggtext",
   "htmlwidgets",
   "R.utils",
   "lme4",
-  "cito", #版本不对，手动安装
-  "xgboost" #版本不对，手动安装
+  "cito", # version mismatch; install manually
+  "xgboost" # version mismatch; install manually
 )
 
-# 一般不用动：检查并加载依赖包
-# 注意：这里会自动安装缺失包；若服务器环境受限，建议提前手动安装。
+# Leave default: check and load dependencies
+# Note: missing packages are auto-installed; on restricted servers, install manually beforehand.
 for (pkg in required_packages) {
   if (!require(pkg, character.only = TRUE, quietly = TRUE)) {
     install.packages(pkg, repos = "https://cloud.r-project.org/")
@@ -557,67 +556,67 @@ for (pkg in required_packages) {
   }
 }
 
-# # 高级：低版本 R 环境下的手动安装示例
+# # Advanced: example manual install for older R
 # Matrixurl <- "https://cran.r-project.org/src/contrib/Archive/Matrix/Matrix_1.5-1.tar.gz"
-# 
-# # 从源码安装指定版本
+#
+# # Install a specific version from source
 # install.packages(Matrixurl, repos = NULL, type = "source")
 
-# # 高级：xgboost 1.7.7.1 历史版本下载地址
+# # Advanced: xgboost 1.7.7.1 archive download URL
 # url_xgb <- "https://cran.r-project.org/src/contrib/Archive/xgboost/xgboost_1.7.7.1.tar.gz"
-# 
-# # 从源码安装指定版本
+#
+# # Install a specific version from source
 # install.packages(url_xgb, repos = NULL, type = "source")
 
 # ============================================================================
-# 全局辅助函数
+# Global helper functions
 # ============================================================================
 
-#' 标准化加载气候数据
-#' 自动读取目录中的栅格文件，按自然数字顺序排序后重命名为 Bio1, Bio2...
-#' @param clim_dir 气候数据所在目录
-#' @param pattern 文件名匹配模式，默认为 "*.tif$"
-#' @return terra::SpatRaster 对象
+#' Load and standardize climate data
+#' Reads raster files from a directory, sorts by natural order, renames to Bio1, Bio2...
+#' @param clim_dir climate data directory
+#' @param pattern filename match pattern, default "*.tif$"
+#' @return terra::SpatRaster
 load_standard_climate <- function(clim_dir, pattern = "*.tif$") {
   files <- list.files(clim_dir, pattern = pattern, full.names = TRUE)
-  
+
   if (length(files) == 0) {
     stop(paste("Error: No climate files found in", clim_dir))
   }
-  
-  # 读取栅格
+
+  # Read rasters
   clim <- terra::rast(files)
-  
-  # 按自然顺序重新排列图层，避免出现 1, 10, 11, 2 这种字典序问题
+
+  # Reorder layers by natural order to avoid lexicographic 1, 10, 11, 2 issues
   clim <- clim[[gtools::mixedsort(names(clim))]]
-  
-  # 统一图层命名
+
+  # Unify layer names
   names(clim) <- paste0("Bio", 1:terra::nlyr(clim))
-  
+
   return(clim)
 }
 
 # ============================================================================
-# 空间稀疏化辅助函数
+# Spatial thinning helper functions
 # ============================================================================
 
-#' 估算栅格分辨率（km）
-#' 根据第一层气候栅格的经纬度分辨率，换算研究区中心附近的公里尺度
-#' @param clim SpatRaster 对象
-#' @param ref_points 可选，SpatVector 点数据，用于估算中心纬度
+#' Estimate raster resolution (km)
+#' Converts lon/lat resolution of the first climate layer to km near the study-area center
+#' @param clim SpatRaster
+#' @param ref_points optional SpatVector points for estimating center latitude
 #' @return list(x_km, y_km, mean_km)
 estimate_raster_resolution_km <- function(clim, ref_points = NULL) {
   raster_res <- terra::res(clim)
-  
+
   if (!is.null(ref_points) && inherits(ref_points, "SpatVector")) {
     center_lat <- mean(terra::crds(ref_points)[, 2], na.rm = TRUE)
   } else {
     center_lat <- mean(terra::ext(clim)[3:4])
   }
-  
+
   lat_km <- 111.32 * abs(raster_res[2])
   lon_km <- 111.32 * cos(center_lat * pi / 180) * abs(raster_res[1])
-  
+
   list(
     x_km = lon_km,
     y_km = lat_km,
@@ -625,50 +624,50 @@ estimate_raster_resolution_km <- function(clim, ref_points = NULL) {
   )
 }
 
-#' 根据点集中心自动猜测 UTM EPSG
-#' @param points SpatVector 点数据（经纬度）
-#' @return EPSG 字符串
+#' Guess UTM EPSG from point-set center
+#' @param points SpatVector points (lon/lat)
+#' @return EPSG string
 guess_utm_epsg <- function(points) {
   coords <- terra::crds(points)
   center_lon <- mean(coords[, 1], na.rm = TRUE)
   center_lat <- mean(coords[, 2], na.rm = TRUE)
   zone <- floor((center_lon + 180) / 6) + 1
-  
+
   if (center_lat >= 0) {
     return(sprintf("EPSG:%d", 32600 + zone))
   }
-  
+
   sprintf("EPSG:%d", 32700 + zone)
 }
 
-#' 按气候栅格单元进行稀疏化
-#' 每个 raster cell 最多保留 1 个点
-#' @param points SpatVector 点数据
-#' @param clim_ref 参考气候栅格
-#' @param keep 策略："random" 或 "first"
-#' @param seed 随机种子
+#' Thin points by climate raster cell
+#' Keep at most 1 point per raster cell
+#' @param points SpatVector points
+#' @param clim_ref reference climate raster
+#' @param keep strategy: "random" or "first"
+#' @param seed random seed
 #' @return list(points, kept_index, cell_ids)
 thin_points_by_cell <- function(points, clim_ref, keep = "random", seed = 123) {
   stopifnot(inherits(points, "SpatVector"))
   stopifnot(inherits(clim_ref, "SpatRaster"))
-  
+
   coords <- terra::crds(points)
   cell_ids <- terra::cellFromXY(clim_ref[[1]], coords)
   valid_idx <- which(!is.na(cell_ids))
-  
+
   if (length(valid_idx) == 0) {
     stop("Error: No occurrence points overlap with the predictor raster extent.")
   }
-  
+
   idx_pool <- valid_idx
   if (keep == "random") {
     set.seed(seed)
     idx_pool <- sample(idx_pool)
   }
-  
+
   seen_cells <- integer(0)
   keep_idx <- integer(0)
-  
+
   for (idx in idx_pool) {
     cell_id <- cell_ids[idx]
     if (!(cell_id %in% seen_cells)) {
@@ -676,9 +675,9 @@ thin_points_by_cell <- function(points, clim_ref, keep = "random", seed = 123) {
       seen_cells <- c(seen_cells, cell_id)
     }
   }
-  
+
   keep_idx <- sort(keep_idx)
-  
+
   list(
     points = points[keep_idx, ],
     kept_index = keep_idx,
@@ -686,52 +685,52 @@ thin_points_by_cell <- function(points, clim_ref, keep = "random", seed = 123) {
   )
 }
 
-#' 按最小距离进行贪心稀疏化
-#' @param points SpatVector 点数据
-#' @param distance_km 最小距离阈值（km）
-#' @param keep 策略："random" 或 "first"
-#' @param seed 随机种子
+#' Greedy thinning by minimum distance
+#' @param points SpatVector points
+#' @param distance_km minimum distance threshold (km)
+#' @param keep strategy: "random" or "first"
+#' @param seed random seed
 #' @return list(points, kept_index, crs_used)
 thin_points_by_distance <- function(points, distance_km, keep = "random", seed = 123) {
   stopifnot(inherits(points, "SpatVector"))
-  
+
   if (terra::nrow(points) <= 1) {
     return(list(points = points, kept_index = seq_len(terra::nrow(points)), crs_used = terra::crs(points)))
   }
-  
+
   utm_epsg <- guess_utm_epsg(points)
   points_proj <- terra::project(points, utm_epsg)
   coords <- terra::crds(points_proj)
   threshold_m <- distance_km * 1000
-  
+
   order_idx <- seq_len(nrow(coords))
   if (keep == "random") {
     set.seed(seed)
     order_idx <- sample(order_idx)
   }
-  
+
   keep_idx <- integer(0)
   kept_coords <- matrix(numeric(0), ncol = 2)
-  
+
   for (idx in order_idx) {
     candidate <- coords[idx, , drop = FALSE]
-    
+
     if (length(keep_idx) == 0) {
       keep_idx <- c(keep_idx, idx)
       kept_coords <- rbind(kept_coords, candidate)
       next
     }
-    
+
     distances <- sqrt((kept_coords[, 1] - candidate[1, 1])^2 + (kept_coords[, 2] - candidate[1, 2])^2)
-    
+
     if (all(distances >= threshold_m)) {
       keep_idx <- c(keep_idx, idx)
       kept_coords <- rbind(kept_coords, candidate)
     }
   }
-  
+
   keep_idx <- sort(keep_idx)
-  
+
   list(
     points = points[keep_idx, ],
     kept_index = keep_idx,
@@ -739,14 +738,14 @@ thin_points_by_distance <- function(points, distance_km, keep = "random", seed =
   )
 }
 
-#' 计算每个点的最近邻距离（km）
-#' @param points SpatVector 点数据
+#' Compute nearest-neighbor distance per point (km)
+#' @param points SpatVector points
 #' @return numeric vector
 nearest_neighbor_distances_km <- function(points) {
   if (!inherits(points, "SpatVector") || terra::nrow(points) < 2) {
     return(NA_real_)
   }
-  
+
   utm_epsg <- guess_utm_epsg(points)
   points_proj <- terra::project(points, utm_epsg)
   coords <- terra::crds(points_proj)
@@ -755,16 +754,16 @@ nearest_neighbor_distances_km <- function(points) {
   apply(dist_mat, 1, min, na.rm = TRUE)
 }
 
-#' 汇总最近邻距离统计量（km）
-#' @param points SpatVector 点数据
+#' Summarize nearest-neighbor distances (km)
+#' @param points SpatVector points
 #' @return named numeric vector
 nearest_neighbor_summary_km <- function(points) {
   nn <- nearest_neighbor_distances_km(points)
-  
+
   if (length(nn) == 1 && is.na(nn)) {
     return(c(min_km = NA_real_, median_km = NA_real_, mean_km = NA_real_))
   }
-  
+
   c(
     min_km = min(nn, na.rm = TRUE),
     median_km = stats::median(nn, na.rm = TRUE),
@@ -772,64 +771,64 @@ nearest_neighbor_summary_km <- function(points) {
   )
 }
 
-#' 确保点数据具有 CRS
-#' 若输入点缺失 CRS，则回填配置中的 target_crs
-#' @param points SpatVector 点数据
-#' @param default_crs 默认 CRS
-#' @return 带 CRS 的 SpatVector
+#' Ensure points have a CRS
+#' If missing, backfill with the configured target_crs
+#' @param points SpatVector points
+#' @param default_crs default CRS
+#' @return SpatVector with CRS
 ensure_points_crs <- function(points, default_crs = target_crs) {
   stopifnot(inherits(points, "SpatVector"))
-  
+
   current_crs <- terra::crs(points)
   if (is.null(current_crs) || !nzchar(current_crs)) {
     terra::crs(points) <- default_crs
   }
-  
+
   points
 }
 
 # ============================================================================
-# 古气候数据加载函数
+# Paleoclimate data loading functions
 # ============================================================================
 
-#' 列出所有可用古气候时期
-#' @param clim_dir 古气候数据根目录 (默认使用 past_clim_dir)
-#' @param subdir 是否扫描子目录 (默认使用 past_clim_subdir)
-#' @return 时期名称向量
+#' List all available paleoclimate periods
+#' @param clim_dir paleoclimate root dir (default past_clim_dir)
+#' @param subdir scan subdirectories? (default past_clim_subdir)
+#' @return period name vector
 list_paleo_periods <- function(clim_dir = past_clim_dir, subdir = past_clim_subdir) {
   if (subdir) {
-    # 扫描时期子目录
+    # Scan period subdirectories
     period_dirs <- list.dirs(clim_dir, full.names = FALSE, recursive = FALSE)
-    # 如果目录名带有 "_masked" 后缀，则去掉后再返回
+    # Strip a "_masked" suffix from dir names if present
     periods <- gsub("_masked$", "", period_dirs)
-    return(sort(unique(periods))) # 去重并排序
+    return(sort(unique(periods))) # dedupe and sort
   } else {
-    # 直接在目录内扫描文件名
+    # Scan filenames directly in the directory
     clim_files <- list.files(clim_dir, pattern = "\\.(tif|nc)$", full.names = FALSE)
     periods <- unique(gsub("_bio\\d+.*$", "", clim_files))
     return(sort(periods))
   }
 }
 
-#' 加载指定时期的古气候数据
-#' @param period 时期名称 (如 "tewta_0k", "tewtb_1000k")
-#' @param clim_dir 古气候数据根目录 (默认使用 past_clim_dir)
-#' @param subdir 时期数据是否在子目录中 (默认使用 past_clim_subdir)
-#' @param pattern 文件匹配模式 (默认 "*.nc$|*.tif$")
-#' @return SpatRaster 对象
-#' 会自动兼容 `period/` 和 `period_masked/` 两种目录结构
-load_paleo_climate <- function(period, 
-                               clim_dir = past_clim_dir, 
+#' Load paleoclimate data for a given period
+#' @param period period name (e.g. "tewta_0k", "tewtb_1000k")
+#' @param clim_dir paleoclimate root dir (default past_clim_dir)
+#' @param subdir is period data in a subdirectory? (default past_clim_subdir)
+#' @param pattern file match pattern (default "*.nc$|*.tif$")
+#' @return SpatRaster
+#' Handles both `period/` and `period_masked/` directory layouts
+load_paleo_climate <- function(period,
+                               clim_dir = past_clim_dir,
                                subdir = past_clim_subdir,
                                pattern = "\\.(nc|tif)$") {
-  
+
   cat("  Loading paleoclimate for period:", period, "\n")
-  
+
   if (subdir) {
-    # 自动尝试两种常见目录命名方式
+    # Try both common directory naming conventions
     path_plain <- file.path(clim_dir, period)
     path_masked <- file.path(clim_dir, paste0(period, "_masked"))
-    
+
     if (dir.exists(path_plain)) {
       period_dir <- path_plain
     } else if (dir.exists(path_masked)) {
@@ -837,43 +836,43 @@ load_paleo_climate <- function(period,
     } else {
       stop("Error: Neither '", period, "' nor '", period, "_masked' directory exists in ", clim_dir)
     }
-    
+
     clim_files <- list.files(period_dir, pattern = pattern, full.names = TRUE)
-    
+
     if (length(clim_files) == 0) {
       stop("Error: No climate files found in ", period_dir)
     }
-    
+
     cat("    Found", length(clim_files), "files in", basename(period_dir), "\n")
     clim <- terra::rast(clim_files)
-    
+
   } else {
-    # 文件直读模式
-    clim_files <- list.files(clim_dir, 
-                             pattern = paste0("^", period, "_.*", pattern), 
+    # Direct file-read mode
+    clim_files <- list.files(clim_dir,
+                             pattern = paste0("^", period, "_.*", pattern),
                              full.names = TRUE)
     if (length(clim_files) == 0) stop("Error: No files found for ", period)
     clim <- terra::rast(clim_files)
   }
-  
-  # 变量名标准化：兼容 bio1 / bio01 / bio_1 / bio_01 等格式
+
+  # Standardize variable names: accept bio1 / bio01 / bio_1 / bio_01 etc.
   layer_names <- names(clim)
   standard_names <- gsub(".*bio_?0*(\\d+).*", "Bio\\1", layer_names, ignore.case = TRUE)
   names(clim) <- standard_names
-  
+
   cat("    Standardized layers:", paste(names(clim), collapse = ", "), "\n")
-  
+
   return(clim)
 }
 
-#' 获取投影输出目录
-#' 根据 projection_name 自动拼接并创建目录
-#' @param type 投影类型 ("modern" 或 "paleo")
-#' @param period 古气候时期名称 (仅 paleo 需要)
-#' @return 输出目录路径
+#' Get projection output directory
+#' Builds and creates the directory from projection_name
+#' @param type projection type ("modern" or "paleo")
+#' @param period paleoclimate period name (paleo only)
+#' @return output directory path
 get_projection_output_dir <- function(type = c("modern", "paleo"), period = NULL) {
   type <- match.arg(type)
-  
+
   if (type == "modern") {
     out_dir <- file.path(output_dirs$projection, paste0("modern_", projection_name))
   } else {
@@ -882,13 +881,13 @@ get_projection_output_dir <- function(type = c("modern", "paleo"), period = NULL
     }
     out_dir <- file.path(output_dirs$projection, paste0("paleo_", period, "_", projection_name))
   }
-  
+
   dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
   return(out_dir)
 }
 
 # ============================================================================
-# 启动时打印当前配置摘要
+# Print current config summary on startup
 # ============================================================================
 
 cat("\n")

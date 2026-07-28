@@ -1,13 +1,13 @@
 # ============================================================================
-# 06_model_evaluation.R - 模型评估与选择
+# 06_model_evaluation.R - Model Evaluation and Selection
 # ============================================================================
-# 功能：
-#   - 基于评估指标筛选优质模型
-#   - 支持手动指定模型或自动筛选
-#   - 保存选中模型列表
+# Functionality:
+#   - Select quality models by evaluation metrics
+#   - Support manual model list or automatic filtering
+#   - Save selected model list
 # ============================================================================
 
-# 加载配置
+# Load config
 source("config.R")
 
 cat("\n")
@@ -16,10 +16,10 @@ cat("  06 Model Evaluation - Starting\n")
 cat("=================================================================\n")
 
 # ============================================================================
-# 1. 加载数据
+# 1. Load data
 # ============================================================================
 
-# 加载模型训练结果
+# Load model training results
 model_results_file <- file.path(output_dirs$models, "model_results.RData")
 if (!file.exists(model_results_file)) {
   stop("Error: Model results not found. Run 05_model_training.R first.")
@@ -34,7 +34,7 @@ if (file.exists(training_metadata_file)) {
   training_metadata <- readRDS(training_metadata_file)
 }
 
-# 加载评估摘要
+# Load evaluation summary
 eval_summary_file <- file.path(output_dirs$models, "model_evaluation_summary.csv")
 if (!file.exists(eval_summary_file)) {
   stop("Error: Evaluation summary not found.")
@@ -43,22 +43,22 @@ if (!file.exists(eval_summary_file)) {
 eval_summary <- read.csv(eval_summary_file)
 cat("  Loaded evaluation summary:", eval_summary_file, "\n")
 
-# 显示所有模型评估结果
+# Show all model evaluation results
 cat("\n  All models evaluation:\n")
 print(eval_summary)
 
 # ============================================================================
-# 2. 模型筛选
+# 2. Model selection
 # ============================================================================
 
 cat("\n  Selecting models...\n")
 cat("  Selection mode:", model_selection_mode, "\n")
 
 if (model_selection_mode == "manual") {
-  # 手动模式：使用配置的模型列表
+  # Manual mode: use configured model list
   selected_models <- manual_selected_models
   
-  # 检查选中的模型是否在评估结果中
+  # Check selected models exist in evaluation results
   valid_models <- selected_models[selected_models %in% eval_summary$algo]
   invalid_models <- selected_models[!selected_models %in% eval_summary$algo]
   
@@ -69,7 +69,7 @@ if (model_selection_mode == "manual") {
   cat("  Manual selected models:", paste(valid_models, collapse = ", "), "\n")
   
 } else {
-  # 自动模式：根据阈值筛选
+  # Auto mode: filter by thresholds
   if (length(metric_select) != length(metric_select_thresh)) {
     stop("Error: metric_select and metric_select_thresh must have the same length.")
   }
@@ -93,10 +93,10 @@ if (model_selection_mode == "manual") {
     qualified <- qualified[!is.na(qualified[[metric_col]]) & qualified[[metric_col]] >= metric_thresh, ]
   }
   
-  # 按 TSS 降序排列
+  # Sort by TSS descending
   qualified <- qualified[order(-qualified$mean_TSS), ]
   
-  # 选择 Top N
+  # Select top N
   if (nrow(qualified) >= top_n_models) {
     selected_models <- qualified$algo[1:top_n_models]
   } else {
@@ -107,7 +107,7 @@ if (model_selection_mode == "manual") {
   cat("  Auto selected (Top", length(selected_models), "):", paste(selected_models, collapse = ", "), "\n")
 }
 
-# 获取选中模型的详细信息
+# Get details of selected models
 selected_eval <- eval_summary[eval_summary$algo %in% selected_models, ]
 selected_eval <- selected_eval[order(-selected_eval$mean_TSS), ]
 
@@ -130,33 +130,33 @@ cat("\n  Selected models details:\n")
 print(selected_eval)
 
 # ============================================================================
-# 3. 保存结果
+# 3. Save results
 # ============================================================================
 
 cat("\n  Saving results...\n")
 
-# 确保输出目录存在
+# Ensure output directory exists
 dir.create(output_dirs$evaluation, showWarnings = FALSE, recursive = TRUE)
 
-# 保存选中模型列表
+# Save selected model list
 selected_file <- file.path(output_dirs$evaluation, "selected_models.rds")
 saveRDS(selected_models, selected_file)
 cat("  Saved selected models:", selected_file, "\n")
 
-# 保存模型排名
+# Save model ranking
 ranking_file <- file.path(output_dirs$evaluation, "model_ranking.csv")
 ranking <- eval_summary[order(-eval_summary$mean_TSS), ]
 ranking$rank <- 1:nrow(ranking)
 write.csv(ranking, ranking_file, row.names = FALSE)
 cat("  Saved model ranking:", ranking_file, "\n")
 
-# 保存选中模型的评估详情
+# Save selected models' evaluation details
 selected_eval_file <- file.path(output_dirs$evaluation, "selected_models_evaluation.csv")
 write.csv(selected_eval, selected_eval_file, row.names = FALSE)
 cat("  Saved selected evaluation:", selected_eval_file, "\n")
 
 # ============================================================================
-# 4. 可视化
+# 4. Visualization
 # ============================================================================
 
 cat("\n  Generating visualization...\n")
@@ -164,7 +164,7 @@ cat("\n  Generating visualization...\n")
 pdf_file <- file.path(output_dirs$evaluation, "model_evaluation_summary.pdf")
 pdf(pdf_file, width = 14, height = 10)
 
-# 为 metric_select 中的每个指标单独绘制全模型比较页
+# One full-model comparison page per metric in metric_select
 metric_bar_colors <- c("forestgreen", "steelblue", "darkorange", "orchid4", "brown3")
 for (i in seq_along(metric_select)) {
   metric_name <- metric_select[i]
@@ -190,7 +190,7 @@ for (i in seq_along(metric_select)) {
   legend("topright", legend = c("Selected", "Not Selected"), fill = c(bar_color, "gray"))
 }
 
-# 选中模型的指标对比（使用主要排序指标 TSS）
+# Selected-model metric comparison (primary sort metric: TSS)
 selected_data <- eval_summary[eval_summary$algo %in% selected_models, ]
 selected_data <- selected_data[order(-selected_data$mean_TSS), ]
 
@@ -204,7 +204,7 @@ x <- barplot(
   ylim = c(0, 1)
 )
 
-# 添加误差棒
+# Add error bars
 segments(x, selected_data$mean_TSS - selected_data$sd_TSS,
          x, selected_data$mean_TSS + selected_data$sd_TSS,
          col = "black")
@@ -215,7 +215,7 @@ segments(x - 0.2, selected_data$mean_TSS + selected_data$sd_TSS,
          x + 0.2, selected_data$mean_TSS + selected_data$sd_TSS,
          col = "black")
 
-# 最后一页：模型选择总结
+# Last page: model selection summary
 plot.new()
 text(0.5, 0.9, "Model Selection Summary", cex = 1.5, font = 2)
 text(0.5, 0.75, paste("Selection mode:", model_selection_mode), cex = 1.2)
@@ -235,7 +235,7 @@ dev.off()
 
 cat("  Saved visualization:", pdf_file, "\n")
 
-# 单独输出筛选后模型的响应曲线，避免和 summary PDF 混用设备时丢图
+# Response curves for selected models in a separate PDF (avoids device conflict with summary PDF)
 response_pdf_file <- file.path(output_dirs$evaluation, "selected_model_response_curves.pdf")
 if (length(selected_response_models) > 0) {
   pdf(response_pdf_file, width = 14, height = 10)
@@ -267,7 +267,7 @@ if (length(selected_response_models) > 0) {
 }
 
 # ============================================================================
-# 5. 保存元数据
+# 5. Save metadata
 # ============================================================================
 
 metadata <- list(
@@ -299,5 +299,5 @@ cat("  - Selection mode:", model_selection_mode, "\n")
 cat("  - Models selected:", length(selected_models), "\n")
 cat("  - Selected:", paste(selected_models, collapse = ", "), "\n")
 cat("\n")
-# 清理内存
+# Free memory
 gc()

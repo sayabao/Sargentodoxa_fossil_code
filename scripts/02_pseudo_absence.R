@@ -1,17 +1,17 @@
 # ============================================================================
-# 02_pseudo_absence.R - 伪缺失点生成（两个方案）
+# 02_pseudo_absence.R - Pseudo-absence generation (two schemes)
 # ============================================================================
-# 功能：
-#   - 使用 biomod2 内置函数生成两个方案的伪缺失点
-#   - 策略：random，全局陆地范围
-#   - 内圈限制：100km 缓冲区（经纬度：dist.min = pa_dist_min 度）
+# Functionality:
+#   - Generate pseudo-absences for two schemes via biomod2 built-in functions
+#   - Strategy: random, global land extent
+#   - Inner buffer: 100 km (lon/lat: dist.min = pa_dist_min degrees)
 #
-# 两个方案（从 config.R 读取）：
-#   1. 方案1：1:1 比例（nb.absences = equal, nb.rep = 1）
-#   2. 方案2：约 1:3 比例（nb.absences = 1000, nb.rep = 1）
+# Two schemes (read from config.R):
+#   1. Scheme 1: 1:1 ratio (nb.absences = equal, nb.rep = 1)
+#   2. Scheme 2: ~1:3 ratio (nb.absences = 1000, nb.rep = 1)
 # ============================================================================
 
-# 加载配置
+# Load config
 source("config.R")
 
 cat("\n")
@@ -20,10 +20,10 @@ cat("  02 Pseudo Absence Generation - Starting\n")
 cat("=================================================================\n")
 
 # ============================================================================
-# 1. 读取数据
+# 1. Read data
 # ============================================================================
 
-# 读取存在点 SpatVector
+# Read presence SpatVector
 presence_file <- file.path(output_dirs$data_prep, "sargentodoxa_presence_spat.rds")
 if (!file.exists(presence_file)) {
   stop("Error: Presence data not found. Run 01_data_preparation.R first.")
@@ -35,7 +35,7 @@ n_presence <- nrow(presence_spat)
 cat("  Loading presence data:", presence_file, "\n")
 cat("  Presence points:", n_presence, "\n")
 
-# 读取现代气候数据
+# Read modern climate data
 cat("\n  Loading modern climate data from:", modern_clim_dir, "\n")
 clim_files <- list.files(modern_clim_dir, pattern = modern_clim_pattern, full.names = TRUE)
 
@@ -45,13 +45,13 @@ if (length(clim_files) == 0) {
 
 cat("  Found", length(clim_files), "climate files\n")
 
-# 读取气候数据并按顺序排列
+# Read climate rasters and order them
 modern_clim <- rast(clim_files)
 modern_clim <- modern_clim[[mixedsort(names(modern_clim))]]
 names(modern_clim) <- paste0("Bio", 1:nlyr(modern_clim))
 
-# 为伪缺失点构建“完整环境值”掩膜，而不只依赖第一层
-# 优先使用 manual_var_select，保证后续建模常用变量都非 NA
+# Build a "complete environmental values" mask for pseudo-absences, not just the first layer
+# Prefer manual_var_select so variables used later are all non-NA
 mask_vars <- if (!is.null(manual_var_select) && length(manual_var_select) > 0) {
   intersect(manual_var_select, names(modern_clim))
 } else {
@@ -70,26 +70,26 @@ valid_mask <- app(mask_stack, fun = function(x) {
   if (all(!is.na(x))) 1 else NA
 })
 
-# 使用“所有关键变量都非 NA”的区域作为采样掩膜
+# Use the region where all key variables are non-NA as the sampling mask
 land_mask <- valid_mask
 cat("  Using complete-case environmental mask for pseudo-absence sampling\n")
 
 # ============================================================================
-# 2. 检查并设置 CRS
+# 2. Check and set CRS
 # ============================================================================
 
-# 确保 presence_spat 有 CRS
+# Ensure presence_spat has a CRS
 if (is.na(crs(presence_spat)) || crs(presence_spat) == "") {
   crs(presence_spat) <- crs(land_mask)
   cat("  Set presence CRS to match climate data:", crs(land_mask), "\n")
 }
 
-# 确保一致
+# Ensure consistency
 cat("  Presence CRS:", crs(presence_spat), "\n")
 cat("  Land mask CRS:", crs(land_mask), "\n")
 
 # ============================================================================
-# 2.1 KDE 辅助函数（兼容旧 R 环境）
+# 2.1 KDE helper (compatible with older R)
 # ============================================================================
 
 build_gaussian_kernel <- function(sigma_cells) {
@@ -247,30 +247,30 @@ sample_kde_pseudo <- function(n_points, presence_spat, land_mask, kde_info, min_
 }
 
 # ============================================================================
-# 3. 对抽样范围进行地理过滤 (剔除极地)
+# 3. Geographic filter on the sampling extent (drop polar regions)
 # ============================================================================
 
 cat("\n  Filtering land mask by latitude limits...\n")
 cat("  Target Range: ", pa_lat_limit_south, " to ", pa_lat_limit_north, "\n")
 
-# 获取 land_mask 的坐标信息
-# 创建一个逻辑掩码：在范围内的为 1，范围外的为 NA
-# 使用 terra::init 或简单的坐标判断
-lat_mask <- init(land_mask, "y") # 创建一个值等于纬度的栅格
+# Get land_mask coordinates
+# Logical mask: 1 inside the extent, NA outside
+# Use terra::init or a simple coordinate check
+lat_mask <- init(land_mask, "y") # raster whose values equal latitude
 
-# 将不在范围内的区域设为 NA
+# Set regions outside the extent to NA
 land_mask_filtered <- land_mask
 land_mask_filtered[lat_mask > pa_lat_limit_north | lat_mask < pa_lat_limit_south] <- NA
 
-# 更新变量供后续函数使用
-# 我们用过滤后的掩码替换原来的掩码
+# Update the variable for later functions
+# Replace the original mask with the filtered one
 land_mask <- land_mask_filtered
 
-# 计算过滤后的陆地面积比例（可选，用于日志）
+# Compute the filtered land-area fraction (optional, for logging)
 non_na_count <- global(land_mask, "notNA")$notNA
 cat("  Land mask updated. Available pixels for sampling:", non_na_count, "\n")
 
-# 可视化范围函数：按 presence + pseudoabsence 联合范围裁剪，并留一定缓冲
+# Extent-visualization function: clip to the joint presence + pseudo-absence extent with a buffer
 plot_buffer_deg <- 8
 
 get_plot_extent <- function(presence_spat, pseudo_list, buffer_deg = 8) {
@@ -296,17 +296,17 @@ get_plot_extent <- function(presence_spat, pseudo_list, buffer_deg = 8) {
   plot_extent
 }
 
-# 核心参数保护机制 (如果 config.R 未更新，自动使用最优默认值)
+# Core-parameter guard (use optimal defaults if config.R is not updated)
 if (!exists("pa_strategy")) pa_strategy <- "disk"
-if (!exists("pa_dist_min")) pa_dist_min <- 0.5   # 度
-if (!exists("pa_dist_max")) pa_dist_max <- 20    # 度 (极其关键！限制在约 2200 公里内)
+if (!exists("pa_dist_min")) pa_dist_min <- 0.5   # degrees
+if (!exists("pa_dist_max")) pa_dist_max <- 20    # degrees (critical: limits to ~2200 km)
 
 cat("\n  PA Strategy Parameters:\n")
 cat("  - Strategy:", pa_strategy, "\n")
 cat("  - Min Distance:", pa_dist_min, "degrees (~", round(pa_dist_min * 111), "km)\n")
 cat("  - Max Distance:", pa_dist_max, "degrees (~", round(pa_dist_max * 111), "km)\n")
 
-# 单位转换 (经纬度投影下 biomod2 必须用米作为距离单位)
+# Unit conversion (biomod2 requires metres for distances under lon/lat)
 min_dist_meters <- pa_dist_min * 111000
 max_dist_meters <- pa_dist_max * 111000
 
@@ -330,12 +330,12 @@ if (pa_strategy == "kde") {
 }
 
 # ============================================================================
-# 4. 定义两个方案（从 config.R 读取）
+# 4. Define the two schemes (read from config.R)
 # ============================================================================
 
 scheme1 <- pa_scheme1
 
-# 方案2
+# Scheme 2
 scheme2 <- pa_scheme2
 
 cat("\n  Scheme definitions (from config.R):\n")
@@ -343,13 +343,13 @@ cat("  - Scheme 1: 1:1 ratio\n")
 cat("  - Scheme 2: 1000 points (1:3 ratio)\n")
 
 # ============================================================================
-# 5. 生成伪缺失点的函数
+# 5. Pseudo-absence generation function
 # ============================================================================
 
 generate_pseudo <- function(scheme, presence_spat, land_mask, kde_info = NULL) {
   cat("\n  Generating", scheme$name, "...\n")
   
-  # 预处理数量向量
+  # Preprocess the count vector
   if (is.numeric(scheme$nb.absences)) {
     nb.vec <- scheme$nb.absences
     if (length(nb.vec) < scheme$nb.rep) nb.vec <- rep(nb.vec, scheme$nb.rep)
@@ -361,7 +361,7 @@ generate_pseudo <- function(scheme, presence_spat, land_mask, kde_info = NULL) {
   
   for (rep in 1:scheme$nb.rep) {
     curr_nb <- nb.vec[rep]
-    # 处理 "equal" 字符串
+    # Handle the "equal" string
     if (is.character(curr_nb) && curr_nb == "equal") {
       curr_nb_val <- nrow(presence_spat)
     } else {
@@ -424,26 +424,26 @@ generate_pseudo <- function(scheme, presence_spat, land_mask, kde_info = NULL) {
 }
 
 # ============================================================================
-# 6. 生成两个方案
+# 6. Generate both schemes
 # ============================================================================
 
 cat("\n  Generating pseudo absence points...\n")
 cat("  Strategy:", pa_strategy, "\n")
 cat("  Distance minimum:", pa_dist_min, "degree (≈", round(pa_dist_min * 111), "km)\n")
 
-# 生成方案1
+# Generate scheme 1
 scheme1_results <- generate_pseudo(scheme1, presence_spat, land_mask, kde_info)
 
-# 生成方案2
+# Generate scheme 2
 scheme2_results <- generate_pseudo(scheme2, presence_spat, land_mask, kde_info)
 
 # ============================================================================
-# 7. 保存数据
+# 7. Save data
 # ============================================================================
 
 dir.create(output_dirs$pseudo_absence, showWarnings = FALSE, recursive = TRUE)
 
-# 保存方案1
+# Save scheme 1
 cat("\n  Saving Scheme 1 (1:1)...\n")
 pseudo1 <- scheme1_results[[1]]
 pseudo1$pseudoabsence <- 0
@@ -453,7 +453,7 @@ cat("    Saved:", pseudo1_csv, "\n")
 pseudo1_rds <- file.path(output_dirs$pseudo_absence, "sargentodoxa_pseudoabsence_1to1_spat.rds")
 saveRDS(pseudo1, pseudo1_rds)
 
-# 保存方案2
+# Save scheme 2
 cat("\n  Saving Scheme 2 (1000 points)...\n")
 pseudo2 <- scheme2_results[[1]]
 pseudo2$pseudoabsence <- 0
@@ -464,7 +464,7 @@ pseudo2_rds <- file.path(output_dirs$pseudo_absence, "sargentodoxa_pseudoabsence
 saveRDS(pseudo2, pseudo2_rds)
 
 # ============================================================================
-# 8. 可视化检查
+# 8. Visualization check
 # ============================================================================
 
 cat("\n  Generating visualization plot...\n")
@@ -472,14 +472,14 @@ cat("\n  Generating visualization plot...\n")
 pdf_file <- file.path(output_dirs$pseudo_absence, "pseudoabsence_check.pdf")
 pdf(pdf_file, width = 12, height = 10)
 
-# 方案 1 绘图范围
+# Scheme 1 plot extent
 plot_extent_1 <- get_plot_extent(presence_spat, list(pseudo1), plot_buffer_deg)
 land_mask_plot_1 <- crop(land_mask, plot_extent_1)
 cat("  Visualization extent - Scheme 1: ",
     round(xmin(plot_extent_1), 2), " to ", round(xmax(plot_extent_1), 2), ", ",
     round(ymin(plot_extent_1), 2), " to ", round(ymax(plot_extent_1), 2), "\n", sep = "")
 
-# 第一页：方案 1
+# Page 1: scheme 1
 plot(land_mask_plot_1, main = "Scheme 1: 1:1 Ratio (Zoomed View)",
      col = gray(0.7, alpha = 0.5))
 points(presence_spat, pch = 21, col = "black", bg = "green", cex = 0.6)
@@ -492,14 +492,14 @@ legend("bottomright",
        bg = "white",
        cex = 0.8)
 
-# 方案 2 绘图范围
+# Scheme 2 plot extent
 plot_extent_2 <- get_plot_extent(presence_spat, list(pseudo2), plot_buffer_deg)
 land_mask_plot_2 <- crop(land_mask, plot_extent_2)
 cat("  Visualization extent - Scheme 2: ",
     round(xmin(plot_extent_2), 2), " to ", round(xmax(plot_extent_2), 2), ", ",
     round(ymin(plot_extent_2), 2), " to ", round(ymax(plot_extent_2), 2), "\n", sep = "")
 
-# 第二页：方案 2
+# Page 2: scheme 2
 plot(land_mask_plot_2, main = "Scheme 2: 1000 Points (1:3 Ratio) (Zoomed View)",
      col = gray(0.7, alpha = 0.5))
 points(presence_spat, pch = 21, col = "black", bg = "green", cex = 0.6)
@@ -517,14 +517,14 @@ dev.off()
 cat("  Saved visualization plot:", pdf_file, "\n")
 
 # ============================================================================
-# 9. 保存元数据
+# 9. Save metadata
 # ============================================================================
 
 metadata <- list(
   presence_count = n_presence,
   strategy = pa_strategy,
-  dist_min = pa_dist_min,  # 度
-  dist_min_km = round(pa_dist_min * 111),  # 约 111km
+  dist_min = pa_dist_min,  # degrees
+  dist_min_km = round(pa_dist_min * 111),  # ~111 km
   dist_max = pa_dist_max,
   dist_max_km = round(pa_dist_max * 111),
   kde = if (pa_strategy == "kde") list(
@@ -568,5 +568,5 @@ cat("=================================================================\n")
 cat("  02 Pseudo Absence Generation - Completed\n")
 cat("=================================================================\n")
 cat("\n")
-# 清理内存
+# Free memory
 gc()

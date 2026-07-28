@@ -1,13 +1,13 @@
 # ============================================================================
-# 05_model_training.R - 单模型训练
+# 05_model_training.R - Single model training
 # ============================================================================
-# 功能：
-#   - 使用 biomod2 训练多个物种分布模型
-#   - 进行 k-fold 交叉验证
-#   - 评估模型性能
+# Purpose:
+#   - Train multiple SDMs with biomod2
+#   - Perform k-fold cross-validation
+#   - Evaluate model performance
 # ============================================================================
 
-# 加载配置
+# Load config
 source("config.R")
 
 cat("\n")
@@ -16,10 +16,10 @@ cat("  05 Model Training - Starting\n")
 cat("=================================================================\n")
 
 # ============================================================================
-# 1. 加载数据
+# 1. Load data
 # ============================================================================
 
-# 加载格式化数据
+# Load formatted data
 formatted_file <- file.path(output_dirs$formatted, "biomod2_formatted_data.RData")
 if (!file.exists(formatted_file)) {
   stop("Error: Formatted data not found. Run 04_data_formatting.R first.")
@@ -28,7 +28,7 @@ if (!file.exists(formatted_file)) {
 load(formatted_file)
 cat("  Loaded formatted data:", formatted_file, "\n")
 
-# 读取元数据获取变量信息
+# Read metadata for variable info
 metadata_file <- file.path(output_dirs$formatted, "data_formatting_metadata.rds")
 metadata <- readRDS(metadata_file)
 
@@ -62,31 +62,31 @@ if (identical(cv_strategy, "user.defined")) {
 # formatted_data
 # plot(formatted_data)
 # ============================================================================
-# 2. 配置模型参数
+# 2. Configure model parameters
 # ============================================================================
 
 cat("\n  Configuring model parameters...\n")
 
-# 检查哪些模型可用
+# Check which models are available
 available_models <- model_list[sapply(model_list, function(m) {
   tryCatch({
-    # --- 新增：专门为 MAXENT (Java 版) 做的检查 ---
+    # --- Added: check specific to MAXENT (Java version) ---
     if (m == "MAXENT") {
-      # 检查1: 工作目录下是否有maxent.jar
+      # Check 1: maxent.jar present in working directory
       if (!file.exists(paste0(project_dir,"/maxent.jar"))) {
         cat("   - MAXENT check: maxent.jar not found at path:", project_dir, ". Skipping.\n")
         return(FALSE)
       }
-      # 检查2 (可选但推荐): 检查 Java 是否安装
+      # Check 2 (optional but recommended): Java installed
       java_check <- system("/usr/bin/java --version", intern = TRUE, ignore.stderr = TRUE)
       if (length(java_check) == 0) {
         cat("   - MAXENT check: Java command not found. Skipping.\n")
         return(FALSE)
       }
-      # 如果以上三项都通过，才认为 MAXENT 可用
+      # MAXENT available only if all checks pass
       return(TRUE)
     } 
-    # --- MAXENT 检查结束 ---
+    # --- End MAXENT check ---
     else if (m == "MAXNET") {
       require(maxnet)
     } else if (m == "MARS") {
@@ -106,27 +106,27 @@ available_models <- model_list[sapply(model_list, function(m) {
     } else if (m == "GBM") {
       require(gbm)
     } else if (m == "GLM") {
-      TRUE  # GLM 是基础 R 的一部分，永远为 TRUE
+      TRUE  # GLM is part of base R, always TRUE
     } else if (m == "SRE") {
-      TRUE # SRE 是 biomod2 内置的，也永远为 TRUE
+      TRUE # SRE is built into biomod2, always TRUE
     }
     else {
-      FALSE # 对于其他未知的模型，返回 FALSE
+      FALSE # Unknown models return FALSE
     }
   }, error = function(e) {
-    # 如果 require(package) 失败，会抛出错误，我们在这里捕获它
+    # Catch error if require(package) fails
     cat("   - Check for", m, "failed (package likely not installed).\n")
     return(FALSE)
   })
 })]
 
-# 模型选项
+# Model options
 bm.options <- bm_ModelingOptions(
-  data.type = "binary",          # 数据类型：物种分布（出现/伪缺席）属于二元分类 "binary"
-  models = available_models,     # 传入刚刚检查好的可用模型列表
-  strategy = opt_strategy,           # 策略："default" 代表使用默认参数（相当于旧版的空号）
+  data.type = "binary",          # Data type: SDM (presence/pseudo-absence) is binary
+  models = available_models,     # Pass the checked available models list
+  strategy = opt_strategy,           # Strategy: "default" = default params (empty option in old versions)
   bm.format = formatted_data
-  # 你也可以改用 "bigboss"（biomod2 团队推荐的预设优选参数）或 "tuned"（自动调参，但很慢）
+  # Can also use "bigboss" (team-recommended presets) or "tuned" (auto-tuning, slow)
 )
 
 cat("  Available models:", paste(available_models, collapse = ", "), "\n")
@@ -141,16 +141,16 @@ if (identical(cv_strategy, "user.defined")) {
 cat("  Evaluation metrics:", paste(metric_eval, collapse = ", "), "\n")
 
 # ============================================================================
-# 3. 训练模型
+# 3. Train models
 # ============================================================================
 
 cat("\n  Training models...\n")
 
-# 确保输出目录存在
+# Ensure output directory exists
 models_dir <- "./Models"
 dir.create(models_dir, showWarnings = FALSE, recursive = TRUE)
 
-# 设置 modeling.id
+# Set modeling.id
 modeling.id <- paste0(species_name, "_", format(Sys.time(), "%Y%m%d%H%M"))
 
 modeling_args <- list(
@@ -180,18 +180,18 @@ myBiomodModel <- do.call(BIOMOD_Modeling, modeling_args)
 cat("  Model training completed\n")
 
 # ============================================================================
-# 4. 提取评估结果
+# 4. Extract evaluation results
 # ============================================================================
 
 cat("\n  Extracting evaluation results...\n")
 
-# 提取评估指标
+# Extract evaluation metrics
 model_eval <- get_evaluations(myBiomodModel)
 
-# 提取变量重要性
+# Extract variable importance
 model_varimp <- get_variables_importance(myBiomodModel)
 
-# 方案 B 没有独立 evaluation 集，因此优先使用 validation 列
+# Scheme B has no independent evaluation set, so prefer the validation column
 score_dataset <- if ("evaluation" %in% names(model_eval) &&
                      any(is.finite(model_eval$evaluation), na.rm = TRUE)) {
   "evaluation"
@@ -201,7 +201,7 @@ score_dataset <- if ("evaluation" %in% names(model_eval) &&
 
 cat("  Aggregating model scores from dataset:", score_dataset, "\n")
 
-# 计算各模型平均 TSS 和 AUC
+# Compute mean TSS and AUC per model
 eval_summary <- model_eval %>%
   group_by(algo, metric.eval) %>%
   summarise(
@@ -214,7 +214,7 @@ eval_summary <- model_eval %>%
 
 cat("  Models evaluated:", length(available_models), "\n")
 
-# 找出最佳模型
+# Find best models
 if ("mean_TSS" %in% names(eval_summary)) {
   best_tss_idx <- which.max(eval_summary$mean_TSS)
   best_tss_model <- eval_summary$algo[best_tss_idx]
@@ -245,36 +245,36 @@ response_curve_models <- unlist(lapply(response_curve_algos, function(algo) {
 response_curve_models <- unique(response_curve_models)
 
 # ============================================================================
-# 5. 保存结果
+# 5. Save results
 # ============================================================================
 
 cat("\n  Saving results...\n")
 
-# 确保输出目录存在
+# Ensure output directory exists
 dir.create(output_dirs$models, showWarnings = FALSE, recursive = TRUE)
 
-# 保存完整模型结果
+# Save full model results
 model_results_file <- file.path(output_dirs$models, "model_results.RData")
 save(myBiomodModel, file = model_results_file)
 cat("  Saved model results:", model_results_file, "\n")
 
-# 保存评估指标
+# Save evaluation metrics
 eval_file <- file.path(output_dirs$models, "model_evaluations.csv")
 write.csv(model_eval, eval_file, row.names = FALSE)
 cat("  Saved evaluations:", eval_file, "\n")
 
-# 保存变量重要性
+# Save variable importance
 varimp_file <- file.path(output_dirs$models, "variable_importance.csv")
 write.csv(model_varimp, varimp_file, row.names = FALSE)
 cat("  Saved variable importance:", varimp_file, "\n")
 
-# 保存评估摘要
+# Save evaluation summary
 eval_summary_file <- file.path(output_dirs$models, "model_evaluation_summary.csv")
 write.csv(eval_summary, eval_summary_file, row.names = FALSE)
 cat("  Saved evaluation summary:", eval_summary_file, "\n")
 
 # ============================================================================
-# 6. 可视化
+# 6. Visualization
 # ============================================================================
 
 cat("\n  Generating visualization...\n")
@@ -282,15 +282,15 @@ cat("\n  Generating visualization...\n")
 pdf_file <- file.path(output_dirs$models, "model_training_summary.pdf")
 pdf(pdf_file, width = 14, height = 10)
 
-# 第1页：模型平均评估指标 2D图 (TSS vs AUCroc)
+# Page 1: mean evaluation metrics 2D plot (TSS vs AUCroc)
 invisible(bm_PlotEvalMean(
   bm.out = myBiomodModel,
-  metric.eval = c("TSS", "AUCroc"),  # <--- 必须同时传 2 个指标
+  metric.eval = c("TSS", "AUCroc"),  # <--- must pass both metrics
   dataset = score_dataset,
   group.by = "algo"
 ))
 
-# 第2页：模型平均评估指标 2D图 (AUCprg vs BOYCE)
+# Page 2: mean evaluation metrics 2D plot (AUCprg vs BOYCE)
 available_eval_metrics <- intersect(metric_eval, c("AUCprg", "BOYCE"))
 if (length(available_eval_metrics) == 2) {
   invisible(bm_PlotEvalMean(
@@ -301,21 +301,21 @@ if (length(available_eval_metrics) == 2) {
   ))
 }
 
-# 第3页：模型评估箱线图
+# Page 3: model evaluation boxplots
 invisible(bm_PlotEvalBoxplot(
   bm.out = myBiomodModel,
   dataset = score_dataset,
   group.by = c("algo", "run")
 ))
 
-# 第4页：变量重要性
+# Page 4: variable importance
 invisible(bm_PlotVarImpBoxplot(
   bm.out = myBiomodModel,
   group.by = c("expl.var", "run", "algo"),
   main = "Variable Importance"
 ))
 
-# 第5页起：重点模型响应曲线
+# Page 5+: response curves for key models
 if (length(response_curve_models) > 0) {
   tryCatch({
     invisible(bm_PlotResponseCurves(
@@ -346,7 +346,7 @@ dev.off()
 cat("  Saved visualization:", pdf_file, "\n")
 
 # ============================================================================
-# 7. 保存元数据
+# 7. Save metadata
 # ============================================================================
 
 metadata_output <- list(
@@ -391,5 +391,5 @@ if (!is.na(best_auc_model)) {
   cat("  - Best model (AUC):", best_auc_model, "(", round(best_auc_value, 3), ")\n")
 }
 cat("\n")
-# 清理内存
+# Free memory
 gc()

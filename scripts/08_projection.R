@@ -1,12 +1,12 @@
 # ============================================================================
-# 08_projection.R - 模型投影
+# 08_projection.R - Model Projection
 # ============================================================================
-# 功能：
-#   - 将模型投影到现代气候数据 (验证模型)
-#   - 为后续古气候投影做准备
+# Functionality:
+#   - Project model onto modern climate data (model validation)
+#   - Prepare for subsequent paleoclimate projection
 # ============================================================================
 
-# 加载配置
+# Load config
 source("config.R")
 
 cat("\n")
@@ -15,10 +15,10 @@ cat("  08 Projection - Starting\n")
 cat("=================================================================\n")
 
 # ============================================================================
-# 1. 加载数据
+# 1. Load data
 # ============================================================================
 
-# 加载模型训练结果 (myBiomodModel)
+# Load model training results (myBiomodModel)
 model_results_file <- file.path(output_dirs$models, "model_results.RData")
 if (!file.exists(model_results_file)) {
   stop("Error: Single model results not found. Run 05_model_training.R first.")
@@ -26,7 +26,7 @@ if (!file.exists(model_results_file)) {
 load(model_results_file)
 cat("  Loaded single model results\n")
 
-# 加载集成模型 (ensemble_model)
+# Load ensemble model (ensemble_model)
 ensemble_file <- file.path(output_dirs$ensemble, "ensemble_model.RData")
 if (!file.exists(ensemble_file)) {
   stop("Error: Ensemble model not found. Run 07_ensemble_modeling.R first.")
@@ -34,7 +34,7 @@ if (!file.exists(ensemble_file)) {
 load(ensemble_file)
 cat("  Loaded ensemble model:", ensemble_file, "\n")
 
-# 加载选中的变量
+# Load selected variables
 variables_file <- file.path(output_dirs$variable_select, "variables_selected.csv")
 if (file.exists(variables_file)) {
   selected_vars <- read.csv(variables_file)$variable
@@ -56,14 +56,14 @@ if (file.exists(evaluation_summary_file)) {
   evaluation_summary <- read.csv(evaluation_summary_file, stringsAsFactors = FALSE)
 }
 
-# 加载现代气候数据 (调用 config.R 中的标准化函数)
+# Load modern climate data (uses standardized function from config.R)
 cat("\n  Loading and formatting modern climate data...\n")
 
 modern_clim <- load_standard_climate(clim_dir = modern_clim_dir, pattern = modern_clim_pattern)
 
 cat("  Loaded modern climate variables:", paste(names(modern_clim), collapse = ", "), "\n")
 
-# 只保留选中的变量
+# Keep only selected variables
 if (!is.null(selected_vars)) {
   available_vars <- names(modern_clim)[names(modern_clim) %in% selected_vars]
   if (length(available_vars) > 0) {
@@ -77,11 +77,11 @@ if (!is.null(selected_vars)) {
 
 data_file_temp <- file.path(output_dirs$formatted, "biomod2_formatted_data.RData") 
 if (!file.exists(data_file_temp)) {
-  # 如果没有单独保存，尝试从 model_results.RData 里看有没有，
-  # 或者从 myBiomodModel 对象中提取（如果它是 link 状态）
+  # If not saved separately, try extracting from model_results.RData
+  # or from the myBiomodModel object (if linked)
   stop("Error: myBiomodData.RData not found. Needed for coordinates.")
 }
-load(data_file_temp) # 载入后对象名为 biomod2_formatted_data.RData
+load(data_file_temp) # after loading, object name is biomod2_formatted_data.RData
 cat("  Loaded formatted data (biomod2_formatted_data.RData)\n")
 
 normalize_prediction_raster <- function(x) {
@@ -219,12 +219,12 @@ plot_presence_background_comparison <- function(r, title_text, presence_xy,
   )
 }
 # ============================================================================
-# 2. 投影到现代气候 (正确使用 BIOMOD_Projection 系列)
+# 2. Project to modern climate (using BIOMOD_Projection properly)
 # ============================================================================
 
 cat("\n  Projecting to modern climate...\n")
 
-# 2.1 准备单模型列表 (需要精准匹配)
+# 2.1 Prepare single-model list (exact match required)
 selected_file <- file.path(output_dirs$evaluation, "selected_models.rds")
 selected_models <- readRDS(selected_file)
 all_built_models <- get_built_models(myBiomodModel)
@@ -246,7 +246,7 @@ best_boyce_algo <- get_best_algo(evaluation_summary, "BOYCE", allowed_algos = se
 cat("  Best single model by TSS:", best_tss_algo, "\n")
 cat("  Best single model by BOYCE:", best_boyce_algo, "\n")
 
-# 2.2 先进行单模型投影 (BIOMOD_Projection)
+# 2.2 Run single-model projection (BIOMOD_Projection)
 proj_name <- paste0("modern_", projection_name)
 
 cat("  Running Single Models Projection (", proj_name, ")...\n")
@@ -255,24 +255,24 @@ myBiomodProj <- BIOMOD_Projection(
   proj.name = proj_name,
   new.env = modern_clim,
   models.chosen = models_to_project,
-  metric.binary = NULL, #设置为 NULL，告诉它不要进行二值化！
+  metric.binary = NULL, # set to NULL to skip binarization
   build.clamping.mask = FALSE,
   output.format = output_format,
   nb.cpu = 1,
-  keep.in.memory = FALSE,     # FALSE = 算完一张图立刻从内存丢弃，只保留硬盘里的 .tif
-  do.stack = FALSE,           # FALSE = 不要试图把几十张图堆叠成一个巨大的对象
+  keep.in.memory = FALSE,     # FALSE = drop from memory after each map, keep only .tif on disk
+  do.stack = FALSE,           # FALSE = don't stack dozens of maps into one huge object
   overwrite = TRUE
 )
 cat("  Single model projection completed\n")
 
-# 2.3 再进行集成模型预测 (BIOMOD_EnsembleForecasting)
-# 基于上一步的单模型投影结果 (bm.proj) 来生成集成结果，这样最稳定
+# 2.3 Ensemble forecasting (BIOMOD_EnsembleForecasting)
+# Build ensemble from single-model projections (bm.proj) - most stable approach
 cat("\n  Running Ensemble Models Forecasting...\n")
 myBiomodEF <- BIOMOD_EnsembleForecasting(
   bm.em = ensemble_model,
   bm.proj = myBiomodProj,
   models.chosen = 'all',
-  metric.binary = NULL, #metric_binary, # <--- 在这里保留 "TSS"，只对少数几个集成模型进行二值化
+  metric.binary = NULL, #metric_binary, # <--- keep "TSS" here to binarize only a few ensemble models
   nb.cpu = 1,
   keep.in.memory = FALSE,
   do.stack = FALSE,
@@ -281,12 +281,12 @@ myBiomodEF <- BIOMOD_EnsembleForecasting(
 cat("  Ensemble forecasting completed\n")
 
 # ============================================================================
-# 3. 提取投影结果统计信息 (内存安全方式)
+# 3. Extract projection statistics (memory-safe approach)
 # ============================================================================
 
 cat("\n  Extracting projection results...\n")
 
-# 注意：biomod2 默认在 "物种名/proj_投影名" 下保存文件
+# Note: biomod2 saves files under "species_name/proj_proj_name" by default
 sp_name <- myBiomodModel@sp.name
 proj_dir <- file.path(getwd(), "Models", sp_name, paste0("proj_", proj_name), "individual_projections")
 
@@ -296,7 +296,7 @@ if (dir.exists(proj_dir)) {
   if (length(proj_files) > 0) {
     cat("  Found", length(proj_files), "projection files\n")
     
-    # 使用 terra::global 进行内存安全的统计计算
+    # Use terra::global for memory-safe statistics
     proj_stats <- data.frame(
       file = basename(proj_files),
       min = sapply(proj_files, function(f) terra::global(rast(f), "min", na.rm = TRUE)[1, 1]),
@@ -313,7 +313,7 @@ if (dir.exists(proj_dir)) {
 }
 
 # ============================================================================
-# 4. 保存投影结果
+# 4. Save projection results
 # ============================================================================
 
 cat("\n  Saving projection objects...\n")
@@ -332,17 +332,17 @@ if (exists("proj_stats")) {
 cat("  Results saved to", output_dirs$projection, "\n")
 
 # ============================================================================
-# 5. 可视化 - 现代气候投影分布图
+# 5. Visualization - modern climate projection map
 # ============================================================================
 
 cat("\n  Generating visualization...\n")
-# ================== 生成陆地边界（基于气候数据 NA） ==================
+# ================== Generate land boundary (based on climate data NA) ==================
 cat("  Creating land mask from modern climate...\n")
 
-# 用第一个气候变量构建 mask（所有变量 NA 分布是一样的）
+# Build mask from first climate variable (all variables share the same NA distribution)
 land_mask <- !is.na(modern_clim[[1]])
 
-# 转为矢量边界（dissolve=TRUE 合并为整体陆地）
+# Convert to vector boundary (dissolve=TRUE merges into single land polygon)
 land_vect <- terra::as.polygons(land_mask, dissolve = TRUE)
 
 cat("  Land mask created\n")
@@ -350,10 +350,10 @@ cat("  Land mask created\n")
 pdf_file <- file.path(output_dirs$projection, "projection_modern_map.pdf")
 pdf(pdf_file, width = 14, height = 10)
 
-# 从模型对象中安全提取存在点 (Presence) 用于叠加显示
+# Safely extract presence points from model object for overlay
 myResp <- get_formal_data(myBiomodModel, "resp.var")
 myXY <- formatted_data@coord
-# 仅保留真实存在点 (值为 1)
+# Keep only true presence points (value = 1)
 pres_xy <- myXY[myResp == 1 & !is.na(myResp), ]
 
 if (dir.exists(proj_dir)) {
@@ -361,8 +361,8 @@ if (dir.exists(proj_dir)) {
   proj_single_tss_hist <- NULL
   proj_single_boyce_hist <- NULL
   
-  # --- 1. 绘制集成模型 (EMwmean) 的连续概率图 ---
-  # 排除 binary 二值化图，提取连续概率图
+  # --- 1. Plot ensemble (EMwmean) continuous probability map ---
+  # Exclude binary maps, keep continuous probability maps
   ensemble_files <- list.files(proj_dir, pattern = "EMwmean", full.names = TRUE)
   prob_ens_files <- ensemble_files[!grepl("_TSSbin", ensemble_files)]
   
@@ -380,7 +380,7 @@ if (dir.exists(proj_dir)) {
     legend("bottomright", legend = "Presence", col = presence_color, pch = presence_pch, bg = "white")
   }
   
-  # --- 2. 绘制最佳 TSS 单模型 ---
+  # --- 2. Plot best TSS single model ---
   if (!is.na(best_tss_algo)) {
     single_files_tss <- list.files(proj_dir, pattern = best_tss_algo, full.names = TRUE)
     prob_single_tss <- single_files_tss[!grepl("_TSSbin", single_files_tss)]
@@ -399,7 +399,7 @@ if (dir.exists(proj_dir)) {
     }
   }
   
-  # --- 3. 绘制最佳 BOYCE 单模型 ---
+  # --- 3. Plot best BOYCE single model ---
   if (!is.na(best_boyce_algo)) {
     single_files_boyce <- list.files(proj_dir, pattern = best_boyce_algo, full.names = TRUE)
     prob_single_boyce <- single_files_boyce[!grepl("_TSSbin", single_files_boyce)]
@@ -418,7 +418,7 @@ if (dir.exists(proj_dir)) {
     }
   }
   
-  # --- 4. 双图对比页：最佳 TSS vs 最佳 BOYCE ---
+  # --- 4. Side-by-side comparison: best TSS vs best BOYCE ---
   if (!is.na(best_tss_algo) && !is.na(best_boyce_algo)) {
     tss_files <- list.files(proj_dir, pattern = best_tss_algo, full.names = TRUE)
     boyce_files <- list.files(proj_dir, pattern = best_boyce_algo, full.names = TRUE)
@@ -447,7 +447,7 @@ if (dir.exists(proj_dir)) {
     }
   }
   
-  # --- 5. 投影值直方图 ---
+  # --- 5. Projection value histograms ---
   hist_targets <- list(
     proj_ensemble_hist,
     proj_single_tss_hist,
@@ -482,7 +482,7 @@ if (dir.exists(proj_dir)) {
     par(old_par)
   }
   
-  # --- 6. Presence vs background 对比图 ---
+  # --- 6. Presence vs background comparison ---
   if (length(hist_targets) > 0) {
     for (hist_name in names(hist_targets)) {
       plot_presence_background_comparison(
@@ -504,7 +504,7 @@ dev.off()
 cat("  Saved visualization:", pdf_file, "\n")
 
 # ============================================================================
-# 6. 保存元数据
+# 6. Save metadata
 # ============================================================================
 
 metadata <- list(
@@ -525,5 +525,5 @@ cat("  08 Projection - Completed\n")
 cat("=================================================================\n")
 cat("\n")
 
-# 清理内存
+# Clean up memory
 gc()

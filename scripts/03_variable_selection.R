@@ -1,12 +1,12 @@
 # ============================================================================
-# 03_variable_selection.R - VIF 变量筛选
+# 03_variable_selection.R - VIF variable selection
 # ============================================================================
-# 功能：
-#   - 使用 Pearson 相关性分析 + VIF 方差膨胀因子筛选气候变量
-#   - 去除高度共线性变量，降低多重共线性对模型的影响
+# Functionality:
+#   - Select climate variables via Pearson correlation + VIF
+#   - Drop highly collinear variables to reduce multicollinearity
 # ============================================================================
 
-# 加载配置
+# Load config
 source("config.R")
 
 cat("\n")
@@ -15,10 +15,10 @@ cat("  03 Variable Selection - Starting\n")
 cat("=================================================================\n")
 
 # ============================================================================
-# 1. 读取数据
+# 1. Read data
 # ============================================================================
 
-# 读取存在点 SpatVector
+# Read presence SpatVector
 presence_file <- file.path(output_dirs$data_prep, "sargentodoxa_presence_spat.rds")
 if (!file.exists(presence_file)) {
   stop("Error: Presence data not found. Run 01_data_preparation.R first.")
@@ -30,7 +30,7 @@ n_presence <- nrow(presence_spat)
 cat("  Loading presence data:", presence_file, "\n")
 cat("  Presence points:", n_presence, "\n")
 
-# 读取现代气候数据
+# Read modern climate data
 cat("\n  Loading modern climate data from:", modern_clim_dir, "\n")
 clim_files <- list.files(modern_clim_dir, pattern = modern_clim_pattern, full.names = TRUE)
 
@@ -40,7 +40,7 @@ if (length(clim_files) == 0) {
 
 cat("  Found", length(clim_files), "climate files\n")
 
-# 读取气候数据并按顺序排列
+# Read climate rasters and order them
 modern_clim <- rast(clim_files)
 modern_clim <- modern_clim[[mixedsort(names(modern_clim))]]
 
@@ -50,15 +50,15 @@ cat("  Climate variables:", length(modern_clim), "\n")
 cat("  Variable names:", paste(names(modern_clim), collapse = ", "), "\n")
 
 # ============================================================================
-# 2. 提取存在点位置的气候值
+# 2. Extract climate values at presence points
 # ============================================================================
 
 cat("\n  Extracting climate values at presence points...\n")
 
-# 使用 terra::extract 提取值
+# Extract values with terra::extract
 clim_values <- terra::extract(modern_clim, presence_spat)
 
-# 【修复代码】：直接转为 df 并去掉第一列 ID
+# Fix: convert to df directly and drop the first ID column
 clim_df <- as.data.frame(clim_values)
 
 if ("ID" %in% colnames(clim_df)) {
@@ -69,7 +69,7 @@ colnames(clim_df) <- names(modern_clim)
 
 cat("  Extracted values matrix:", nrow(clim_df), "x", ncol(clim_df), "\n")
 
-# 检查是否有 NA 值
+# Check for NA values
 na_count <- sum(is.na(clim_df))
 if (na_count > 0) {
   cat("  Warning: Found", na_count, "NA values in extracted data\n")
@@ -80,18 +80,18 @@ if (na_count > 0) {
 }
 
 # ============================================================================
-# 3. 相关性分析
+# 3. Correlation analysis
 # ============================================================================
 
 cat("\n  Computing Pearson correlation matrix...\n")
 
-# 计算相关性矩阵
+# Compute the correlation matrix
 corr_matrix <- cor(clim_df, method = "pearson")
 
-# 识别高相关变量对 (|r| > corr_threshold)，只取上三角以避免 A-B / B-A 重复
+# Identify highly correlated pairs (|r| > corr_threshold); upper triangle only to avoid A-B / B-A duplication
 high_corr <- which(abs(corr_matrix) > corr_threshold & upper.tri(corr_matrix), arr.ind = TRUE)
 
-# 创建高相关变量对数据框
+# Build a data frame of highly correlated pairs
 high_corr_pairs <- data.frame(
   var1 = rownames(corr_matrix)[high_corr[, 1]],
   var2 = colnames(corr_matrix)[high_corr[, 2]],
@@ -106,13 +106,13 @@ if (nrow(high_corr_pairs) > 0) {
 cat("  Found", nrow(high_corr_pairs), "highly correlated pairs (|r| > ", corr_threshold, ")\n")
 
 # ============================================================================
-# 4. 手动变量筛选（基于地理学常识）
+# 4. Manual variable selection (based on ecological judgement)
 # ============================================================================
 
 cat("\n  Manual variable selection (based on ecological knowledge)...\n")
 
-# 预设保留的变量（参考 main.r 中的变量选择）
-# Bio1-19 的完整列表
+# Preset variables to keep (reference: main.r variable choice)
+# Full Bio1-19 list
 all_vars <- names(modern_clim)
 
 if (!is.null(manual_var_select)) {
@@ -121,31 +121,31 @@ if (!is.null(manual_var_select)) {
   selected_vars <- all_vars
 }
 
-# 确保预设变量都在气候数据中
+# Ensure preset variables exist in the climate data
 selected_vars <- intersect(selected_vars, all_vars)
 
 cat("  Selected variables (manual):", length(selected_vars), "\n")
 cat("  ", paste(selected_vars, collapse = ", "), "\n")
 
-# 更新气候数据（只保留选中的变量）
+# Update climate data (keep selected variables only)
 clim_selected <- modern_clim[[selected_vars]]
 clim_df_selected <- clim_df[, selected_vars]
 
 # ============================================================================
-# 5. VIF 方差膨胀因子分析
+# 5. VIF (variance inflation factor) analysis
 # ============================================================================
 
 if (use_vif_step) {
   cat("\n  Computing VIF (Variance Inflation Factor)...\n")
   cat("  VIF threshold:", vif_threshold, "\n")
   
-  # 【修复 1】确保数据框只包含数值列，且剔除 ID 列
-  # terra::extract 生成的 df 第一列通常是 ID
+  # Fix 1: ensure the data frame has only numeric columns and drop the ID column
+  # The first column of terra::extract output is usually an ID
   if ("ID" %in% colnames(clim_df_selected)) {
     clim_df_selected <- clim_df_selected[, !colnames(clim_df_selected) %in% "ID"]
   }
   
-  # 检查是否存在常数项（某列方差为0），VIF 无法计算常数项
+  # Check for constant columns (zero variance); VIF cannot be computed for them
   variances <- apply(clim_df_selected, 2, var, na.rm = TRUE)
   if (any(variances == 0)) {
     const_vars <- names(variances[variances == 0])
@@ -153,19 +153,19 @@ if (use_vif_step) {
     clim_df_selected <- clim_df_selected[, variances > 0]
   }
   
-  # 记录所有候选变量的初始 VIF，便于判断哪些变量在 VIF 逐步筛选前共线性较强
+  # Record initial VIF of all candidates to gauge collinearity before stepwise VIF
   initial_vif_results <- usdm::vif(clim_df_selected)
   initial_vif_df <- as.data.frame(initial_vif_results)
   colnames(initial_vif_df) <- c("variable", "initial_vif")
   initial_vif_df$variable <- trimws(as.character(initial_vif_df$variable))
   initial_vif_df$initial_vif <- round(initial_vif_df$initial_vif, 4)
   
-  # 使用 usdm::vifstep 计算 VIF
-  # train = TRUE 表示我们传入的是数据框
+  # Compute VIF with usdm::vifstep
+  # train = TRUE means a data frame is passed in
   vif_results <- usdm::vifstep(clim_df_selected, th = vif_threshold)
   
-  # 【修复 2】正确获取最终选中的变量名
-  # usdm 的 VIF 对象中，@variables 存储了保留下的变量名
+  # Fix 2: correctly retrieve the final selected variable names
+  # In the usdm VIF object, @variables holds the retained variable names
   final_vars <- trimws(as.character(vif_results@results$Variables))
   
   if (length(final_vars) == 0) {
@@ -176,8 +176,8 @@ if (use_vif_step) {
   cat("  Remaining variables after VIF filtering:", length(final_vars), "\n")
   cat("  ", paste(final_vars, collapse = ", "), "\n")
   
-  # 【修复 3】正确提取 VIF 结果用于展示
-  # vif_results@results 是一个 data.frame，包含 Variables 和 VIF 两列
+  # Fix 3: correctly extract VIF results for display
+  # vif_results@results is a data.frame with Variables and VIF columns
   vif_df <- vif_results@results
   colnames(vif_df) <- c("variable", "final_vif")
   vif_df$variable <- trimws(as.character(vif_df$variable))
@@ -190,30 +190,30 @@ if (use_vif_step) {
   initial_vif_df <- NULL
 }
 
-# 更新最终气候数据
+# Update the final climate data
 clim_final <- modern_clim[[final_vars]]
 
-# 生成辅助判断表：不改变筛选流程，只把每个变量的共线性风险和去留状态列出来
+# Build an advice table (does not change selection): list each variable collinearity risk and keep/drop status
 bio_labels <- c(
-  Bio1 = "Annual mean temperature / 年均温",
-  Bio2 = "Mean diurnal range / 昼夜温差月均值",
-  Bio3 = "Isothermality / 等温性",
-  Bio4 = "Temperature seasonality / 温度季节性",
-  Bio5 = "Max temperature of warmest month / 最暖月最高温",
-  Bio6 = "Min temperature of coldest month / 最冷月最低温",
-  Bio7 = "Temperature annual range / 温度年较差",
-  Bio8 = "Mean temperature of wettest quarter / 最湿季度均温",
-  Bio9 = "Mean temperature of driest quarter / 最干季度均温",
-  Bio10 = "Mean temperature of warmest quarter / 最暖季度均温",
-  Bio11 = "Mean temperature of coldest quarter / 最冷季度均温",
-  Bio12 = "Annual precipitation / 年降水",
-  Bio13 = "Precipitation of wettest month / 最湿月降水",
-  Bio14 = "Precipitation of driest month / 最干月降水",
-  Bio15 = "Precipitation seasonality / 降水季节性",
-  Bio16 = "Precipitation of wettest quarter / 最湿季度降水",
-  Bio17 = "Precipitation of driest quarter / 最干季度降水",
-  Bio18 = "Precipitation of warmest quarter / 最暖季度降水",
-  Bio19 = "Precipitation of coldest quarter / 最冷季度降水"
+  Bio1 = "Annual mean temperature",
+  Bio2 = "Mean diurnal range",
+  Bio3 = "Isothermality",
+  Bio4 = "Temperature seasonality",
+  Bio5 = "Max temperature of warmest month",
+  Bio6 = "Min temperature of coldest month",
+  Bio7 = "Temperature annual range",
+  Bio8 = "Mean temperature of wettest quarter",
+  Bio9 = "Mean temperature of driest quarter",
+  Bio10 = "Mean temperature of warmest quarter",
+  Bio11 = "Mean temperature of coldest quarter",
+  Bio12 = "Annual precipitation",
+  Bio13 = "Precipitation of wettest month",
+  Bio14 = "Precipitation of driest month",
+  Bio15 = "Precipitation seasonality",
+  Bio16 = "Precipitation of wettest quarter",
+  Bio17 = "Precipitation of driest quarter",
+  Bio18 = "Precipitation of warmest quarter",
+  Bio19 = "Precipitation of coldest quarter"
 )
 
 get_high_corr_partners <- function(var_name, pairs_df) {
@@ -316,35 +316,35 @@ advice_df$suggestion <- ifelse(
 )
 
 # ============================================================================
-# 6. 保存结果
+# 6. Save results
 # ============================================================================
 
 cat("\n  Saving results...\n")
 
-# 确保输出目录存在
+# Ensure output directory exists
 dir.create(output_dirs$variable_select, showWarnings = FALSE, recursive = TRUE)
 
-# 保存相关性矩阵
+# Save the correlation matrix
 corr_file <- file.path(output_dirs$variable_select, "correlation_matrix.csv")
 write.csv(corr_matrix, corr_file)
 cat("  Saved correlation matrix:", corr_file, "\n")
 
-# 保存高相关变量对
+# Save highly correlated pairs
 high_corr_file <- file.path(output_dirs$variable_select, "high_correlation_pairs.csv")
 write.csv(high_corr_pairs, high_corr_file, row.names = FALSE)
 cat("  Saved high correlation pairs:", high_corr_file, "\n")
 
-# 保存辅助判断建议
+# Save the variable-selection advice
 advice_file <- file.path(output_dirs$variable_select, "variable_selection_advice.csv")
 write.csv(advice_df, advice_file, row.names = FALSE)
 cat("  Saved variable selection advice:", advice_file, "\n")
 
-# 保存相关性筛选后的变量
+# Save variables remaining after correlation filtering
 corr_vars_file <- file.path(output_dirs$variable_select, "variables_after_corr.csv")
 write.csv(data.frame(variable = selected_vars), corr_vars_file, row.names = FALSE)
 cat("  Saved variables after correlation:", corr_vars_file, "\n")
 
-# 保存 VIF 结果
+# Save VIF results
 if (!is.null(initial_vif_df)) {
   initial_vif_file <- file.path(output_dirs$variable_select, "vif_initial_all_candidates.csv")
   write.csv(initial_vif_df, initial_vif_file, row.names = FALSE)
@@ -357,13 +357,13 @@ if (!is.null(vif_df)) {
   cat("  Saved VIF results:", vif_file, "\n")
 }
 
-# 保存最终选中的变量
+# Save the final selected variables
 final_vars_file <- file.path(output_dirs$variable_select, "variables_selected.csv")
 write.csv(data.frame(variable = final_vars), final_vars_file, row.names = FALSE)
 cat("  Saved final selected variables:", final_vars_file, "\n")
 
 # ============================================================================
-# 7. 可视化
+# 7. Visualization
 # ============================================================================
 
 cat("\n  Generating visualization...\n")
@@ -380,7 +380,7 @@ cat("  PDF device opened:", names(pdf_device), "(", as.integer(pdf_device), ")\n
 
 bio_order_key <- function(x) as.integer(sub("^Bio", "", x))
 
-# 第1页：BioClim 变量释义
+# Page 1: BioClim variable descriptions
 plot.new()
 par(mar = c(4, 4, 4, 2))
 bio_desc_df <- data.frame(
@@ -399,19 +399,19 @@ for (i in seq_len(nrow(bio_desc_df))) {
   text(0.18, y_desc[i], bio_desc_df$description[i], adj = 0, cex = 0.78)
 }
 
-# 第2页：相关性热图
+# Page 2: correlation heatmap
 corrplot(corr_matrix, type = "upper", order = "original",
          tl.cex = 0.8, tl.col = "black",
          col = colorRampPalette(c("blue", "white", "red"))(100),
          title = "Correlation Matrix (Pearson)",
          mar = c(0, 0, 2, 0))
 
-# 第3页：高相关变量对
+# Page 3: highly correlated pairs
 if (nrow(high_corr_pairs) > 0) {
   par(mar = c(7, 9, 4, 2))
   high_corr_plot <- high_corr_pairs[order(bio_order_key(high_corr_pairs$var1),
                                           bio_order_key(high_corr_pairs$var2)), ]
-  # horiz = TRUE 时第一项画在底部；反转后左侧标签从上到下按 Bio1-Bio19 阅读。
+  # With horiz = TRUE the first item is at the bottom; reverse so left labels read Bio1-Bio19 top to bottom.
   high_corr_plot <- high_corr_plot[rev(seq_len(nrow(high_corr_plot))), ]
   pair_cols <- ifelse(high_corr_plot$correlation > 0, "firebrick3", "steelblue3")
   bar_mid <- barplot(high_corr_plot$correlation,
@@ -446,11 +446,11 @@ if (nrow(high_corr_pairs) > 0) {
   text(0.5, 0.5, "No high correlation pairs found", cex = 1.5)
 }
 
-# 第4页：VIF 柱状图
+# Page 4: VIF bar chart
 if (!is.null(vif_df)) {
   par(mar = c(5, 8, 4, 2))
   vif_df_sorted <- vif_df[order(bio_order_key(vif_df$variable)), ]
-  # horiz = TRUE 时第一项画在底部；反转后左侧标签从上到下按 Bio 顺序阅读。
+  # With horiz = TRUE the first item is at the bottom; reverse so left labels read in Bio order top to bottom.
   vif_df_sorted <- vif_df_sorted[rev(seq_len(nrow(vif_df_sorted))), ]
   barplot(vif_df_sorted$final_vif, names.arg = vif_df_sorted$variable,
           horiz = TRUE, las = 2, cex.names = 0.8,
@@ -466,7 +466,7 @@ if (!is.null(vif_df)) {
   text(0.5, 0.5, "VIF analysis not performed", cex = 1.5)
 }
 
-# 第5页：变量筛选流程总结
+# Page 5: variable-selection workflow summary
 plot.new()
 text(0.5, 0.9, "Variable Selection Summary", cex = 1.5, font = 2)
 text(0.5, 0.75, paste("Initial variables:", length(all_vars)), cex = 1.2)
@@ -479,7 +479,7 @@ if (use_vif_step) {
 text(0.5, 0.35, "Final selected variables:", cex = 1.1)
 text(0.5, 0.25, paste(final_vars, collapse = ", "), cex = 0.8)
 
-# 第6页：最终变量剩余相关性检查
+# Page 6: residual correlation check of final variables
 if (length(final_vars) >= 2) {
   final_vars_plot <- final_vars[order(bio_order_key(final_vars))]
   final_corr_matrix_plot <- final_corr_matrix[final_vars_plot, final_vars_plot, drop = FALSE]
@@ -498,7 +498,7 @@ if (length(final_vars) >= 2) {
   text(0.5, 0.5, "Only one final variable selected; residual correlation check is not applicable.", cex = 1.2)
 }
 
-# 第7页：变量筛选辅助建议
+# Page 7: variable-selection advice
 plot.new()
 par(mar = c(4, 4, 4, 2))
 text(0.02, 0.95, "Variable Selection Advice", adj = 0, cex = 1.4, font = 2)
@@ -545,7 +545,7 @@ cat("  Saved visualization:", pdf_file, "\n")
 cat("  Expected PDF pages: 7\n")
 
 # ============================================================================
-# 8. 保存元数据
+# 8. Save metadata
 # ============================================================================
 
 metadata <- list(
@@ -582,5 +582,5 @@ if (use_vif_step) {
 }
 cat("  - Final selected variables:", paste(final_vars, collapse = ", "), "\n")
 cat("\n")
-# 清理内存
+# Free memory
 gc()

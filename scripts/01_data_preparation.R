@@ -1,14 +1,14 @@
 # ============================================================================
-# 01_data_preparation.R - 数据准备与验证
+# 01_data_preparation.R - Data preparation and validation
 # ============================================================================
-# 功能：
-#   - 读取已清洗的 CVH 物种分布数据
-#   - 验证数据完整性
-#   - 转换为 SpatVector 格式
-#   - 保存到 output 目录
+# Functions:
+#   - Read cleaned CVH species distribution data
+#   - Validate data integrity
+#   - Convert to SpatVector format
+#   - Save to output directory
 # ============================================================================
 
-# 加载配置
+# Load config
 source("./config.R")
 
 cat("\n")
@@ -19,7 +19,7 @@ cat("  Reading CVH data from:", sp_file_cvh, "\n")
 cat("\n")
 
 # ============================================================================
-# 1. 读取已清洗的 CVH 数据
+# 1. Read cleaned CVH data
 # ============================================================================
 
 if (!file.exists(sp_file_cvh)) {
@@ -33,10 +33,10 @@ cat("  Total records:", nrow(cvh_data), "\n")
 cat("  Columns:", paste(colnames(cvh_data), collapse = ", "), "\n")
 
 # ============================================================================
-# 2. 数据验证
+# 2. Data validation
 # ============================================================================
 
-# 检查必要列
+# Check required columns
 required_cols <- c("Longitude", "Latitude", "presence")
 missing_cols <- setdiff(required_cols, colnames(cvh_data))
 
@@ -46,7 +46,7 @@ if (length(missing_cols) > 0) {
 
 cat("\n  Column validation: PASSED\n")
 
-# 检查坐标范围
+# Check coordinate range
 lon_valid <- cvh_data$Longitude >= -180 & cvh_data$Longitude <= 180
 lat_valid <- cvh_data$Latitude >= -90 & cvh_data$Latitude <= 90
 
@@ -64,7 +64,7 @@ if (all(lon_valid) && all(lat_valid)) {
   cat("  Coordinate range validation: PASSED\n")
 }
 
-# 检查 NA 值
+# Check NA values
 na_records <- apply(cvh_data, 1, function(x) any(is.na(x)))
 if (any(na_records)) {
   cat("  Warning: Found", sum(na_records), "records with NA values\n")
@@ -73,20 +73,20 @@ if (any(na_records)) {
 }
 
 # ============================================================================
-# 3. 统计信息
+# 3. Statistics
 # ============================================================================
 
 cat("\n  Statistics:\n")
 cat("  - Total presence points:", sum(cvh_data$presence == 1), "\n")
 
-# 计算分布范围
+# Compute distribution range
 lon_range <- range(cvh_data$Longitude, na.rm = TRUE)
 lat_range <- range(cvh_data$Latitude, na.rm = TRUE)
 cat("  - Longitude range:", lon_range[1], "to", lon_range[2], "\n")
 cat("  - Latitude range:", lat_range[1], "to", lat_range[2], "\n")
 
 # ============================================================================
-# 4. 转换为 SpatVector
+# 4. Convert to SpatVector
 # ============================================================================
 
 presence_spat <- vect(cvh_data, geom = c("Longitude", "Latitude"))
@@ -97,7 +97,7 @@ cat("  - Geometry type:", geomtype(presence_spat), "\n")
 cat("  - CRS:", crs(presence_spat), "\n")
 
 # ============================================================================
-# 4.1 空间稀疏化（降低空间自相关）
+# 4.1 Spatial thinning (reduce spatial autocorrelation)
 # ============================================================================
 
 original_n <- nrow(cvh_data)
@@ -203,23 +203,23 @@ for (i in seq_along(diagnostic_thresholds)) {
 }
 
 # ============================================================================
-# 5. 保存数据
+# 5. Save data
 # ============================================================================
 
-# 确保输出目录存在
+# Ensure output directory exists
 dir.create(output_dirs$data_prep, showWarnings = FALSE, recursive = TRUE)
 
-# 保存 CSV
+# Save CSV
 output_csv <- file.path(output_dirs$data_prep, "sargentodoxa_occ_cvh_clean.csv")
 write.csv(cvh_data, output_csv, row.names = FALSE)
 cat("\n  Saved CSV:", output_csv, "\n")
 
-# 保存 SpatVector
+# Save SpatVector
 output_rds <- file.path(output_dirs$data_prep, "sargentodoxa_presence_spat.rds")
 saveRDS(presence_spat, output_rds)
 cat("  Saved SpatVector:", output_rds, "\n")
 
-# 保存稀疏化统计
+# Save thinning statistics
 thinning_stats <- data.frame(
   stage = c("original", "deduplicated", "cell_thinned", "distance_thinned", "final"),
   n_points = c(
@@ -246,7 +246,7 @@ thinning_diag <- data.frame(
 write.csv(thinning_diag, thinning_diag_file, row.names = FALSE)
 cat("  Saved thinning diagnostics:", thinning_diag_file, "\n")
 
-# 保存稀疏化前后对比图
+# Save before/after thinning comparison plot
 thinning_plot_file <- file.path(output_dirs$data_prep, "presence_thinning_check.pdf")
 pdf(thinning_plot_file, width = 10, height = 5)
 par(mfrow = c(1, 2), mar = c(4, 4, 3, 1))
@@ -335,7 +335,7 @@ dev.off()
 cat("  Saved NN histogram:", thinning_hist_file, "\n")
 
 # ============================================================================
-# 6. 保存元数据
+# 6. Save metadata
 # ============================================================================
 
 metadata <- list(

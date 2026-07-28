@@ -1,13 +1,13 @@
 # ============================================================================
-# 09_paleoclimate_projection.R - 古气候投影
+# 09_paleoclimate_projection.R - Paleoclimate Projection
 # ============================================================================
-# 功能：
-#   - 将模型投影到古气候数据
-#   - 支持分时期运行（通过 config 中的 projection_periods 控制）
-#   - 输出扁平化目录结构
+# Functionality:
+#   - Project model onto paleoclimate data
+#   - Support per-period runs (controlled by projection_periods in config)
+#   - Output flattened directory structure
 # ============================================================================
 
-# 加载配置
+# Load config
 source("config.R")
 
 cat("\n")
@@ -16,10 +16,10 @@ cat("  09 Paleoclimate Projection - Starting\n")
 cat("=================================================================\n")
 
 # ============================================================================
-# 1. 加载模型和数据
+# 1. Load model and data
 # ============================================================================
 
-# 加载单模型训练结果
+# Load single-model training results
 model_results_file <- file.path(output_dirs$models, "model_results.RData")
 if (!file.exists(model_results_file)) {
   stop("Error: Single model results not found. Run 05_model_training.R first.")
@@ -27,7 +27,7 @@ if (!file.exists(model_results_file)) {
 load(model_results_file)
 cat("  Loaded single model results\n")
 
-# 加载集成模型
+# Load ensemble model
 ensemble_file <- file.path(output_dirs$ensemble, "ensemble_model.RData")
 if (!file.exists(ensemble_file)) {
   stop("Error: Ensemble model not found. Run 07_ensemble_modeling.R first.")
@@ -35,7 +35,7 @@ if (!file.exists(ensemble_file)) {
 load(ensemble_file)
 cat("  Loaded ensemble model:", ensemble_file, "\n")
 
-# 加载选中的变量
+# Load selected variables
 variables_file <- file.path(output_dirs$variable_select, "variables_selected.csv")
 if (file.exists(variables_file)) {
   selected_vars <- read.csv(variables_file)$variable
@@ -45,7 +45,7 @@ if (file.exists(variables_file)) {
   cat("  Variables not found, using all available\n")
 }
 
-# 加载格式化的数据（用于获取坐标等）
+# Load formatted data (for coordinates etc.)
 data_file_temp <- file.path(output_dirs$formatted, "biomod2_formatted_data.RData")
 if (!file.exists(data_file_temp)) {
   stop("Error: Formatted data not found.")
@@ -54,28 +54,28 @@ load(data_file_temp)
 cat("  Loaded formatted data\n")
 
 # ============================================================================
-# 2. 获取要投影的时期列表
+# 2. Get list of periods to project
 # ============================================================================
 
 cat("\n  Scanning available paleoclimate periods...\n")
 
-# 使用 config 中的函数获取时期列表
+# Use config function to get period list
 all_periods <- list_paleo_periods()
 cat("  Found", length(all_periods), "periods in", current_past_clim, "\n")
 
-# 根据 config 中的 projection_periods 过滤
+# Filter by projection_periods in config
 if (is.null(projection_periods)) {
-  # 默认：投影所有时期
+  # Default: project all periods
   periods_to_project <- all_periods
   cat("  Projection periods: ALL (", length(periods_to_project), ")\n")
 } else if (is.character(projection_periods)) {
-  # 指定时期列表
+  # Specified period list
   periods_to_project <- intersect(projection_periods, all_periods)
   cat("  Projection periods: CUSTOM (", length(periods_to_project), ")\n")
 } else if (is.list(projection_periods) && !is.null(projection_periods$time_range)) {
-  # 按时间范围过滤（需要从时期名称中提取时间）
+  # Filter by time range (extract time from period names)
   time_range <- projection_periods$time_range
-  # 提取时期名称中的数字（单位：ka）
+  # Extract numeric value from period name (unit: ka)
   period_years <- as.numeric(sub(".*_([0-9]+)k", "\\1", all_periods))
   periods_to_project <- all_periods[period_years >= time_range[1] & period_years <= time_range[2]]
   cat("  Projection periods: TIME RANGE", time_range[1], "-", time_range[2], "ka (", length(periods_to_project), ")\n")
@@ -93,25 +93,25 @@ if (length(periods_to_project) == 0) {
 }
 
 # ============================================================================
-# 3. 创建输出目录
+# 3. Create output directories
 # ============================================================================
 
-# 主输出目录
+# Main output directory
 output_paleo_base <- "./output/09_paleoclimate"
 dir.create(output_paleo_base, showWarnings = FALSE, recursive = TRUE)
 
-# 投影结果目录
+# Projection results directory
 output_proj_dir <- file.path(output_paleo_base, "projections")
 dir.create(output_proj_dir, showWarnings = FALSE, recursive = TRUE)
 
-# 统计结果目录
+# Statistics directory
 output_stats_dir <- file.path(output_paleo_base, "stats")
 dir.create(output_stats_dir, showWarnings = FALSE, recursive = TRUE)
 
 cat("  Output base:", output_paleo_base, "\n")
 
 # ============================================================================
-# 4. 获取单模型列表（用于投影）
+# 4. Get single-model list (for projection)
 # ============================================================================
 
 selected_file <- file.path(output_dirs$evaluation, "selected_models.rds")
@@ -127,7 +127,7 @@ names(models_to_project) <- NULL
 cat("  Models to project:", length(models_to_project), "\n")
 
 # ============================================================================
-# 5. 逐时期投影
+# 5. Project per period
 # ============================================================================
 
 cat("\n")
@@ -135,27 +135,27 @@ cat("=================================================================\n")
 cat("  Starting projection for", length(periods_to_project), "periods\n")
 cat("=================================================================\n")
 
-# 存储统计结果
+# Store statistics
 all_stats <- data.frame()
 
-# 设置投影名称前缀
+# Set projection name prefix
 proj_prefix <- paste0("paleo_", projection_name)
 
-# 进度跟踪
+# Progress tracking
 n_periods <- length(periods_to_project)
 
 for (i in seq_along(periods_to_project)) {
   period <- periods_to_project[i]
-  
+
   cat("\n  [", i, "/", n_periods, "] Processing:", period, "\n")
-  
-  # ----- 5.1 加载该时期的气候数据 -----
+
+  # ----- 5.1 Load climate data for this period -----
   load_error <- FALSE
-  
+
   tryCatch({
     paleo_clim <- load_paleo_climate(period)
-    
-    # 只保留选中的变量
+
+    # Keep only selected variables
     if (!is.null(selected_vars)) {
       available_vars <- names(paleo_clim)[names(paleo_clim) %in% selected_vars]
       if (length(available_vars) > 0) {
@@ -164,25 +164,25 @@ for (i in seq_along(periods_to_project)) {
         cat("    Warning: Selected variables not found in paleoclimate data\n")
       }
     }
-    
+
     cat("    Loaded", nlyr(paleo_clim), "climate variables\n")
-    
+
   }, error = function(e) {
     cat("    Error loading paleoclimate:", e$message, "\n")
     load_error <<- TRUE
   })
-  
-  # 跳过加载失败的时期
+
+  # Skip periods that failed to load
   if (load_error) {
     cat("    Skipping this period due to error\n")
     next
   }
-  
-  # ----- 5.2 单模型投影 -----
+
+  # ----- 5.2 Single-model projection -----
   proj_name <- paste0(proj_prefix, "_", period)
-  
+
   cat("    Running single model projection...")
-  
+
   myBiomodProj <- BIOMOD_Projection(
     bm.mod = myBiomodModel,
     proj.name = proj_name,
@@ -196,12 +196,12 @@ for (i in seq_along(periods_to_project)) {
     do.stack = FALSE,
     overwrite = TRUE
   )
-  
+
   cat(" done\n")
-  
-  # ----- 5.3 集成模型预测 -----
+
+  # ----- 5.3 Ensemble forecast -----
   cat("    Running ensemble forecasting...")
-  
+
   myBiomodEF <- BIOMOD_EnsembleForecasting(
     bm.em = ensemble_model,
     bm.proj = myBiomodProj,
@@ -212,29 +212,29 @@ for (i in seq_along(periods_to_project)) {
     do.stack = FALSE,
     output.format = output_format
   )
-  
+
   cat(" done\n")
-  
-  # ----- 5.4 提取并保存统计信息 -----
+
+  # ----- 5.4 Extract and save statistics -----
   cat("    Extracting statistics...")
-  
+
   sp_name <- myBiomodModel@sp.name
   proj_dir <- file.path(getwd(), "Models", sp_name, paste0("proj_", proj_name), "individual_projections")
-  
+
   if (dir.exists(proj_dir)) {
     proj_files <- list.files(proj_dir, pattern = "\\.tif$", full.names = TRUE)
-    
-    # 提取 EMwmean 的结果（推荐）
+
+    # Extract EMwmean result (recommended)
     em_files <- proj_files[grepl("EMwmean", proj_files) & !grepl("_TSSbin", proj_files)]
-    
+
     if (length(em_files) > 0) {
-      # 复制到输出目录
+      # Copy to output directory
       for (f in em_files) {
         new_name <- paste0(period, "_", basename(f))
         file.copy(f, file.path(output_proj_dir, new_name), overwrite = TRUE)
       }
-      
-      # 计算统计
+
+      # Compute statistics
       r <- rast(em_files[1])
       stats <- data.frame(
         period = period,
@@ -244,53 +244,53 @@ for (i in seq_along(periods_to_project)) {
         sd = global(r, "sd", na.rm = TRUE)[1, 1],
         na_count = global(is.na(r), "sum", na.rm = TRUE)[1, 1]
       )
-      
-      # 保存单时期统计
+
+      # Save per-period statistics
       stats_file <- file.path(output_stats_dir, paste0(period, "_summary.csv"))
       write.csv(stats, stats_file, row.names = FALSE)
-      
-      # 添加到汇总
+
+      # Append to summary
       all_stats <- rbind(all_stats, stats)
     }
   }
-  
+
   cat(" done\n")
-  
-  # ----- 5.5 内存清理 -----
+
+  # ----- 5.5 Memory cleanup -----
   if (i %% gc_trigger == 0) {
     gc()
     cat("    [Garbage collected]\n")
   }
-  
-  # 清理当前时期的模型对象，释放内存
+
+  # Remove current period's model objects to free memory
   rm(myBiomodProj, myBiomodEF, paleo_clim)
 }
 
 # ============================================================================
-# 6. 保存汇总统计
+# 6. Save summary statistics
 # ============================================================================
 
 cat("\n  Collecting all available statistics files...\n")
 
-# 1. 获取 stats 目录下所有的汇总 CSV 文件
+# 1. List all summary CSV files in the stats directory
 stat_files <- list.files(output_stats_dir, pattern = "_summary.csv$", full.names = TRUE)
 
 if (length(stat_files) > 0) {
   cat("  Found", length(stat_files), "individual period stats. Merging...\n")
-  
-  # 2. 读取并合并所有文件
+
+  # 2. Read and merge all files
   all_stats <- do.call(rbind, lapply(stat_files, function(f) {
     read.csv(f, stringsAsFactors = FALSE)
   }))
-  
-  # 3. 按时期名称排序（可选，根据你的时期命名规则）
-  # all_stats <- all_stats[order(all_stats$period), ] 
-  
-  # 4. 保存最终汇总文件
+
+  # 3. Sort by period name (optional)
+  # all_stats <- all_stats[order(all_stats$period), ]
+
+  # 4. Save the final merged summary
   summary_file <- file.path(output_paleo_base, "summary_all_periods.csv")
   write.csv(all_stats, summary_file, row.names = FALSE)
   cat("  Saved final summary:", summary_file, "\n")
-  
+
   cat("\n  Projection summary:\n")
   print(head(all_stats, 10))
 } else {
@@ -298,7 +298,7 @@ if (length(stat_files) > 0) {
 }
 
 # ============================================================================
-# 7. 元数据
+# 7. Metadata
 # ============================================================================
 
 metadata <- list(
@@ -326,5 +326,5 @@ cat("  Projected", length(periods_to_project), "periods\n")
 cat("  Output:", output_paleo_base, "\n")
 cat("\n")
 
-# 清理
+# Cleanup
 gc()

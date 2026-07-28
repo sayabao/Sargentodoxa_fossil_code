@@ -1,13 +1,13 @@
 # ============================================================================
-# 04_data_formatting.R - 数据格式化与 biomod2 格式化
+# 04_data_formatting.R - Data formatting for biomod2
 # ============================================================================
-# 功能：
-#   - 读取存在点、伪缺失点和筛选后的气候变量
-#   - 合并数据并进行训练/测试集划分
-#   - 格式化为 biomod2 可接受的格式
+# Purpose:
+#   - Read presence points, pseudo-absence points, and selected climate variables
+#   - Merge data and split into train/test sets
+#   - Format into biomod2-compatible format
 # ============================================================================
 
-# 加载配置
+# Load config
 source("config.R")
 
 cat("\n")
@@ -16,10 +16,10 @@ cat("  04 Data Formatting - Starting\n")
 cat("=================================================================\n")
 
 # ============================================================================
-# 1. 读取数据
+# 1. Read data
 # ============================================================================
 
-# 读取存在点 SpatVector
+# Read presence points as SpatVector
 presence_file <- file.path(output_dirs$data_prep, "sargentodoxa_presence_spat.rds")
 if (!file.exists(presence_file)) {
   stop("Error: Presence data not found. Run 01_data_preparation.R first.")
@@ -31,7 +31,7 @@ n_presence <- nrow(presence_spat)
 cat("  Loading presence data:", presence_file, "\n")
 cat("  Presence points:", n_presence, "\n")
 
-# 根据配置选择伪缺失点文件
+# Select pseudo-absence file based on config
 cat("\n  Pseudo-absence scheme:", pa_scheme_to_use, "\n")
 
 if (pa_scheme_to_use == "scheme_1to1") {
@@ -54,7 +54,7 @@ n_pseudo <- nrow(pseudo_spat)
 cat("  Loaded:", pseudo_file, "\n")
 cat("  Pseudo-absence points:", n_pseudo, "\n")
 
-# 读取筛选后的变量列表
+# Read selected variables list
 var_file <- file.path(output_dirs$variable_select, "variables_selected.csv")
 if (!file.exists(var_file)) {
   stop("Error: Selected variables not found. Run 03_variable_selection.R first.")
@@ -67,7 +67,7 @@ cat("\n  Loading selected variables:", var_file, "\n")
 cat("  Selected variables:", length(selected_vars), "\n")
 cat("  ", paste(selected_vars, collapse = ", "), "\n")
 
-# 读取现代气候数据
+# Read modern climate data
 cat("\n  Loading modern climate data from:", modern_clim_dir, "\n")
 clim_files <- list.files(modern_clim_dir, pattern = modern_clim_pattern, full.names = TRUE)
 
@@ -79,13 +79,13 @@ modern_clim <- rast(clim_files)
 modern_clim <- modern_clim[[mixedsort(names(modern_clim))]]
 
 names(modern_clim) <- paste0("Bio", 1:nlyr(modern_clim)) 
-# 只保留选中的变量
+# Keep only selected variables
 modern_clim_selected <- modern_clim[[selected_vars]]
 
 cat("  Climate data loaded:", nlyr(modern_clim_selected), "variables\n")
 
 # ============================================================================
-# 2. 合并全部数据（方案 B：不再随机拆分 train/test）
+# 2. Merge full dataset (Scheme B: no random train/test split)
 # ============================================================================
 
 cat("\n  Merging full dataset for spatial CV...\n")
@@ -103,7 +103,7 @@ cat("  - Presence:", n_presence, "\n")
 cat("  - Pseudo-absence:", n_pseudo, "\n")
 
 # ============================================================================
-# 3. 先过滤环境值缺失的样点，再生成自定义空间交叉验证折
+# 3. Filter points with missing predictor values, then build custom spatial CV folds
 # ============================================================================
 
 cat("\n  Filtering points with missing predictor values...\n")
@@ -132,7 +132,7 @@ cat("  - Remaining presence:", n_presence_filtered, "\n")
 cat("  - Remaining pseudo-absence:", n_pseudo_filtered, "\n")
 
 # ============================================================================
-# 4. 生成自定义空间交叉验证折
+# 4. Build custom spatial CV folds
 # ============================================================================
 
 cat("\n  Building custom spatial CV table...\n")
@@ -290,7 +290,7 @@ for (i in seq_len(nrow(spatial_cv$fold_summary))) {
 }
 
 # ============================================================================
-# 5. 格式化为 biomod2 格式
+# 5. Format for biomod2
 # ============================================================================
 
 cat("\n  Formatting full dataset for biomod2...\n")
@@ -311,7 +311,7 @@ cat("  Data formatted successfully\n")
 cat("  Formatted data object saved in:", models_dir, "\n")
 
 # ============================================================================
-# 6. 保存结果
+# 6. Save results
 # ============================================================================
 
 cat("\n  Saving results...\n")
@@ -339,7 +339,7 @@ write.csv(spatial_cv$fold_summary, fold_summary_file, row.names = FALSE)
 cat("  Saved fold summary:", fold_summary_file, "\n")
 
 # ============================================================================
-# 7. 可视化
+# 7. Visualization
 # ============================================================================
 
 cat("\n  Generating visualization...\n")
@@ -410,7 +410,7 @@ dev.off()
 cat("  Saved visualization:", pdf_file, "\n")
 
 # ============================================================================
-# 8. 保存元数据
+# 8. Save metadata
 # ============================================================================
 
 metadata <- list(
