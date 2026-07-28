@@ -1,0 +1,5 @@
+"full.name","merged.by.PA","merged.by.run","merged.by.algo","filtered.by","algo","metric.eval","cutoff","sensitivity","specificity","calibration","validation","evaluation"
+"Sargentodoxa_EMwmeanByTSS_mergedData_mergedRun_mergedAlgo","mergedData","mergedRun","mergedAlgo","TSS","EMwmean","TSS",643,99.288,99.251,0.985,NA,NA
+"Sargentodoxa_EMwmeanByTSS_mergedData_mergedRun_mergedAlgo","mergedData","mergedRun","mergedAlgo","TSS","EMwmean","AUCroc",642.5,99.288,99.251,1,NA,NA
+"Sargentodoxa_EMwmeanByTSS_mergedData_mergedRun_mergedAlgo","mergedData","mergedRun","mergedAlgo","TSS","EMwmean","AUCprg",726,99.288,99.251,1,NA,NA
+"Sargentodoxa_EMwmeanByTSS_mergedData_mergedRun_mergedAlgo","mergedData","mergedRun","mergedAlgo","TSS","EMwmean","BOYCE",602,99.288,99.251,0.878,NA,NA

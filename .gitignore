@@ -1,0 +1,19 @@
+# R
+.RData
+.Rhistory
+.Rproj.user/
+*.Rproj
+*.RData
+
+# Python
+__pycache__/
+*.pyc
+
+# OS junk
+Thumbs.db
+desktop.ini
+.DS_Store
+~$*
+
+# Claude local override
+.claude/settings.local.json

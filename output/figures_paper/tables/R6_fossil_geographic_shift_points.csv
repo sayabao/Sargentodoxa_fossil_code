@@ -1,0 +1,33 @@
+number,fossil_sp,organ,locality,country_region,Age_stage,Age,age,coordinate_type,lon,lat
+1,Sargentodoxa cretaceum (Knobloch and Mai) Song et al.,Seed,"Walbeck, Saxony-Anhalt, Germany",Germany,Maastrichtian,69,69,Modern coordinates,11.0635,52.2815
+2,Sargentodoxa sp.,Seed,"Le Quesnoy, Oise, France",France,Early Eocene,52,52,Modern coordinates,3.6363,50.2479
+3,Sargentodoxa globosa (Manchester) Manchester,Seed,"Middle Eocene Nut Beds Flora Clarno Formation, Oregon",USA,Middle Eocene,44,44,Modern coordinates,-120.4261,44.9433
+4,cf. Sargentodoxa sp.,Seed,"Eckfeld near Manderscheid (Eifel, Germany)",Germany,Middle Eocene,41.2,39,Modern coordinates,6.6667,50.25
+5,Sargentodoxa barghoorniana Tiffney,Seed,"the Brandon Lignite, west-central Vermont",USA,Early Miocene,20.44,19,Modern coordinates,-73.05,43.8333
+6,Sargentodoxa lusatica (Mai) Mai,Seed,Turów (SW Poland),Poland,Middle Miocene,15,14,Modern coordinates,15.2279,51.95
+7,Sargentodoxa lusatica (Mai) Mai,Seed,Adamów and Tomisławice near Konin (Central Poland),Poland,Middle Miocene,13.83,14,Modern coordinates,18.2873,52.2389
+8,Sargentodoxa lusatica (Mai) Mai,Seed,"Meuro, Lusatia",Germany,Middle Miocene,13.82,14,Modern coordinates,13.9278,51.5488
+9,Sargentodoxa sp.,Seed,southern Mississippi,USA,Middle Miocene,13.82,14,Modern coordinates,-89.3054,31.3497
+10,Sargentodoxa sp.,Seed,Guiping Basin,China,Miocene,13.82,14,Modern coordinates,110.1653,23.386
+11,Sargentodoxa cuneata (Oliv.) Rehd. et Wils.,Seed,Tokiguchi Porcelain Clay Formation in Tajimi City,Japan,Late Miocene,10,10,Modern coordinates,137.15,35.3417
+12,Sargentodoxa lusatica (Mai) Mai,Seed,"""Saugbaggerflora"" of Sessenheim in Alsace",France,Mio-Pliocene,5.3,4,Modern coordinates,7.9861,48.8005
+13,Sargentodoxa lusatica (Mai) Mai,Seed,Ronco Biellese,Italy,Early Pliocene,4.5,4,Modern coordinates,8.0492,45.568
+14,Sargentodoxa lusatica (Mai) Mai,Seed,"Boca, Novara",Italy,Early Pliocene,4.5,4,Modern coordinates,8.4084,45.6794
+15,Sargentodoxa lusatica (Mai) Mai,Seed,"Fortuna-Garsdorf, near Cologne",Germany,Pliocene,3.6,4,Modern coordinates,6.9609,50.9734
+16,Sargentodoxa cuneata (Oliv.) Rehd. et Wils.,Pollen,"Zhaotong, Yunnan",China,Pliocene– Pleistocene,2.58,4,Modern coordinates,103.712,27.3392
+1,Sargentodoxa cretaceum (Knobloch and Mai) Song et al.,Seed,"Walbeck, Saxony-Anhalt, Germany",Germany,Maastrichtian,69,69,Paleo-coordinates,9.3278,44.4208
+2,Sargentodoxa sp.,Seed,"Le Quesnoy, Oise, France",France,Early Eocene,52,52,Paleo-coordinates,1.0369,45.808
+3,Sargentodoxa globosa (Manchester) Manchester,Seed,"Middle Eocene Nut Beds Flora Clarno Formation, Oregon",USA,Middle Eocene,44,44,Paleo-coordinates,-105.0317,46.7141
+4,cf. Sargentodoxa sp.,Seed,"Eckfeld near Manderscheid (Eifel, Germany)",Germany,Middle Eocene,41.2,39,Paleo-coordinates,2.608,48.0362
+5,Sargentodoxa barghoorniana Tiffney,Seed,"the Brandon Lignite, west-central Vermont",USA,Early Miocene,20.44,19,Paleo-coordinates,-68.4428,43.9637
+6,Sargentodoxa lusatica (Mai) Mai,Seed,Turów (SW Poland),Poland,Middle Miocene,15,14,Paleo-coordinates,13.7809,52.2061
+7,Sargentodoxa lusatica (Mai) Mai,Seed,Adamów and Tomisławice near Konin (Central Poland),Poland,Middle Miocene,13.83,14,Paleo-coordinates,16.9507,52.534
+8,Sargentodoxa lusatica (Mai) Mai,Seed,"Meuro, Lusatia",Germany,Middle Miocene,13.82,14,Paleo-coordinates,12.5797,51.8074
+9,Sargentodoxa sp.,Seed,southern Mississippi,USA,Middle Miocene,13.82,14,Paleo-coordinates,-86.4181,31.7314
+10,Sargentodoxa sp.,Seed,Guiping Basin,China,Miocene,13.82,14,Paleo-coordinates,109.2497,23.2024
+11,Sargentodoxa cuneata (Oliv.) Rehd. et Wils.,Seed,Tokiguchi Porcelain Clay Formation in Tajimi City,Japan,Late Miocene,10,10,Paleo-coordinates,135.1816,37.0193
+12,Sargentodoxa lusatica (Mai) Mai,Seed,"""Saugbaggerflora"" of Sessenheim in Alsace",France,Mio-Pliocene,5.3,4,Paleo-coordinates,7.7203,48.8859
+13,Sargentodoxa lusatica (Mai) Mai,Seed,Ronco Biellese,Italy,Early Pliocene,4.5,4,Paleo-coordinates,7.9625,45.4666
+14,Sargentodoxa lusatica (Mai) Mai,Seed,"Boca, Novara",Italy,Early Pliocene,4.5,4,Paleo-coordinates,8.322,45.5766
+15,Sargentodoxa lusatica (Mai) Mai,Seed,"Fortuna-Garsdorf, near Cologne",Germany,Pliocene,3.6,4,Paleo-coordinates,6.7396,51.0397
+16,Sargentodoxa cuneata (Oliv.) Rehd. et Wils.,Pollen,"Zhaotong, Yunnan",China,Pliocene– Pleistocene,2.58,4,Paleo-coordinates,103.3763,27.1288

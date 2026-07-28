@@ -1,0 +1,4 @@
+"threshold_km","n_points_before","n_points_after","pct_points_before","pct_points_after"
+10,4,0,1.37,0
+20,25,0,8.53,0
+30,76,57,25.94,20.28
