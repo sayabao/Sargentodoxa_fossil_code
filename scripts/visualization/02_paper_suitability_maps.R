@@ -1,15 +1,12 @@
 # Paper figures: suitability maps
 #
 # Outputs:
-#   R1 present-day suitability map
-#   R2 key TEYF paleoclimate suitability panels
 #   R2b all TEYF paleoclimate suitability panels from 69 Ma to present
 #
 # Note:
-#   The modern biomod2 projection in output/08_projection is currently stored as
-#   a biomod2 RData object with server-side raster links. For a reproducible
-#   local figure, R1 uses the TEYF 0 Ma projection (teyfa), which is also used as
-#   the present-day panel in R2.
+#   The modern suitability (0 Ma) is shown as the present-day panel within R2b.
+#   R1 (standalone modern map) and R2 (key-period panels) were removed: the
+#   article uses R2b only (Fig 4 component A).
 
 library(dplyr)
 library(readr)
@@ -108,7 +105,7 @@ calculate_area_by_class <- function(raster_file, period, ma) {
   area_r <- terra::cellSize(r, unit = "km")
   names(r) <- "suitability"
   names(area_r) <- "area_km2"
-  
+
   as.data.frame(c(r, area_r), na.rm = TRUE) %>%
     mutate(
       period = period,
@@ -149,15 +146,6 @@ plot_global_suitability <- function(plot_data) {
 
 teyf_simulations <- read_csv(path_here("documents", "teyf_simulations.csv"), show_col_types = FALSE)
 
-key_periods <- tibble::tibble(
-  period = c("teyfo", "teyfk", "teyfj", "teyfe", "teyfd", "teyfb", "teyfa"),
-  Ma = c(69, 52, 44, 19, 14, 4, 0)
-) %>%
-  mutate(
-    panel_label = paste0(Ma, " Ma"),
-    raster_file = vapply(period, find_teyf_file, character(1))
-  )
-
 all_periods <- teyf_simulations %>%
   transmute(
     period = `Simulation Name`,
@@ -172,17 +160,6 @@ all_periods <- teyf_simulations %>%
 
 write_csv(all_periods, path_here("output", "figures_paper", "tables", "R2b_all_period_map_inputs.csv"))
 
-write_csv(key_periods, path_here("output", "figures_paper", "tables", "R2_key_period_map_inputs.csv"))
-
-key_period_area <- bind_rows(lapply(seq_len(nrow(key_periods)), function(i) {
-  calculate_area_by_class(key_periods$raster_file[i], key_periods$period[i], key_periods$Ma[i])
-}))
-
-write_csv(
-  key_period_area,
-  path_here("output", "figures_paper", "tables", "R2_key_period_suitability_area_by_class.csv")
-)
-
 all_period_area <- bind_rows(lapply(seq_len(nrow(all_periods)), function(i) {
   calculate_area_by_class(all_periods$raster_file[i], all_periods$period[i], all_periods$Ma[i])
 }))
@@ -190,64 +167,6 @@ all_period_area <- bind_rows(lapply(seq_len(nrow(all_periods)), function(i) {
 write_csv(
   all_period_area,
   path_here("output", "figures_paper", "tables", "R2b_all_period_suitability_area_by_class.csv")
-)
-
-# -------------------------------------------------------------------------
-# R1. Present-day suitability map
-# -------------------------------------------------------------------------
-
-present_file <- find_teyf_file("teyfa")
-present_map_data <- raster_to_plot_df(present_file, aggregate_factor = 6)
-
-p_r1 <- plot_global_suitability(present_map_data) +
-  labs(
-    title = "Present-day habitat suitability",
-    subtitle = "TEYF 0 Ma ensemble projection, classified by shared suitability thresholds"
-  )
-
-save_figure(
-  p_r1,
-  path_here("output", "figures_paper", "maps", "R1_modern_suitability_map"),
-  width = 7.8,
-  height = 3.9
-)
-
-# -------------------------------------------------------------------------
-# R2. Key paleoclimate suitability panels
-# -------------------------------------------------------------------------
-
-panel_data <- bind_rows(lapply(seq_len(nrow(key_periods)), function(i) {
-  raster_to_plot_df(key_periods$raster_file[i], aggregate_factor = 8) %>%
-    mutate(
-      period = key_periods$period[i],
-      Ma = key_periods$Ma[i],
-      panel_label = key_periods$panel_label[i]
-    )
-}))
-
-panel_data <- panel_data %>%
-  mutate(panel_label = factor(panel_label, levels = key_periods$panel_label))
-
-p_r2 <- ggplot(panel_data, aes(x = x, y = y, fill = suitability_class)) +
-  geom_raster() +
-  facet_wrap(~ panel_label, ncol = 2) +
-  suitability_scale +
-  coord_quickmap(xlim = c(-180, 180), ylim = c(-90, 90), expand = FALSE) +
-  labs(
-    title = "Paleoclimate habitat suitability through key periods",
-    subtitle = "Selected TEYF periods from the earliest fossil-matched period to present, classified using shared suitability thresholds"
-  ) +
-  theme_map(base_size = 8) +
-  theme(
-    panel.spacing = unit(0.55, "lines"),
-    strip.text = element_text(margin = margin(b = 2))
-  )
-
-save_figure(
-  p_r2,
-  path_here("output", "figures_paper", "maps", "R2_paleoclimate_key_period_panels"),
-  width = 7.2,
-  height = 8.9
 )
 
 # -------------------------------------------------------------------------
@@ -290,4 +209,4 @@ save_figure(
   height = 5.6
 )
 
-message("R1, R2, and R2b suitability maps were generated.")
+message("R2b all-period suitability panels were generated.")
