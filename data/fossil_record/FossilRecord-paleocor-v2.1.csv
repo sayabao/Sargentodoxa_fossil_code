@@ -1,15 +1,15 @@
 number,fossil_sp,organ,country_region,Age_stage,Age,paleoLong,paleoLat,age,simulation_name
-1,Sargentodoxa cretaceum (Knobloch and Mai) Song et al.,Seed,Germany,Maastrichtian,69.0,9.3278,44.4208,69,teyfo
-2,Sargentodoxa sp.,Seed,France,Early Eocene,52.0,1.0369,45.808,52,teyfk
-3,Sargentodoxa globosa (Manchester) Manchester,Seed,USA,Middle Eocene,44.0,-105.0317,46.7141,44,teyfj
+1,"Sargentodoxa cretaceum (Knobloch et Mai) H.-Z. Song, C. Del Rio et E. Martinetto",Seed,Germany,Maastrichtian,69,9.3278,44.4208,69,teyfo
+2,Sargentodoxa sp.,Seed,France,Early Eocene,52,1.0369,45.808,52,teyfk
+3,Sargentodoxa globosa (Manchester) Manchester,Seed,USA,Middle Eocene,44,-105.0317,46.7141,44,teyfj
 4,cf. Sargentodoxa sp.,Seed,Germany,Middle Eocene,41.2,2.608,48.0362,39,teyfi
 5,Sargentodoxa barghoorniana Tiffney,Seed,USA,Early Miocene,20.44,-68.4428,43.9637,19,teyfe
-6,Sargentodoxa lusatica (Mai) Mai,Seed,Poland,Middle Miocene,15.0,13.7809,52.2061,14,teyfd
+6,Sargentodoxa lusatica (Mai) Mai,Seed,Poland,Middle Miocene,15,13.7809,52.2061,14,teyfd
 7,Sargentodoxa lusatica (Mai) Mai,Seed,Poland,Middle Miocene,13.83,16.9507,52.534,14,teyfd
 8,Sargentodoxa lusatica (Mai) Mai,Seed,Germany,Middle Miocene,13.82,12.5797,51.8074,14,teyfd
 9,Sargentodoxa sp.,Seed,USA,Middle Miocene,13.82,-86.4181,31.7314,14,teyfd
-10,Sargentodoxa sp.,Seed,China,Miocene,13.82,109.2497,23.2024,14,teyfd
-11,Sargentodoxa cuneata (Oliv.) Rehd. et Wils.,Seed,Japan,Late Miocene,10.0,135.1816,37.0193,10,teyfc
+10,Sargentodoxa guipingensis H.-Z. Song et J.-H. Jin,Seed,China,Miocene,13.82,109.2497,23.2024,14,teyfd
+11,Sargentodoxa tajimiensis A. Momohara et H.-Z. Song,Seed,Japan,Late Miocene,10,135.1816,37.0193,10,teyfc
 12,Sargentodoxa lusatica (Mai) Mai,Seed,France,Mio-Pliocene,5.3,7.7203,48.8859,4,teyfb
 13,Sargentodoxa lusatica (Mai) Mai,Seed,Italy,Early Pliocene,4.5,7.9625,45.4666,4,teyfb
 14,Sargentodoxa lusatica (Mai) Mai,Seed,Italy,Early Pliocene,4.5,8.322,45.5766,4,teyfb

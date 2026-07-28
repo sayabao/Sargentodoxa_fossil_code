@@ -1,15 +1,15 @@
 No.,Species,Organ,Country/Region,Latitude,Longitude,Age,Age (Ma)
-1,Sargentodoxa cretaceum (Knobloch and Mai) Song et al. ,Seed,Germany,52.2815,11.0635,Maastrichtian,69.0
-2,Sargentodoxa sp.,Seed,France,50.2479,3.6363,Early Eocene,52.0
-3,Sargentodoxa globosa (Manchester) Manchester,Seed,USA,44.9433,-120.4261,Middle Eocene,44.0
+1,"Sargentodoxa cretaceum (Knobloch et Mai) H.-Z. Song, C. Del Rio et E. Martinetto",Seed,Germany,52.2815,11.0635,Maastrichtian,69
+2,Sargentodoxa sp.,Seed,France,50.2479,3.6363,Early Eocene,52
+3,Sargentodoxa globosa (Manchester) Manchester,Seed,USA,44.9433,-120.4261,Middle Eocene,44
 4,cf. Sargentodoxa sp.,Seed,Germany,50.25,6.6667,Middle Eocene,41.2
 5,Sargentodoxa barghoorniana Tiffney,Seed,USA,43.8333,-73.05,Early Miocene,20.44
-6,Sargentodoxa lusatica (Mai) Mai,Seed,Poland,51.95,15.2279,Middle Miocene,15.0
+6,Sargentodoxa lusatica (Mai) Mai,Seed,Poland,51.95,15.2279,Middle Miocene,15
 7,Sargentodoxa lusatica (Mai) Mai,Seed,Poland,52.2389,18.2873,Middle Miocene,13.83
 8,Sargentodoxa lusatica (Mai) Mai,Seed,Germany,51.5488,13.9278,Middle Miocene,13.82
 9,Sargentodoxa sp.,Seed,USA,31.3497,-89.3054,Middle Miocene,13.82
-10,Sargentodoxa sp.,Seed,China,23.386,110.1653,Miocene,13.82
-11,Sargentodoxa cuneata (Oliv.) Rehd. et Wils.,Seed,Japan,35.3417,137.15,Late Miocene,10.0
+10,Sargentodoxa guipingensis H.-Z. Song et J.-H. Jin,Seed,China,23.386,110.1653,Miocene,13.82
+11,Sargentodoxa tajimiensis A. Momohara et H.-Z. Song,Seed,Japan,35.3417,137.15,Late Miocene,10
 12,Sargentodoxa lusatica (Mai) Mai,Seed,France,48.8005,7.9861,Mio-Pliocene,5.3
 13,Sargentodoxa lusatica (Mai) Mai,Seed,Italy,45.568,8.0492,Early Pliocene,4.5
 14,Sargentodoxa lusatica (Mai) Mai,Seed,Italy,45.6794,8.4084,Early Pliocene,4.5

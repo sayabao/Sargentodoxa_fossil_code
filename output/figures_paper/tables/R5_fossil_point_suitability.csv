@@ -1,5 +1,5 @@
 number,fossil_sp,organ,country_region,Age_stage,Age,paleoLong,paleoLat,age,simulation_name,extracted_suitability,suitability_class,Ma,panel_label,fossil_label,age_label
-1,Sargentodoxa cretaceum (Knobloch and Mai) Song et al.,Seed,Germany,Maastrichtian,69,9.3278,44.4208,69,teyfo,0.671,Moderately suitable,69,69 Ma,1,Maastrichtian / 69 Ma
+1,"Sargentodoxa cretaceum (Knobloch et Mai) H.-Z. Song, C. Del Rio et E. Martinetto",Seed,Germany,Maastrichtian,69,9.3278,44.4208,69,teyfo,0.671,Moderately suitable,69,69 Ma,1,Maastrichtian / 69 Ma
 2,Sargentodoxa sp.,Seed,France,Early Eocene,52,1.0369,45.808,52,teyfk,0.651,Moderately suitable,52,52 Ma,2,Early Eocene / 52 Ma
 3,Sargentodoxa globosa (Manchester) Manchester,Seed,USA,Middle Eocene,44,-105.0317,46.7141,44,teyfj,0.674,Moderately suitable,44,44 Ma,3,Middle Eocene / 44 Ma
 4,cf. Sargentodoxa sp.,Seed,Germany,Middle Eocene,41.2,2.608,48.0362,39,teyfi,0.728,Highly suitable,39,39 Ma,4,Middle Eocene / 41.2 Ma
@@ -8,8 +8,8 @@ number,fossil_sp,organ,country_region,Age_stage,Age,paleoLong,paleoLat,age,simul
 7,Sargentodoxa lusatica (Mai) Mai,Seed,Poland,Middle Miocene,13.83,16.9507,52.534,14,teyfd,0.154,Slightly suitable,14,14 Ma,7,Middle Miocene / 13.83 Ma
 8,Sargentodoxa lusatica (Mai) Mai,Seed,Germany,Middle Miocene,13.82,12.5797,51.8074,14,teyfd,0.189,Slightly suitable,14,14 Ma,8,Middle Miocene / 13.82 Ma
 9,Sargentodoxa sp.,Seed,USA,Middle Miocene,13.82,-86.4181,31.7314,14,teyfd,0.74,Highly suitable,14,14 Ma,9,Middle Miocene / 13.82 Ma
-10,Sargentodoxa sp.,Seed,China,Miocene,13.82,109.2497,23.2024,14,teyfd,0.875,Highly suitable,14,14 Ma,10,Miocene / 13.82 Ma
-11,Sargentodoxa cuneata (Oliv.) Rehd. et Wils.,Seed,Japan,Late Miocene,10,135.1816,37.0193,10,teyfc,0.11,Slightly suitable,10,10 Ma,11,Late Miocene / 10 Ma
+10,Sargentodoxa guipingensis H.-Z. Song et J.-H. Jin,Seed,China,Miocene,13.82,109.2497,23.2024,14,teyfd,0.875,Highly suitable,14,14 Ma,10,Miocene / 13.82 Ma
+11,Sargentodoxa tajimiensis A. Momohara et H.-Z. Song,Seed,Japan,Late Miocene,10,135.1816,37.0193,10,teyfc,0.11,Slightly suitable,10,10 Ma,11,Late Miocene / 10 Ma
 12,Sargentodoxa lusatica (Mai) Mai,Seed,France,Mio-Pliocene,5.3,7.7203,48.8859,4,teyfb,0.213,Slightly suitable,4,4 Ma,12,Mio-Pliocene / 5.3 Ma
 13,Sargentodoxa lusatica (Mai) Mai,Seed,Italy,Early Pliocene,4.5,7.9625,45.4666,4,teyfb,0.306,Moderately suitable,4,4 Ma,13,Early Pliocene / 4.5 Ma
 14,Sargentodoxa lusatica (Mai) Mai,Seed,Italy,Early Pliocene,4.5,8.322,45.5766,4,teyfb,0.332,Moderately suitable,4,4 Ma,14,Early Pliocene / 4.5 Ma

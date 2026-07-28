@@ -1,21 +1,21 @@
-﻿Simulation Name,Ma,Fuller Description,Owner,Model Descriptors,Total Length of Run (in years),Averaging period (in years),Spinup period (in years),Coastline name and code numner,CO2 (in ppmv),CH4 (in ppbv),N2O (in ppbv),CFC11 (in pptv),CFC12 (in pptv),Computer used for simulation,Compiler used for simulation,Date of first entry in database,Date of most recent modification to entry in database
-teyfa,0,This is the 0.0 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Pres, 391",276.01,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfb,4,This is the 4.0 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Zanc, 392",298.33,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfc,10,This is the 10.5 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Tort, 393",299.4,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfd,14,This is the 14.9 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Lang, 394",310.19,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfe,19,This is the 19.5 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Burd, 395",338.28,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyff,25,This is the 25.6 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Chat, 396",502.09,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfg,31,This is the 31.0 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Rupe, 397",763.85,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfh,35,This is the 35.9 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Pria, 398",901.42,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfi,39,This is the 39.5 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Bart, 399",795.57,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfj,44,This is the 44.5 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Lute, 400",751.41,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfk,52,This is the 52.2 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Ypre, 401",735.76,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfl,55,This is the 55.8 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Than, 402",570.28,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfm,60,This is the 60.6 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Sele, 403",334.83,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfn,66,This is the 66.0 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Dani, 404",228.84,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfo,69,This is the 69.0 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Maas, 405",261.65,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfp,75,This is the 75.0 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Camp, 406",559.27,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfq,80,This is the 80.8 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Camp, 407",667.16,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfr,86,This is the 86.7 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Sant, 408",590.28,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyfs,91,This is the 91.9 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Turo, 409",465.65,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_13
-teyft,97,This is the 97.2 Ma simulation using the Scotese palaeogeographies and revised CCN etc.,ggpjv,"HadCM3L, MOSES2_1, TRIFFID_dyn",2000,100,1900,"Ceno, 410",707.39,760,270,0,0,bc4,Intel_v17_0.1_bc4,2018_12_14_10_49,2018_12_16_21_1
+Simulation Name,Ma
+teyfa,0
+teyfb,4
+teyfc,10
+teyfd,14
+teyfe,19
+teyff,25
+teyfg,31
+teyfh,35
+teyfi,39
+teyfj,44
+teyfk,52
+teyfl,55
+teyfm,60
+teyfn,66
+teyfo,69
+teyfp,75
+teyfq,80
+teyfr,86
+teyfs,91
+teyft,97

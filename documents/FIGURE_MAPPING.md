@@ -40,7 +40,7 @@
 - 适宜度分级：0–0.1 / 0.1–0.3 / 0.3–0.7 / 0.7–1（least / slightly / moderately / highly suitable）
 - 高适宜区阈值：0.7（R3b、R7 均用此定义）
 - biomod2 投影原始为 0–1000 存储尺度，出图前转换为 0–1
-- 化石记录 16 条，与手稿 Table 1 一致；Tajimi 记录在分析文件中标为 *cuneata*，手稿已修订为 *tajimiensis* sp. nov.（仅标签，不影响模型）
+- 化石记录 16 条，与手稿 Table 1 一致；v2.1 文件已采用手稿终版分类学标签（*tajimiensis*、*guipingensis*、*cretaceum* comb. nov. 正式作者），仅标签更新不影响模型
 
 ## 已移除的图版（2026-07-28 精简）
 

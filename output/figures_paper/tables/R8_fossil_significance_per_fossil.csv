@@ -1,5 +1,5 @@
 number,fossil_sp,organ,country_region,simulation_name,Ma,paleoLong,paleoLat,extracted_suitability,suitability_class,pct_NH,pct_global
-1,Sargentodoxa cretaceum (Knobloch and Mai) Song et al.,Seed,Germany,teyfo,69,9.3278,44.4208,0.671,Moderately suitable,92.57585172273468,91.41521371833308
+1,"Sargentodoxa cretaceum (Knobloch et Mai) H.-Z. Song, C. Del Rio et E. Martinetto",Seed,Germany,teyfo,69,9.3278,44.4208,0.671,Moderately suitable,92.57585172273468,91.41521371833308
 2,Sargentodoxa sp.,Seed,France,teyfk,52,1.0369,45.808,0.651,Moderately suitable,89.02663103972803,91.80682392977276
 3,Sargentodoxa globosa (Manchester) Manchester,Seed,USA,teyfj,44,-105.0317,46.7141,0.674,Moderately suitable,89.54877255368817,90.76554855188151
 4,cf. Sargentodoxa sp.,Seed,Germany,teyfi,39,2.608,48.0362,0.728,Highly suitable,91.8010084948779,93.14517320477155
@@ -8,8 +8,8 @@ number,fossil_sp,organ,country_region,simulation_name,Ma,paleoLong,paleoLat,extr
 7,Sargentodoxa lusatica (Mai) Mai,Seed,Poland,teyfd,14,16.9507,52.534,0.154,Slightly suitable,72.14042459307092,70.75544504888796
 8,Sargentodoxa lusatica (Mai) Mai,Seed,Germany,teyfd,14,12.5797,51.8074,0.189,Slightly suitable,74.0306867657787,72.35299879162274
 9,Sargentodoxa sp.,Seed,USA,teyfd,14,-86.4181,31.7314,0.74,Highly suitable,95.28329184489293,95.62071531707232
-10,Sargentodoxa sp.,Seed,China,teyfd,14,109.2497,23.2024,0.875,Highly suitable,99.58082250529989,99.70643448554083
-11,Sargentodoxa cuneata (Oliv.) Rehd. et Wils.,Seed,Japan,teyfc,10,135.1816,37.0193,0.11,Slightly suitable,68.51564631939796,66.56652292286743
+10,Sargentodoxa guipingensis H.-Z. Song et J.-H. Jin,Seed,China,teyfd,14,109.2497,23.2024,0.875,Highly suitable,99.58082250529989,99.70643448554083
+11,Sargentodoxa tajimiensis A. Momohara et H.-Z. Song,Seed,Japan,teyfc,10,135.1816,37.0193,0.11,Slightly suitable,68.51564631939796,66.56652292286743
 12,Sargentodoxa lusatica (Mai) Mai,Seed,France,teyfb,4,7.7203,48.8859,0.213,Slightly suitable,70.45915313826218,70.28205233875994
 13,Sargentodoxa lusatica (Mai) Mai,Seed,Italy,teyfb,4,7.9625,45.4666,0.306,Moderately suitable,74.57738203944352,74.09783857320555
 14,Sargentodoxa lusatica (Mai) Mai,Seed,Italy,teyfb,4,8.322,45.5766,0.332,Moderately suitable,75.78397977749768,75.1770192273596

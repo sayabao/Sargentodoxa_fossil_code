@@ -66,9 +66,11 @@ enabled; see that file for how to add a strict lockfile.)
 
 ## Note on fossil taxonomy
 
-The analysis file `data/fossil_record/FossilRecord-paleocor-v2.1.csv` labels
-the Tajimi (Japan) record as *Sargentodoxa cuneata*, consistent with the
-taxonomic naming at the time of modelling. The manuscript (v5.3) subsequently
-revises this record to *Sargentodoxa tajimiensis* sp. nov. This is a taxonomic
-label update only - coordinates, age, and TEYF period assignment are unchanged,
-so it does not affect the niche model or any figure.
+The fossil record files (`data/fossil_record/FossilRecord-paleocor-v2.1.csv`
+and `Fossil_Record_Formal_v2.1_for_coding.csv`) carry the final manuscript
+taxonomy, including *Sargentodoxa tajimiensis* sp. nov. (Tajimi, Japan),
+*S. guipingensis* sp. nov. (Guiping, China), and *S. cretaceum* comb. nov.
+(formal authors). Earlier modelling-stage versions used placeholder names
+(e.g. *cuneata* for the Tajimi record); these are label-only updates -
+coordinates, ages, and TEYF period assignments are unchanged, so the niche
+model and all figures are unaffected.
