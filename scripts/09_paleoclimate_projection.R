@@ -181,6 +181,12 @@ for (i in seq_along(periods_to_project)) {
   # ----- 5.2 Single-model projection -----
   proj_name <- paste0(proj_prefix, "_", period)
 
+  # Pre-create the projection output directory; newer terra no longer
+  # auto-creates it, so biomod2's writeRaster fails with "path does not exist".
+  dir.create(file.path(getwd(), "Models", myBiomodModel@sp.name,
+                       paste0("proj_", proj_name), "individual_projections"),
+             recursive = TRUE, showWarnings = FALSE)
+
   cat("    Running single model projection...")
 
   myBiomodProj <- BIOMOD_Projection(

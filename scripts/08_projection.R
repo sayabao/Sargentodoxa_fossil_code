@@ -249,6 +249,12 @@ cat("  Best single model by BOYCE:", best_boyce_algo, "\n")
 # 2.2 Run single-model projection (BIOMOD_Projection)
 proj_name <- paste0("modern_", projection_name)
 
+# Pre-create the projection output directory; newer terra no longer auto-creates
+# it, so biomod2's writeRaster fails with "[writeRaster] path does not exist".
+dir.create(file.path(getwd(), "Models", myBiomodModel@sp.name,
+                     paste0("proj_", proj_name), "individual_projections"),
+           recursive = TRUE, showWarnings = FALSE)
+
 cat("  Running Single Models Projection (", proj_name, ")...\n")
 myBiomodProj <- BIOMOD_Projection(
   bm.mod = myBiomodModel,
