@@ -59,13 +59,13 @@ all_built_models <- get_built_models(myBiomodModel)
 
 # 2. Match selected_models algo short-names to full model names
 #    Append "$" to anchor the algo name at string end (distinguishes "RF" from "RFd")
-models_to_use <- unlist(sapply(selected_models, function(algo) {
+models_to_use <- as.character(unlist(lapply(selected_models, function(algo) {
   # Build an end-anchored regex, e.g. "RF$"
   pattern <- paste0(algo, "$")
   grep(pattern, all_built_models, value = TRUE)
-}))
+}), use.names = FALSE))
 
-# Remove names from the result (sapply may name the vector, which can cause issues)
+# Remove names from the result (may cause issues if left named)
 names(models_to_use) <- NULL
 
 # Check whether models were found

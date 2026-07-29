@@ -229,10 +229,10 @@ selected_file <- file.path(output_dirs$evaluation, "selected_models.rds")
 selected_models <- readRDS(selected_file)
 all_built_models <- get_built_models(myBiomodModel)
 
-models_to_project <- unlist(sapply(selected_models, function(algo) {
+models_to_project <- as.character(unlist(lapply(selected_models, function(algo) {
   pattern <- paste0(algo, "$")
   grep(pattern, all_built_models, value = TRUE)
-}))
+}), use.names = FALSE))
 names(models_to_project) <- NULL
 
 best_tss_algo <- if (!is.null(training_metadata) && !is.null(training_metadata$best_model_tss)) {
