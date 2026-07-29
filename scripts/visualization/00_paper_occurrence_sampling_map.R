@@ -65,7 +65,22 @@ read_sampling_points <- function() {
       source = "presence_clean"
     )
 
-  pa <- read_csv(path_here("output", "02_pseudo_absence", "sargentodoxa_pseudoabsence_1000.csv"), show_col_types = FALSE) %>%
+  # Use the pseudo-absence scheme that 04 actually formatted (read from its
+  # metadata); default to scheme_1to1 if the metadata is unavailable.
+  pa_scheme <- "scheme_1to1"
+  fmt_meta <- path_here("output", "04_formatted", "data_formatting_metadata.rds")
+  tryCatch({
+    m <- readRDS(fmt_meta)
+    if (!is.null(m$pa_scheme)) pa_scheme <- m$pa_scheme
+  }, error = function(e) {})
+  pa_suffix <- sub("^scheme_", "", pa_scheme)
+  pa_candidates <- c(
+    path_here("output", "02_pseudo_absence", paste0("sargentodoxa_pseudoabsence_", pa_suffix, ".csv")),
+    path_here("output", "02_pseudo_absence", "sargentodoxa_pseudoabsence_1to1.csv"),
+    path_here("output", "02_pseudo_absence", "sargentodoxa_pseudoabsence_1000.csv")
+  )
+  pa_file <- pa_candidates[file.exists(pa_candidates)][1]
+  pa <- read_csv(pa_file, show_col_types = FALSE) %>%
     transmute(
       presence = 0L,
       cv_fold = NA_integer_,
