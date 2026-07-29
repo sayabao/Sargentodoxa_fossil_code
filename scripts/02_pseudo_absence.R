@@ -348,6 +348,11 @@ cat("  - Scheme 2: 1000 points (1:3 ratio)\n")
 
 generate_pseudo <- function(scheme, presence_spat, land_mask, kde_info = NULL) {
   cat("\n  Generating", scheme$name, "...\n")
+
+  # Seed the RNG so pseudo-absence generation is reproducible across re-runs.
+  # Without this, sample() and runif() jitter below draw from an unseeded
+  # stream and every run gives different points.
+  set.seed(seed_val)
   
   # Preprocess the count vector
   if (is.numeric(scheme$nb.absences)) {
@@ -523,6 +528,7 @@ cat("  Saved visualization plot:", pdf_file, "\n")
 metadata <- list(
   presence_count = n_presence,
   strategy = pa_strategy,
+  seed = seed_val,
   dist_min = pa_dist_min,  # degrees
   dist_min_km = round(pa_dist_min * 111),  # ~111 km
   dist_max = pa_dist_max,
