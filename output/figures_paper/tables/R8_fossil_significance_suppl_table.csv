@@ -1,10 +1,10 @@
 test_type,statistic,background,observed,expected_null,null_sd,null_95CI,z_score,n_perm_or_trials,p_value,significance
-Monte Carlo randomization,Mean percentile rank of fossil cells (%),Northern Hemisphere land,82.2,49.2,7.5,"[34.6, 63.7]",4.41,9999,0.0001,***
-Monte Carlo randomization,Mean percentile rank of fossil cells (%),Global land,81.9,49.2,7.5,"[34.5, 63.7]",4.35,9999,0.0001,***
-Monte Carlo randomization,Mean suitability of fossil cells (0-1),Northern Hemisphere land,0.449,0.173,0.062,"[0.064, 0.305]",4.43,9999,0.0002,***
-Binomial test,Fossil cells >= 0.1 suitability,Northern Hemisphere land,15/16 (93.8%),5.6/16 (34.8%),,,,16,<0.0001,***
-Binomial test,Fossil cells >= 0.3 suitability,Northern Hemisphere land,10/16 (62.5%),3.7/16 (23.4%),,,,16,0.0010,***
-Binomial test,Fossil cells >= 0.7 suitability,Northern Hemisphere land,4/16 (25.0%),1.2/16 (7.2%),,,,16,0.0241,*
-Binomial test,Fossil cells >= 0.1 suitability,Global land,15/16 (93.8%),5.6/16 (35.2%),,,,16,<0.0001,***
-Binomial test,Fossil cells >= 0.3 suitability,Global land,10/16 (62.5%),4.0/16 (25.0%),,,,16,0.0016,**
-Binomial test,Fossil cells >= 0.7 suitability,Global land,4/16 (25.0%),1.2/16 (7.4%),,,,16,0.0265,*
+Monte Carlo randomization,Mean percentile rank of fossil cells (%),Northern Hemisphere land,85.8,49.6,7.3,"[35.3, 63.8]",4.93,9999,0.0001,***
+Monte Carlo randomization,Mean percentile rank of fossil cells (%),Global land,84.8,49.6,7.4,"[35.2, 63.8]",4.77,9999,0.0001,***
+Monte Carlo randomization,Mean suitability of fossil cells (0-1),Northern Hemisphere land,0.457,0.166,0.053,"[0.073, 0.280]",5.47,9999,0.0001,***
+Binomial test,Fossil cells >= 0.1 suitability,Northern Hemisphere land,16/16 (100.0%),6.3/16 (39.2%),,,,16,<0.0001,***
+Binomial test,Fossil cells >= 0.3 suitability,Northern Hemisphere land,12/16 (75.0%),3.4/16 (21.1%),,,,16,<0.0001,***
+Binomial test,Fossil cells >= 0.7 suitability,Northern Hemisphere land,2/16 (12.5%),0.6/16 (3.5%),,,,16,0.1073,ns
+Binomial test,Fossil cells >= 0.1 suitability,Global land,16/16 (100.0%),6.1/16 (38.0%),,,,16,<0.0001,***
+Binomial test,Fossil cells >= 0.3 suitability,Global land,12/16 (75.0%),3.6/16 (22.4%),,,,16,<0.0001,***
+Binomial test,Fossil cells >= 0.7 suitability,Global land,2/16 (12.5%),0.7/16 (4.2%),,,,16,0.1442,ns

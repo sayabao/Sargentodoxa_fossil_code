@@ -24,7 +24,16 @@ if (basename(project_root) == "visualization") {
   project_root <- normalizePath(file.path(project_root, ".."), mustWork = TRUE)
 }
 
-path_here <- function(...) file.path(project_root, ...)
+# Output root: defaults to "output" (frozen shipped outputs). Set the
+# SARGENTO_OUTPUT_ROOT env var to regenerate figures from an alternative
+# output tree (e.g. a fresh server copy under output_new/) without touching
+# the frozen outputs. Only the "output" prefix is redirected; "data" stays.
+output_root <- Sys.getenv("SARGENTO_OUTPUT_ROOT", "output")
+path_here <- function(...) {
+  parts <- list(...)
+  if (length(parts) >= 1L && identical(parts[[1]], "output")) parts[[1]] <- output_root
+  do.call(file.path, c(list(project_root), parts))
+}
 
 dir.create(path_here("output", "figures_paper", "trends"), recursive = TRUE, showWarnings = FALSE)
 dir.create(path_here("output", "figures_paper", "tables"), recursive = TRUE, showWarnings = FALSE)

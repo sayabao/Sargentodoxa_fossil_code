@@ -45,7 +45,26 @@ if (basename(project_root) == "visualization") {
   project_root <- normalizePath(file.path(project_root, ".."), mustWork = TRUE)
 }
 
-path_here <- function(...) file.path(project_root, ...)
+# Output root: defaults to "output" (frozen shipped outputs). Set the
+# SARGENTO_OUTPUT_ROOT env var to regenerate figures from an alternative
+# output tree (e.g. a fresh server copy under output_new/) without touching
+# the frozen outputs. Only the "output" prefix is redirected; "data" stays.
+output_root <- Sys.getenv("SARGENTO_OUTPUT_ROOT", "output")
+path_here <- function(...) {
+  parts <- list(...)
+  if (length(parts) >= 1L && identical(parts[[1]], "output")) parts[[1]] <- output_root
+  do.call(file.path, c(list(project_root), parts))
+}
+
+# Paleoclimate projection dir: current pipeline writes "09_paleoclimate";
+# older frozen outputs used "09_paleoclimate_teyf". Accept either.
+paleo_proj_dir <- function() {
+  for (nm in c("09_paleoclimate_teyf", "09_paleoclimate")) {
+    d <- path_here("output", nm, "projections")
+    if (dir.exists(d)) return(d)
+  }
+  path_here("output", "09_paleoclimate_teyf", "projections")
+}
 
 dir.create(path_here("output", "figures_paper", "fossil_comparison"), recursive = TRUE, showWarnings = FALSE)
 dir.create(path_here("output", "figures_paper", "tables"), recursive = TRUE, showWarnings = FALSE)
@@ -61,7 +80,7 @@ normalize_prediction_raster <- function(r) {
 }
 
 find_teyf_file <- function(period) {
-  projection_dir <- path_here("output", "09_paleoclimate_teyf", "projections")
+  projection_dir <- paleo_proj_dir()
   hit <- list.files(
     projection_dir,
     pattern = paste0("^", period, "_.*\\.tif$"),

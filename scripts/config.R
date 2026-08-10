@@ -55,6 +55,11 @@ data_dir <- file.path(project_dir, "data")
 sp_file_cvh <- file.path(project_dir, "data/occ_data_cvh/sargentodoxa_occ_cvh_counties_filtered.csv")
 sp_file_gbif <- file.path(project_dir, "data/occ_data_cvh/sargentodoxa_occ_filtered.csv")
 
+Sys.setenv(
+  SARGENTO_MODERN_CLIM_DIR = "/home/cedrus/data/shz/data/wc2.1_5m_bio",
+  SARGENTO_TEWT_CLIM_DIR   = "/home/cedrus/data/shz/data/tewt_0_3600ka/masked_landsea",
+  SARGENTO_TEYF_CLIM_DIR   = "/home/cedrus/data/shz/data/from linlin/teyf-mask-nc-5min"
+)
 # Leave default: modern climate directory (WorldClim 2.1, 5 arc-min)
 # Set the SARGENTO_MODERN_CLIM_DIR env var to your climate data directory.
 # Not bundled; set the env var to rerun steps 01-08 locally.
@@ -216,21 +221,21 @@ kde_window <- "hull"  # window type: "hull" (convex hull), "rect" (rectangle)
 # Common: custom KDE implementation params (for older R versions)
 # Bandwidth (km): smoothing scale spreading occurrence hotspots
 # Larger = smoother, more dispersed pseudo-absence; smaller = closer to occurrence clusters.
-kde_bandwidth_km <- 2500
+kde_bandwidth_km <- 1200
 
 # Advanced: KDE weight-map computation resolution (km)
 # Larger = faster but coarser; NULL uses the native climate raster resolution
-kde_compute_resolution_km <- 60
+kde_compute_resolution_km <- 30
 
 # Advanced: add random jitter within KDE coarse cells to reduce blockiness
 kde_jitter_within_cell <- T
 
 # Advanced: candidate oversampling factor
 # Larger = easier to satisfy min-distance constraints, but slower
-kde_candidate_multiplier <- 8
+kde_candidate_multiplier <- 10
 
 # Advanced: maximum resampling iterations
-kde_max_iter <- 10
+kde_max_iter <- 14
 
 # Advanced: SRE params (only when pa_strategy = "sre")
 sre_quant <- 0.1      # half-quantile
@@ -238,7 +243,7 @@ sre_quant <- 0.1      # half-quantile
 # Common: distance limits between pseudo-absence and presence (degrees)
 # These directly control how near/far pseudo-absences sit from known occurrences.
 # Mainly affects `disk`; in the current implementation `kde` also uses them as constraints.
-pa_dist_min <- 5  # 1 degree ~ 111 km
+pa_dist_min <- 2  # 1 degree ~ 111 km
 pa_dist_max <- 60 # max distance (degrees) from presence for KDE/disk pseudo-absence
 
 # Advanced: pseudo-absence sampling latitude limits
@@ -262,9 +267,9 @@ pa_scheme1 <- list(
 # adjust manually based on presence count and study design.
 pa_scheme2 <- list(
   name = "scheme_1000",
-  nb.absences = 2000,
+  nb.absences = 1000,
   nb.rep = 1,
-  desc = "1:10 ratio (2000 points)"
+  desc = "1:10 ratio (1000 points)"
 )
 
 # ==================== 7. Data formatting ====================
@@ -273,7 +278,7 @@ pa_scheme2 <- list(
 # The main pipeline keeps two schemes for clarity and maintenance.
 # "scheme_1to1" = equal to presence
 # "scheme_1000" = fixed-count pseudo-absence points
-pa_scheme_to_use <- "scheme_1000"
+pa_scheme_to_use <- "scheme_1to1"
 
 # ==================== 8. Variable selection ====================
 
@@ -283,7 +288,7 @@ corr_threshold <- 0.8
 
 # Common: VIF threshold (final screening)
 # Controls multicollinearity; a core variable-selection parameter.
-vif_threshold <- 11
+vif_threshold <- 12
 
 # Common: run stepwise VIF removal?
 use_vif_step <- TRUE
@@ -297,11 +302,11 @@ use_vif_step <- TRUE
 #   Bio8 = Mean temp of wettest quarter, Bio9 = Mean temp of driest quarter, Bio10 = Mean temp of warmest quarter, Bio11 = Mean temp of coldest quarter
 #   Bio12 = Annual precipitation, Bio13 = Precip of wettest month, Bio14 = Precip of driest month, Bio15 = Precip seasonality
 #   Bio16 = Precip of wettest quarter, Bio17 = Precip of driest quarter, Bio18 = Precip of warmest quarter, Bio19 = Precip of coldest quarter
-manual_var_select <- c(#'Bio1',
-                       'Bio2', 'Bio5','Bio6',#'Bio7','Bio3','Bio4',
-                       'Bio8','Bio9',# 'Bio10', 'Bio11',
-                       #'Bio12',#
-                       'Bio13','Bio14','Bio15'#'Bio16','Bio17','Bio18','Bio19'
+manual_var_select <- c(#'Bio1','Bio2'
+                       'Bio3', #'Bio5','Bio6','Bio7','Bio4',
+                       'Bio8','Bio9', 'Bio10', 'Bio11',
+                       #'Bio12',#'Bio13','Bio14',
+                       'Bio15', 'Bio18','Bio19'#'Bio16','Bio17',
                        )
 # ==================== 9. Data split and cross-validation ====================
 
@@ -343,7 +348,7 @@ spatial_cv_max_tries <- 4
 # Common: single-model algorithm list
 # On first contact, prioritize a stable pipeline over many algorithms.
 # Options: "ANN", "CTA", "FDA", "GAM", "GBM", "GLM", "MARS", "MAXNET", "RF", "RFd"
-model_list <- c( "CTA", "FDA", "GAM", "GBM", "GLM", "MARS", "MAXNET", "RF")
+model_list <- c( "CTA", "FDA", "GAM", "GLM", "MARS", "MAXNET", "RF")
 # model_list <- c("MAXNET")
 # If some algorithms are unavailable in your environment, trim the list temporarily
 # model_list <- c("GAM", "GBM", "GLM", "MAXNET", "RF")
@@ -372,7 +377,7 @@ var_importance_rep <- 5
 nb_cpu <- 8
 
 # Leave default: global random seed (for reproducibility)
-seed_val <- 123
+seed_val <- 1001
 
 # ==================== 12. Ensemble models ====================
 
@@ -390,16 +395,12 @@ ensemble_algo <- c("EMwmean")
 # Common: model filtering metrics
 # Only models meeting all these thresholds enter the ensemble.
 # Options: "TSS", "AUCroc", "AUCprg", "BOYCE"
-metric_select <- c("TSS", "AUCroc","AUCprg", "BOYCE")
+metric_select <- c("TSS")#, "AUCroc","AUCprg", "BOYCE"
 
 # Common: model filtering thresholds
 # Order must correspond one-to-one with metric_select
-# Current rules:
-#   TSS >= 0.8
-#   AUCroc >= 0.8
-#   AUCprg >= 0.8
-#   BOYCE >= 0.6
-metric_select_thresh <- c(0.8, 0.8, 0.8, 0.6)
+
+metric_select_thresh <- c(0.8)#, 0.8, 0.8, 0.6
 
 # Advanced: ensemble grouping
 # "all"     = merge all models into one ensemble (recommended)
@@ -413,7 +414,7 @@ em.by <- "all"
 # If unsure whether thresholds are reasonable, start with `manual` for clearer results.
 # "auto"   = filter by thresholds
 # "manual" = manually specify kept models
-model_selection_mode <- "manual"
+model_selection_mode <- "auto"
 
 # Common: model names to keep under manual mode (one or more)
 # e.g.: manual_selected_models <- c("MAXNET", "RF", "GLM")
@@ -432,7 +433,7 @@ emwmean_decay <- "proportional"
 # Common: projection version label
 # Distinguishes runs; directly affects output dir and file naming
 # e.g. "v1_modern", "v2_teyf", "v3_tewt_petm"
-projection_name <- "v10_test_sudo_number"
+projection_name <- "v5_for_paper_code"
 
 # Common: paleoclimate periods to project
 # NULL = scan the data dir and project all periods.
@@ -443,7 +444,7 @@ projection_name <- "v10_test_sudo_number"
 # 09_paleoclimate_projection.R extracts numbers from period names for range filtering.
 # For TEWT data, to test within 100 ka:
 #   projection_periods <- list(time_range = c(0, 100))
-projection_periods <- list(time_range = c(3602, 999999)) # dynamic; NULL = auto-scan all
+projection_periods <- NULL # dynamic; NULL = auto-scan all
 
 # Leave default: projection raster output format
 # ".tif" = GeoTIFF (recommended)
@@ -913,7 +914,8 @@ cat("  Model selection mode:", model_selection_mode, "\n")
 if (model_selection_mode == "manual") {
   cat("  Manual selected models:", paste(manual_selected_models, collapse = ", "), "\n")
 } else {
-  cat("  Auto selection: Top", top_n_models, "models (TSS >=", metric_select_thresh[1], ", AUC >=", metric_select_thresh[2], ")\n")
+  rules <- paste(metric_select, ">=", metric_select_thresh, collapse = ", ")
+  cat("  Auto selection: Top", top_n_models, "models (", rules, ")\n")
 }
 cat("  Ensemble:", paste(ensemble_algo, collapse = ", "), "\n")
 cat("\n")
@@ -921,3 +923,4 @@ cat("  Output base:", output_base, "\n")
 cat("  Projection name:", projection_name, "\n")
 cat("=================================================================\n")
 cat("\n")
+

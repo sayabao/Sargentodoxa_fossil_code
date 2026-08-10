@@ -1,12 +1,12 @@
 simulation_name,Ma,panel_label,suitability_class,fossil_count,mean_suitability,min_suitability,max_suitability
-teyfo,69,69 Ma,Moderately suitable,1,0.671,0.671,0.671
-teyfk,52,52 Ma,Moderately suitable,1,0.651,0.651,0.651
-teyfj,44,44 Ma,Moderately suitable,1,0.674,0.674,0.674
-teyfi,39,39 Ma,Highly suitable,1,0.728,0.728,0.728
-teyfe,19,19 Ma,Least suitable,1,0.084,0.084,0.084
-teyfd,14,14 Ma,Slightly suitable,3,0.18033333333333335,0.154,0.198
-teyfd,14,14 Ma,Highly suitable,2,0.8075,0.74,0.875
-teyfc,10,10 Ma,Slightly suitable,1,0.11,0.11,0.11
-teyfb,4,4 Ma,Slightly suitable,1,0.213,0.213,0.213
-teyfb,4,4 Ma,Moderately suitable,3,0.37333333333333335,0.306,0.482
-teyfb,4,4 Ma,Highly suitable,1,0.777,0.777,0.777
+teyfo,69,69 Ma,Moderately suitable,1,0.605,0.605,0.605
+teyfk,52,52 Ma,Moderately suitable,1,0.572,0.572,0.572
+teyfj,44,44 Ma,Moderately suitable,1,0.634,0.634,0.634
+teyfi,39,39 Ma,Moderately suitable,1,0.566,0.566,0.566
+teyfe,19,19 Ma,Slightly suitable,1,0.192,0.192,0.192
+teyfd,14,14 Ma,Slightly suitable,2,0.2805,0.28,0.281
+teyfd,14,14 Ma,Moderately suitable,2,0.48,0.307,0.653
+teyfd,14,14 Ma,Highly suitable,1,0.706,0.706,0.706
+teyfc,10,10 Ma,Slightly suitable,1,0.133,0.133,0.133
+teyfb,4,4 Ma,Moderately suitable,4,0.39125,0.305,0.431
+teyfb,4,4 Ma,Highly suitable,1,0.813,0.813,0.813

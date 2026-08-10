@@ -1,17 +1,17 @@
 number,fossil_sp,organ,country_region,Age_stage,Age,paleoLong,paleoLat,age,simulation_name,extracted_suitability,suitability_class
-1,"Sargentodoxa cretaceum (Knobloch et Mai) H.-Z. Song, C. Del Rio et E. Martinetto",Seed,Germany,Maastrichtian,69,9.3278,44.4208,69,teyfo,0.671,Moderately suitable
-2,Sargentodoxa sp.,Seed,France,Early Eocene,52,1.0369,45.808,52,teyfk,0.651,Moderately suitable
-3,Sargentodoxa globosa (Manchester) Manchester,Seed,USA,Middle Eocene,44,-105.0317,46.7141,44,teyfj,0.674,Moderately suitable
-4,cf. Sargentodoxa sp.,Seed,Germany,Middle Eocene,41.2,2.608,48.0362,39,teyfi,0.728,Highly suitable
-5,Sargentodoxa barghoorniana Tiffney,Seed,USA,Early Miocene,20.44,-68.4428,43.9637,19,teyfe,0.084,Least suitable
-6,Sargentodoxa lusatica (Mai) Mai,Seed,Poland,Middle Miocene,15,13.7809,52.2061,14,teyfd,0.198,Slightly suitable
-7,Sargentodoxa lusatica (Mai) Mai,Seed,Poland,Middle Miocene,13.83,16.9507,52.534,14,teyfd,0.154,Slightly suitable
-8,Sargentodoxa lusatica (Mai) Mai,Seed,Germany,Middle Miocene,13.82,12.5797,51.8074,14,teyfd,0.189,Slightly suitable
-9,Sargentodoxa sp.,Seed,USA,Middle Miocene,13.82,-86.4181,31.7314,14,teyfd,0.74,Highly suitable
-10,Sargentodoxa guipingensis H.-Z. Song et J.-H. Jin,Seed,China,Miocene,13.82,109.2497,23.2024,14,teyfd,0.875,Highly suitable
-11,Sargentodoxa tajimiensis A. Momohara et H.-Z. Song,Seed,Japan,Late Miocene,10,135.1816,37.0193,10,teyfc,0.11,Slightly suitable
-12,Sargentodoxa lusatica (Mai) Mai,Seed,France,Mio-Pliocene,5.3,7.7203,48.8859,4,teyfb,0.213,Slightly suitable
-13,Sargentodoxa lusatica (Mai) Mai,Seed,Italy,Early Pliocene,4.5,7.9625,45.4666,4,teyfb,0.306,Moderately suitable
-14,Sargentodoxa lusatica (Mai) Mai,Seed,Italy,Early Pliocene,4.5,8.322,45.5766,4,teyfb,0.332,Moderately suitable
-15,Sargentodoxa lusatica (Mai) Mai,Seed,Germany,Pliocene,3.6,6.7396,51.0397,4,teyfb,0.482,Moderately suitable
-16,Sargentodoxa cuneata (Oliv.) Rehd. et Wils.,Pollen,China,Pliocene– Pleistocene,2.58,103.3763,27.1288,4,teyfb,0.777,Highly suitable
+1,"Sargentodoxa cretaceum (Knobloch et Mai) H.-Z. Song, C. Del Rio et E. Martinetto",Seed,Germany,Maastrichtian,69,9.3278,44.4208,69,teyfo,0.605,Moderately suitable
+2,Sargentodoxa sp.,Seed,France,Early Eocene,52,1.0369,45.808,52,teyfk,0.572,Moderately suitable
+3,Sargentodoxa globosa (Manchester) Manchester,Seed,USA,Middle Eocene,44,-105.0317,46.7141,44,teyfj,0.634,Moderately suitable
+4,cf. Sargentodoxa sp.,Seed,Germany,Middle Eocene,41.2,2.608,48.0362,39,teyfi,0.566,Moderately suitable
+5,Sargentodoxa barghoorniana Tiffney,Seed,USA,Early Miocene,20.44,-68.4428,43.9637,19,teyfe,0.192,Slightly suitable
+6,Sargentodoxa lusatica (Mai) Mai,Seed,Poland,Middle Miocene,15,13.7809,52.2061,14,teyfd,0.307,Moderately suitable
+7,Sargentodoxa lusatica (Mai) Mai,Seed,Poland,Middle Miocene,13.83,16.9507,52.534,14,teyfd,0.28,Slightly suitable
+8,Sargentodoxa lusatica (Mai) Mai,Seed,Germany,Middle Miocene,13.82,12.5797,51.8074,14,teyfd,0.281,Slightly suitable
+9,Sargentodoxa sp.,Seed,USA,Middle Miocene,13.82,-86.4181,31.7314,14,teyfd,0.653,Moderately suitable
+10,Sargentodoxa guipingensis H.-Z. Song et J.-H. Jin,Seed,China,Miocene,13.82,109.2497,23.2024,14,teyfd,0.706,Highly suitable
+11,Sargentodoxa tajimiensis A. Momohara et H.-Z. Song,Seed,Japan,Late Miocene,10,135.1816,37.0193,10,teyfc,0.133,Slightly suitable
+12,Sargentodoxa lusatica (Mai) Mai,Seed,France,Mio-Pliocene,5.3,7.7203,48.8859,4,teyfb,0.305,Moderately suitable
+13,Sargentodoxa lusatica (Mai) Mai,Seed,Italy,Early Pliocene,4.5,7.9625,45.4666,4,teyfb,0.408,Moderately suitable
+14,Sargentodoxa lusatica (Mai) Mai,Seed,Italy,Early Pliocene,4.5,8.322,45.5766,4,teyfb,0.421,Moderately suitable
+15,Sargentodoxa lusatica (Mai) Mai,Seed,Germany,Pliocene,3.6,6.7396,51.0397,4,teyfb,0.431,Moderately suitable
+16,Sargentodoxa cuneata (Oliv.) Rehd. et Wils.,Pollen,China,Pliocene– Pleistocene,2.58,103.3763,27.1288,4,teyfb,0.813,Highly suitable

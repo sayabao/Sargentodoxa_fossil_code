@@ -2,7 +2,7 @@
 
 This repository contains the species distribution model (SDM) code, frozen
 intermediate outputs, and figure-generating scripts for the palaeoecological
-analysis of *Sargentodoxa* reported in the accompanying manuscript (v5.3,
+analysis of *Sargentodoxa* reported in the accompanying manuscript (v5.5,
 submitted to *Palaeogeography, Palaeoclimatology, Palaeoecology*).
 
 It is a **curated, de-servered snapshot** of the analysis workspace: only the
@@ -18,11 +18,11 @@ assembles the final article figures in Photoshop.
 | `scripts/01_…_10_*.R` | Numbered biomod2 SDM pipeline (data prep -> ensemble -> modern/paleo projection -> visualization) |
 | `scripts/config.R` | Global config; paths de-servered (local data via relative paths, climate rasters via env vars) |
 | `scripts/get_paleocoordinates.R` | Generates palaeo-coordinates for fossil records via the GPlates PALEOMAP service |
-| `scripts/visualization/` | Paper-figure component scripts (M1-M4, R2b, R3, R3b, R4, R5, R7, R8) |
+| `scripts/visualization/` | Paper-figure component scripts (M1-M4, R2b, R3, R3b, R3c, R4, R5, R7, R8) |
 | `data/occ_data_cvh/` | Occurrence data (CVH) |
 | `data/fossil_record/` | Fossil record tables incl. palaeo-coordinates (`FossilRecord-paleocor-v2.1.csv`) |
 | `data/teyf_simulations.csv` | TEYF period metadata (Simulation Name, Ma) used to match fossils/projections to periods |
-| `output/` | Frozen model/projection outputs that let the figure scripts reproduce every article figure locally |
+| `output/` | Frozen model/projection outputs (incl. `output/09_paleoclimate/`) that let the figure scripts reproduce every article figure locally |
 
 ## Quickstart - reproduce the article component figures
 
@@ -36,7 +36,14 @@ Rscript scripts/visualization/02_paper_suitability_maps.R           # Fig 4 (R2b
 Rscript scripts/visualization/03_paper_fossil_comparison_figures.R  # Fig 5 (R4,R5)
 Rscript scripts/visualization/05_redraw_r7_contrast_heatmap_trends.R # Fig 3 (R7 contrast)
 Rscript scripts/visualization/06_fossil_suitability_significance.R  # Fig S11 (R8)
+Rscript scripts/visualization/R3b_latitudinal_threshold_comparison.R # Fig 4 (R3b/R3c ≥0.3 companion panel)
 ```
+
+The `R3b_latitudinal_threshold_comparison.R` script adds a `≥0.3` (moderately +
+highly suitable) companion panel to the R3b latitudinal heatmap, matching the
+manuscript's revised suitability threshold (changed from `0.7` to `0.3`). It
+reads the already-computed `R3b_latitudinal_suitability_area_by_class.csv` and
+does not recompute rasters.
 
 `Fig S4` is taken from `output/08_projection/projection_modern_map.pdf` (produced
 by `scripts/08_projection.R`): panel A = page 1, panel B = page 6

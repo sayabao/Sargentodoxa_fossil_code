@@ -17,7 +17,7 @@ Priority inputs:
 - `output/03_variable_select/` (M2)
 - `output/06_evaluation/`, `output/07_ensemble/` (M3, M4)
 - `output/08_projection/` (Fig S4)
-- `output/09_paleoclimate_teyf/` (R2b, R3, R3b, R4, R5, R7, R8)
+- `output/09_paleoclimate/` (R2b, R3, R3b, R3c, R4, R5, R7, R8)
 - `data/fossil_record/FossilRecord-paleocor-v2.1.csv` (R3, R4, R5, R8)
 
 Current scripts:
@@ -29,5 +29,6 @@ Current scripts:
 - `04_server_important_variable_paleoclimate_background.R`: server-side R7 script summarizing important Bio variables within high-suitability (`>= 0.7`) cells through time. RStudio-friendly: edit the settings block at the top and click Source. Requires the original TEYF Bio nc/tif files. Its output CSV is the input to `05_…`.
 - `05_redraw_r7_contrast_heatmap_trends.R`: redraws the R7 high-suitability vs background contrast heatmap locally from the R7 CSV (Fig 3 B).
 - `06_fossil_suitability_significance.R`: R8 fossil-point suitability significance test (Monte Carlo + binomial) and figure (Fig S11).
+- `R3b_latitudinal_threshold_comparison.R`: adds a `>= 0.3` (moderately + highly suitable) companion panel to the R3b latitudinal heatmap (R3c / Fig 4), matching the manuscript's revised suitability threshold (changed from `0.7` to `0.3`). Reads the already-computed `R3b_latitudinal_suitability_area_by_class.csv`; does not recompute rasters.
 
 See the repo `README.md` for the article-figure ↔ script mapping and reproducibility notes.
