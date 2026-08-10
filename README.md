@@ -2,8 +2,7 @@
 
 This repository contains the species distribution model (SDM) code, frozen
 intermediate outputs, and figure-generating scripts for the palaeoecological
-analysis of *Sargentodoxa* reported in the accompanying manuscript (v5.5,
-submitted to *Palaeogeography, Palaeoclimatology, Palaeoecology*).
+analysis of *Sargentodoxa*.
 
 It is a **curated, de-servered snapshot** of the analysis workspace: only the
 scripts, data, and outputs that the manuscript actually uses are included, and
@@ -15,7 +14,7 @@ assembles the final article figures in Photoshop.
 
 | Path | Contents |
 |---|---|
-| `scripts/01_…_10_*.R` | Numbered biomod2 SDM pipeline (data prep -> ensemble -> modern/paleo projection -> visualization) |
+| `scripts/01_…_09_*.R` | Numbered biomod2 SDM pipeline (data prep -> ensemble -> modern/paleo projection) |
 | `scripts/config.R` | Global config; paths de-servered (local data via relative paths, climate rasters via env vars) |
 | `scripts/get_paleocoordinates.R` | Generates palaeo-coordinates for fossil records via the GPlates PALEOMAP service |
 | `scripts/visualization/` | Paper-figure component scripts (M1-M4, R2b, R3, R3c, R4, R5, R7, R8) |
@@ -39,13 +38,6 @@ Rscript scripts/visualization/06_fossil_suitability_significance.R  # Fig S11 (R
 Rscript scripts/visualization/R3c_latitudinal_area_heatmap.R        # Fig 4 (R3c ≥0.3 latitudinal heatmap)
 ```
 
-The `R3c_latitudinal_area_heatmap.R` script draws the manuscript's latitudinal
-heatmap of suitable habitat for suitability `≥0.3` (moderately + highly
-suitable), matching the manuscript's revised suitability threshold (changed from
-`0.7` to `0.3`). It reads the pre-computed `R3b_latitudinal_suitability_area_by_class.csv`
-(all four classes) from `01_paper_model_and_trend_figures.R` and does not
-recompute rasters. The earlier R3b (`0.7-1` only) figure is no longer used.
-
 `Fig S4` is taken from `output/08_projection/projection_modern_map.pdf` (produced
 by `scripts/08_projection.R`): panel A = page 1, panel B = page 6
 ("Presence vs Background: Ensemble (EMwmean)"), with a green dashed line added
@@ -57,18 +49,18 @@ manually by the author. Outputs are written under `output/figures_paper/`.
 figure scripts (and the Presence-vs-Background page of `08_projection.R`).
 
 **Requires server data (not shipped):** the upstream pipeline `01-07` needs the
-full WorldClim 2.1 bioclim stack; `09_paleoclimate_projection.R` needs the TEYF
-palaeoclimate rasters; `04_server_*.R` (R7) needs the raw TEYF Bio variables.
+full WorldClim 2.1 bioclim stack; `09_paleoclimate_projection.R` needs the
+palaeoclimate data from HadCM3; `04_server_*.R` (R7) also needs the raw palaeoclimate data.
 These scripts are kept for methodology; their frozen outputs ship in `output/`
 so downstream figures reproduce without re-running them.
 
 **Random seeds:** spatial thinning / CV use `thinning_seed = 42` and
-`seed_val = 123` (see `scripts/config.R`); model training, ensembling, and
+`seed_val = 1001` (see `scripts/config.R`); model training, ensembling, and
 projection are bound by these, so results are reproducible.
 
 ## R environment
 
-R 4.5.1 (ucrt, Windows). versions are recorded here.
-Key packages: biomod2 4.3.4.5, terra 1.9.1, raster 3.6.32, sf 1.1.0, dplyr 1.2.0,
-readr 2.1.6, ggplot2 4.0.1, patchwork 1.3.2, tidyterra 1.1.0, viridis 0.6.5,
-corrplot 0.95, usdm 2.1.7.
+R 4.6.0 Platform: x86_64-pc-linux-gnu. versions are recorded here.
+Key packages: biomod2 4.3-4-6, terra 1.9.1, raster 3.6-32, sf 1.1-1, dplyr 1.2.1,
+readr 2.2.0, ggplot2 4.0.3, viridis 0.6.5,
+corrplot 0.95, usdm 2.1-7.

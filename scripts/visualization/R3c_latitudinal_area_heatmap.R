@@ -2,10 +2,9 @@
 #
 # Draws the manuscript's latitudinal heatmap of suitable habitat for the
 # moderately + highly suitable classes (suitability >= 0.3), from the earliest
-# fossil period to present. This replaced the earlier R3b (0.7-1 only) figure,
-# which the manuscript no longer uses.
+# fossil period to present.
 #
-# It reads the already-computed R3b_latitudinal_suitability_area_by_class.csv
+# It reads the already-computed latitudinal_suitability_area_by_class.csv
 # (which contains all four classes) and does NOT recompute rasters.
 # It honours SARGENTO_OUTPUT_ROOT to point at the desired output tree
 # (e.g. output_new, output_new_2/output).
@@ -56,7 +55,7 @@ save_figure <- function(plot, stem, width, height, dpi = 600) {
 }
 
 lat_area <- read_csv(
-  path_here("output", "figures_paper", "tables", "R3b_latitudinal_suitability_area_by_class.csv"),
+  path_here("output", "figures_paper", "tables", "latitudinal_suitability_area_by_class.csv"),
   show_col_types = FALSE
 )
 

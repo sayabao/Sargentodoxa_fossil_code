@@ -5,7 +5,7 @@
 #   M3 model evaluation metrics
 #   M4 ensemble variable importance
 #   R3 suitability area trend from the earliest fossil-matched period onward
-#   R3b latitudinal suitability-area-by-class TABLE (input to R3c)
+#   latitudinal suitability-area-by-class TABLE (input to R3c)
 #   (the >= 0.3 latitudinal HEATMAP is drawn by R3c_latitudinal_area_heatmap.R)
 
 library(dplyr)
@@ -579,7 +579,7 @@ save_figure(
 )
 
 # -------------------------------------------------------------------------
-# R3b. Latitudinal suitability-area gradient from earliest fossil period onward
+# Latitudinal suitability-area gradient from earliest fossil period onward
 # -------------------------------------------------------------------------
 
 lat_bin_width <- 10
@@ -611,11 +611,11 @@ lat_area_by_class <- dplyr::bind_rows(
 
 write_csv(
   lat_area_by_class,
-  path_here("output", "figures_paper", "tables", "R3b_latitudinal_suitability_area_by_class.csv")
+  path_here("output", "figures_paper", "tables", "latitudinal_suitability_area_by_class.csv")
 )
 
 # The manuscript uses the >= 0.3 (moderately + highly suitable) latitudinal
 # heatmap, produced separately by R3c_latitudinal_area_heatmap.R from the table
-# above. The former R3b (0.7-1 only) heatmap figure is intentionally not drawn.
+# above.
 
 message("All requested first-pass paper figures were generated.")
