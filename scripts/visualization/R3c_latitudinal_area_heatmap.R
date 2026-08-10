@@ -1,9 +1,9 @@
-# Add a "0.3-1" (moderate + highly suitable) panel to the R3b latitudinal heatmap
+# R3c. Latitudinal area-gradient heatmap for suitability >= 0.3
 #
-# The standard R3b figure shows the latitudinal area gradient of the highly
-# suitable class only (0.7-1). This script additionally renders the same
-# gradient for suitability >= 0.3 (moderately + highly suitable), as a
-# side-by-side companion panel, so the two thresholds can be compared.
+# Draws the manuscript's latitudinal heatmap of suitable habitat for the
+# moderately + highly suitable classes (suitability >= 0.3), from the earliest
+# fossil period to present. This replaced the earlier R3b (0.7-1 only) figure,
+# which the manuscript no longer uses.
 #
 # It reads the already-computed R3b_latitudinal_suitability_area_by_class.csv
 # (which contains all four classes) and does NOT recompute rasters.
@@ -12,7 +12,7 @@
 #
 # Usage:
 #   export SARGENTO_OUTPUT_ROOT=output_new_2/output
-#   Rscript scripts/visualization/R3b_latitudinal_threshold_comparison.R
+#   Rscript scripts/visualization/R3c_latitudinal_area_heatmap.R
 
 library(dplyr)
 library(readr)
@@ -64,57 +64,14 @@ periods <- lat_area %>%
   distinct(period, Ma, period_order, ma_label) %>%
   arrange(desc(Ma))
 
-# Panel B (existing): highly suitable only (0.7-1)
-panel_high <- lat_area %>%
-  filter(suitability_class == "Highly suitable") %>%
-  mutate(panel = "Highly suitable (0.7-1)")
-
-# Panel C (new): suitability >= 0.3 (moderately + highly suitable)
+# Suitability >= 0.3 (moderately + highly suitable)
 panel_ge03 <- lat_area %>%
   filter(suitability_class %in% c("Moderately suitable", "Highly suitable")) %>%
   group_by(period, Ma, period_order, ma_label, lat_bin, lat_bin_mid, lat_band) %>%
   summarise(area_km2 = sum(area_km2, na.rm = TRUE), .groups = "drop") %>%
   mutate(panel = ">= 0.3 (moderate + high)")
 
-compare_data <- bind_rows(panel_high, panel_ge03) %>%
-  mutate(panel = factor(panel, levels = c("Highly suitable (0.7-1)", ">= 0.3 (moderate + high)")))
-
-p <- ggplot(compare_data, aes(x = period_order, y = lat_bin_mid, fill = area_km2 / 1e6)) +
-  geom_tile(color = "white", linewidth = 0.12) +
-  scale_x_continuous(
-    breaks = periods$period_order,
-    labels = periods$ma_label,
-    minor_breaks = NULL,
-    expand = c(0, 0)
-  ) +
-  scale_y_continuous(
-    breaks = seq(-80, 80, by = 20),
-    limits = c(-90, 90),
-    expand = c(0, 0)
-  ) +
-  scale_fill_gradientn(
-    colours = c("#F7FCF5", "#C7E9C0", "#74C476", "#238B45", "#00441B"),
-    name = expression("Suitable area ("*10^6~km^2*")"),
-    trans = "sqrt"
-  ) +
-  facet_wrap(~ panel, ncol = 2) +
-  labs(
-    title = "Latitudinal area gradient of suitable habitat",
-    subtitle = "10-degree latitude bands from earliest fossil period to present",
-    x = "Age (Ma)",
-    y = "Latitude band midpoint"
-  ) +
-  theme_paper()
-
-save_figure(
-  p,
-  path_here("output", "figures_paper", "trends", "R3b_latitudinal_threshold_comparison"),
-  width = 12.5,
-  height = 5.0
-)
-message("Wrote: R3b_latitudinal_threshold_comparison (two-panel 0.7-1 vs 0.3-1)")
-
-# ---- Standalone R3c: latitudinal area gradient for suitability >= 0.3 ----
+# ---- R3c: latitudinal area gradient for suitability >= 0.3 ----
 p_r3c <- ggplot(panel_ge03, aes(x = period_order, y = lat_bin_mid, fill = area_km2 / 1e6)) +
   geom_tile(color = "white", linewidth = 0.12) +
   scale_x_continuous(

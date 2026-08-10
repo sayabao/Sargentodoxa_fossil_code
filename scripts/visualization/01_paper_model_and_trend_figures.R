@@ -5,7 +5,8 @@
 #   M3 model evaluation metrics
 #   M4 ensemble variable importance
 #   R3 suitability area trend from the earliest fossil-matched period onward
-#   R3b high-suitability latitudinal area heatmap
+#   R3b latitudinal suitability-area-by-class TABLE (input to R3c)
+#   (the >= 0.3 latitudinal HEATMAP is drawn by R3c_latitudinal_area_heatmap.R)
 
 library(dplyr)
 library(tidyr)
@@ -613,48 +614,8 @@ write_csv(
   path_here("output", "figures_paper", "tables", "R3b_latitudinal_suitability_area_by_class.csv")
 )
 
-high_lat_heatmap_data <- lat_area_by_class %>%
-  filter(suitability_class == "Highly suitable")
-
-p_r3b <- ggplot(
-  high_lat_heatmap_data,
-  aes(x = period_order, y = lat_bin_mid, fill = area_km2 / 1e6)
-) +
-  geom_tile(color = "white", linewidth = 0.12) +
-  scale_x_continuous(
-    breaks = trend_periods$period_order,
-    labels = trend_periods$ma_label,
-    minor_breaks = NULL,
-    expand = c(0, 0)
-  ) +
-  scale_y_continuous(
-    breaks = seq(-80, 80, by = 20),
-    limits = c(-90, 90),
-    expand = c(0, 0)
-  ) +
-  scale_fill_gradientn(
-    colours = c("#F7FCF5", "#C7E9C0", "#74C476", "#238B45", "#00441B"),
-    name = expression("High-suitability area ("*10^6~km^2*")"),
-    trans = "sqrt"
-  ) +
-  labs(
-    title = "Latitudinal area gradient of highly suitable habitat",
-    subtitle = paste0("Highly suitable class only (0.7-1); ", lat_bin_width, " degree latitude bands from ", earliest_fossil_ma, " Ma to present"),
-    x = "Age (Ma)",
-    y = "Latitude band midpoint"
-  ) +
-  theme_paper(base_size = 8) +
-  theme(
-    legend.position = "bottom",
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    panel.grid = element_blank()
-  )
-
-save_figure(
-  p_r3b,
-  path_here("output", "figures_paper", "trends", "R3b_high_suitability_latitudinal_area_heatmap"),
-  width = 7.4,
-  height = 4.8
-)
+# The manuscript uses the >= 0.3 (moderately + highly suitable) latitudinal
+# heatmap, produced separately by R3c_latitudinal_area_heatmap.R from the table
+# above. The former R3b (0.7-1 only) heatmap figure is intentionally not drawn.
 
 message("All requested first-pass paper figures were generated.")
