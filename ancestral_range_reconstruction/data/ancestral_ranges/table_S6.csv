@@ -1,0 +1,19 @@
+﻿Taxon,Geological age,Locality,Age used (Ma),Area,Observation,Reference
+Sargentodoxa cretacea,Maastrichtian,"Walbeck, Saxony-Anhalt, Germany",66,EU,O01,"Knobloch and Mai, 1986; this study"
+Sargentodoxa sp.,Early Eocene,"Le Quesnoy, Oise, France",52,EU,O02,This study
+Sargentodoxa globosa,Middle Eocene,"Clarno, Oregon, USA",44,NA,O03,"Manchester, 1994, 1999"
+cf. Sargentodoxa sp.,Middle Eocene,"Eckfeld, Rhineland-Palatinate, Germany",41.2,EU,O04,"Wilde and Frankenhäuser, 1998"
+Decaisnea bornensis,Late Oligocene,Germany,23.03,EU,O05,"Mai and Walther, 1991"
+Sargentodoxa barghoorniana,Early Miocene,"Brandon, Vermont, USA",20.44,NA,O06,"Tiffney, 1993"
+Sargentodoxa lusatica,Early Miocene,"Turów, Lower Silesian Voivodeship, Poland",15,EU,O07,This study
+Sargentodoxa lusatica,Middle Miocene,"Adamów and Tomisławice, Greater Poland Voivodeship, Poland",13.83,EU,O08,This study
+Sargentodoxa lusatica,Middle Miocene,"Meuro, Brandenburg, Germany",13.82,EU,O09,"Mai, 2001"
+Sargentodoxa sp.,Middle Miocene,"Mississippi, USA",13.82,NA,O09,"McNair et al., 2019"
+Sargentodoxa guipingensis,Miocene,"Guiping, Guangxi, China",13.82,EA,O09,This study
+Sargentodoxa tajimiensis,Late Miocene,"Tajimi, Gifu, Japan",10,EA,O10,"Momohara and Saito, 2001; this study"
+Sargentodoxa lusatica,Mio-Pliocene,"Sessenheim, Alsace, France",5.3,EU,O11,"Geissert et al., 1990; Martinetto, 2001"
+Sargentodoxa lusatica,Early Pliocene,"Ronco Biellese, Piedmont, Italy",4.5,EU,O12,"Martinetto, 2001"
+Sargentodoxa lusatica,Early Pliocene,"Boca, Piedmont, Italy",4.5,EU,O12,"Martinetto, 2001"
+Sargentodoxa lusatica,Pliocene,"Fortuna-Garsdorf, North Rhine-Westphalia, Germany",3.6,EU,O13,"Martinetto, 2001"
+Sargentodoxa cuneata,Pliocene–Pleistocene,"Zhaotong, Yunnan, China",2.58,EA,O14,"Song, 1988"
+Lardizabaloxylon lardizabaloides,Tertiary,Patagonia,—,SA,Excluded,"Schönfeld, 1954"

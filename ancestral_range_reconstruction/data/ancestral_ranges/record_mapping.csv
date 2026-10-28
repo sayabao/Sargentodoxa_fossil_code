@@ -1,0 +1,131 @@
+﻿age_Ma,code,hook,record_id,scenario,status,treatment
+,,,WANG2020_NON_SARG_02,Walbeck_minimum,not inserted: unresolved Tertiary age and within-family placement,all_dated
+66.0,???1,OBS_Sargentodoxa_66,SARG_01,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+52.0,???1,OBS_Sargentodoxa_52,SARG_02,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+44.0,??1?,OBS_Sargentodoxa_44,SARG_03,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+41.2,???1,OBS_Sargentodoxa_41p2,SARG_04,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+23.03,???1,OBS_Decaisnea_23p03,WANG2020_NON_SARG_01,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+20.44,??1?,OBS_Sargentodoxa_20p44,SARG_05,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+15.0,???1,OBS_Sargentodoxa_15,SARG_06,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+13.83,???1,OBS_Sargentodoxa_13p83,SARG_07,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_08,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_09,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_10,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+10.0,1???,OBS_Sargentodoxa_10,SARG_11,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+5.3,???1,OBS_Sargentodoxa_5p3,SARG_12,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+4.5,???1,OBS_Sargentodoxa_4p5,SARG_13,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+4.5,???1,OBS_Sargentodoxa_4p5,SARG_14,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+3.6,???1,OBS_Sargentodoxa_3p6,SARG_15,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+2.58,1???,OBS_Sargentodoxa_2p58,SARG_16,Walbeck_minimum,observation hook under genus-lineage assumption,all_dated
+,,,SARG_04,Walbeck_minimum,excluded cf. or pollen observation in sensitivity,exclude_cf_and_pollen
+,,,SARG_16,Walbeck_minimum,excluded cf. or pollen observation in sensitivity,exclude_cf_and_pollen
+,,,WANG2020_NON_SARG_02,Walbeck_minimum,not inserted: unresolved Tertiary age and within-family placement,exclude_cf_and_pollen
+66.0,???1,OBS_Sargentodoxa_66,SARG_01,Walbeck_minimum,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+52.0,???1,OBS_Sargentodoxa_52,SARG_02,Walbeck_minimum,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+44.0,??1?,OBS_Sargentodoxa_44,SARG_03,Walbeck_minimum,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+23.03,???1,OBS_Decaisnea_23p03,WANG2020_NON_SARG_01,Walbeck_minimum,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+20.44,??1?,OBS_Sargentodoxa_20p44,SARG_05,Walbeck_minimum,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+15.0,???1,OBS_Sargentodoxa_15,SARG_06,Walbeck_minimum,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+13.83,???1,OBS_Sargentodoxa_13p83,SARG_07,Walbeck_minimum,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_08,Walbeck_minimum,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_09,Walbeck_minimum,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_10,Walbeck_minimum,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+10.0,1???,OBS_Sargentodoxa_10,SARG_11,Walbeck_minimum,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+5.3,???1,OBS_Sargentodoxa_5p3,SARG_12,Walbeck_minimum,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+4.5,???1,OBS_Sargentodoxa_4p5,SARG_13,Walbeck_minimum,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+4.5,???1,OBS_Sargentodoxa_4p5,SARG_14,Walbeck_minimum,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+3.6,???1,OBS_Sargentodoxa_3p6,SARG_15,Walbeck_minimum,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+,,,SARG_01,Walbeck_minimum,excluded regional observation in sensitivity; tree calibration retained,without_Walbeck
+,,,WANG2020_NON_SARG_02,Walbeck_minimum,not inserted: unresolved Tertiary age and within-family placement,without_Walbeck
+52.0,???1,OBS_Sargentodoxa_52,SARG_02,Walbeck_minimum,observation hook under genus-lineage assumption,without_Walbeck
+44.0,??1?,OBS_Sargentodoxa_44,SARG_03,Walbeck_minimum,observation hook under genus-lineage assumption,without_Walbeck
+41.2,???1,OBS_Sargentodoxa_41p2,SARG_04,Walbeck_minimum,observation hook under genus-lineage assumption,without_Walbeck
+23.03,???1,OBS_Decaisnea_23p03,WANG2020_NON_SARG_01,Walbeck_minimum,observation hook under genus-lineage assumption,without_Walbeck
+20.44,??1?,OBS_Sargentodoxa_20p44,SARG_05,Walbeck_minimum,observation hook under genus-lineage assumption,without_Walbeck
+15.0,???1,OBS_Sargentodoxa_15,SARG_06,Walbeck_minimum,observation hook under genus-lineage assumption,without_Walbeck
+13.83,???1,OBS_Sargentodoxa_13p83,SARG_07,Walbeck_minimum,observation hook under genus-lineage assumption,without_Walbeck
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_08,Walbeck_minimum,observation hook under genus-lineage assumption,without_Walbeck
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_09,Walbeck_minimum,observation hook under genus-lineage assumption,without_Walbeck
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_10,Walbeck_minimum,observation hook under genus-lineage assumption,without_Walbeck
+10.0,1???,OBS_Sargentodoxa_10,SARG_11,Walbeck_minimum,observation hook under genus-lineage assumption,without_Walbeck
+5.3,???1,OBS_Sargentodoxa_5p3,SARG_12,Walbeck_minimum,observation hook under genus-lineage assumption,without_Walbeck
+4.5,???1,OBS_Sargentodoxa_4p5,SARG_13,Walbeck_minimum,observation hook under genus-lineage assumption,without_Walbeck
+4.5,???1,OBS_Sargentodoxa_4p5,SARG_14,Walbeck_minimum,observation hook under genus-lineage assumption,without_Walbeck
+3.6,???1,OBS_Sargentodoxa_3p6,SARG_15,Walbeck_minimum,observation hook under genus-lineage assumption,without_Walbeck
+2.58,1???,OBS_Sargentodoxa_2p58,SARG_16,Walbeck_minimum,observation hook under genus-lineage assumption,without_Walbeck
+,,,WANG2020_NON_SARG_02,Walbeck_no_Kajanthus,not inserted: unresolved Tertiary age and within-family placement,all_dated
+66.0,???1,OBS_Sargentodoxa_66,SARG_01,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+52.0,???1,OBS_Sargentodoxa_52,SARG_02,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+44.0,??1?,OBS_Sargentodoxa_44,SARG_03,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+41.2,???1,OBS_Sargentodoxa_41p2,SARG_04,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+23.03,???1,OBS_Decaisnea_23p03,WANG2020_NON_SARG_01,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+20.44,??1?,OBS_Sargentodoxa_20p44,SARG_05,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+15.0,???1,OBS_Sargentodoxa_15,SARG_06,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+13.83,???1,OBS_Sargentodoxa_13p83,SARG_07,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_08,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_09,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_10,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+10.0,1???,OBS_Sargentodoxa_10,SARG_11,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+5.3,???1,OBS_Sargentodoxa_5p3,SARG_12,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+4.5,???1,OBS_Sargentodoxa_4p5,SARG_13,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+4.5,???1,OBS_Sargentodoxa_4p5,SARG_14,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+3.6,???1,OBS_Sargentodoxa_3p6,SARG_15,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+2.58,1???,OBS_Sargentodoxa_2p58,SARG_16,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,all_dated
+,,,SARG_04,Walbeck_no_Kajanthus,excluded cf. or pollen observation in sensitivity,exclude_cf_and_pollen
+,,,SARG_16,Walbeck_no_Kajanthus,excluded cf. or pollen observation in sensitivity,exclude_cf_and_pollen
+,,,WANG2020_NON_SARG_02,Walbeck_no_Kajanthus,not inserted: unresolved Tertiary age and within-family placement,exclude_cf_and_pollen
+66.0,???1,OBS_Sargentodoxa_66,SARG_01,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+52.0,???1,OBS_Sargentodoxa_52,SARG_02,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+44.0,??1?,OBS_Sargentodoxa_44,SARG_03,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+23.03,???1,OBS_Decaisnea_23p03,WANG2020_NON_SARG_01,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+20.44,??1?,OBS_Sargentodoxa_20p44,SARG_05,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+15.0,???1,OBS_Sargentodoxa_15,SARG_06,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+13.83,???1,OBS_Sargentodoxa_13p83,SARG_07,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_08,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_09,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_10,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+10.0,1???,OBS_Sargentodoxa_10,SARG_11,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+5.3,???1,OBS_Sargentodoxa_5p3,SARG_12,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+4.5,???1,OBS_Sargentodoxa_4p5,SARG_13,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+4.5,???1,OBS_Sargentodoxa_4p5,SARG_14,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+3.6,???1,OBS_Sargentodoxa_3p6,SARG_15,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,exclude_cf_and_pollen
+,,,SARG_01,Walbeck_no_Kajanthus,excluded regional observation in sensitivity; tree calibration retained,without_Walbeck
+,,,WANG2020_NON_SARG_02,Walbeck_no_Kajanthus,not inserted: unresolved Tertiary age and within-family placement,without_Walbeck
+52.0,???1,OBS_Sargentodoxa_52,SARG_02,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,without_Walbeck
+44.0,??1?,OBS_Sargentodoxa_44,SARG_03,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,without_Walbeck
+41.2,???1,OBS_Sargentodoxa_41p2,SARG_04,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,without_Walbeck
+23.03,???1,OBS_Decaisnea_23p03,WANG2020_NON_SARG_01,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,without_Walbeck
+20.44,??1?,OBS_Sargentodoxa_20p44,SARG_05,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,without_Walbeck
+15.0,???1,OBS_Sargentodoxa_15,SARG_06,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,without_Walbeck
+13.83,???1,OBS_Sargentodoxa_13p83,SARG_07,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,without_Walbeck
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_08,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,without_Walbeck
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_09,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,without_Walbeck
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_10,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,without_Walbeck
+10.0,1???,OBS_Sargentodoxa_10,SARG_11,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,without_Walbeck
+5.3,???1,OBS_Sargentodoxa_5p3,SARG_12,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,without_Walbeck
+4.5,???1,OBS_Sargentodoxa_4p5,SARG_13,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,without_Walbeck
+4.5,???1,OBS_Sargentodoxa_4p5,SARG_14,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,without_Walbeck
+3.6,???1,OBS_Sargentodoxa_3p6,SARG_15,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,without_Walbeck
+2.58,1???,OBS_Sargentodoxa_2p58,SARG_16,Walbeck_no_Kajanthus,observation hook under genus-lineage assumption,without_Walbeck
+,,,WANG2020_NON_SARG_02,original_minima,not inserted: unresolved Tertiary age and within-family placement,all_dated
+,,,SARG_04,original_minima,excluded cf. or pollen observation in sensitivity,exclude_cf_and_pollen
+,,,SARG_16,original_minima,excluded cf. or pollen observation in sensitivity,exclude_cf_and_pollen
+,,,WANG2020_NON_SARG_02,original_minima,not inserted: unresolved Tertiary age and within-family placement,exclude_cf_and_pollen
+,,,SARG_01,original_minima,excluded regional observation in sensitivity; tree calibration retained,without_Walbeck
+,,,WANG2020_NON_SARG_02,original_minima,not inserted: unresolved Tertiary age and within-family placement,without_Walbeck
+52.0,???1,OBS_Sargentodoxa_52,SARG_02,original_minima,observation hook under genus-lineage assumption,without_Walbeck
+44.0,??1?,OBS_Sargentodoxa_44,SARG_03,original_minima,observation hook under genus-lineage assumption,without_Walbeck
+41.2,???1,OBS_Sargentodoxa_41p2,SARG_04,original_minima,observation hook under genus-lineage assumption,without_Walbeck
+23.03,???1,OBS_Decaisnea_23p03,WANG2020_NON_SARG_01,original_minima,observation hook under genus-lineage assumption,without_Walbeck
+20.44,??1?,OBS_Sargentodoxa_20p44,SARG_05,original_minima,observation hook under genus-lineage assumption,without_Walbeck
+15.0,???1,OBS_Sargentodoxa_15,SARG_06,original_minima,observation hook under genus-lineage assumption,without_Walbeck
+13.83,???1,OBS_Sargentodoxa_13p83,SARG_07,original_minima,observation hook under genus-lineage assumption,without_Walbeck
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_08,original_minima,observation hook under genus-lineage assumption,without_Walbeck
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_09,original_minima,observation hook under genus-lineage assumption,without_Walbeck
+13.82,1?11,OBS_Sargentodoxa_13p82,SARG_10,original_minima,observation hook under genus-lineage assumption,without_Walbeck
+10.0,1???,OBS_Sargentodoxa_10,SARG_11,original_minima,observation hook under genus-lineage assumption,without_Walbeck
+5.3,???1,OBS_Sargentodoxa_5p3,SARG_12,original_minima,observation hook under genus-lineage assumption,without_Walbeck
+4.5,???1,OBS_Sargentodoxa_4p5,SARG_13,original_minima,observation hook under genus-lineage assumption,without_Walbeck
+4.5,???1,OBS_Sargentodoxa_4p5,SARG_14,original_minima,observation hook under genus-lineage assumption,without_Walbeck
+3.6,???1,OBS_Sargentodoxa_3p6,SARG_15,original_minima,observation hook under genus-lineage assumption,without_Walbeck
+2.58,1???,OBS_Sargentodoxa_2p58,SARG_16,original_minima,observation hook under genus-lineage assumption,without_Walbeck

@@ -1,0 +1,63 @@
+{
+  "tree_sha256": "8c8d8af59b71593af99e837f5fd294bda5feed316a455365a9177f81c90bd406",
+  "input": "Walbeck_minimum_all_dated",
+  "tip_count": 21,
+  "internal_nodes": 20,
+  "tree_role": "sample MCC with original sampled heights, not posterior median heights",
+  "probability_role": "AIC-weighted marginal ancestral range probabilities on a fixed tree; not joint Bayesian posterior probabilities",
+  "root_probabilities": {
+    "EA+NAM+EU": 0.5089131354405454,
+    "EA+SA+NAM+EU": 0.2238101302031158,
+    "EA+EU": 0.08980694926139779,
+    "EA+SA+EU": 0.06817956107899416,
+    "SA+NAM+EU": 0.027272216523963028,
+    "NAM+EU": 0.02504009142991576,
+    "EU": 0.02419658335709432,
+    "SA+EU": 0.011462414695841215,
+    "EA+NAM": 0.006958319658578181,
+    "EA+SA+NAM": 0.005900133419256053,
+    "EA": 0.0046555864134074035,
+    "EA+SA": 0.0021256707170671245,
+    "SA+NAM": 0.0007792971290977615,
+    "NAM": 0.0006586230923988153,
+    "SA": 0.00024128757932682346,
+    "empty": 0.0
+  },
+  "age_intervals": "95% HPD of MRCA ages from both complete late Walbeck chains; show only passing node-age diagnostics; see node_age_interval_provenance.json",
+  "geological_time_scale": {
+    "source": "https://stratigraphy.org/ICSchart/ChronostratChart2024-12.pdf",
+    "boundaries_Ma": [
+      66.0,
+      56.0,
+      33.9,
+      23.04,
+      5.333,
+      2.58,
+      0.0
+    ],
+    "abbreviations": {
+      "Pl.": "Pliocene",
+      "Q.": "Quaternary (Pleistocene and Holocene)"
+    },
+    "oldest_visible_unit": "Cretaceous truncated at displayed-tree age"
+  },
+  "display_tree": {
+    "path": "display_tree_with_outgroups.nwk",
+    "sha256": "7e12457d81c6521455871d30c68a34555c24465be166082b3786dcd113a3ae61",
+    "tip_count": 23,
+    "outgroups": [
+      "Circaeaster_agrestis",
+      "Kingdonia_uniflora"
+    ],
+    "role": "same posterior sample, pruned display only; no outgroup range inference",
+    "root_role": "MRCA of sampled Lardizabalaceae and Circaeasteraceae; distinct from ingroup crown N01"
+  },
+  "primary_figure": "ancestral_probability_tree_with_outgroups_HPD",
+  "node_age_labels": {
+    "unit": "Ma",
+    "decimal_places": 2,
+    "scope": "all displayed internal nodes, including outgroup nodes",
+    "source": "original node heights of the displayed representative tree; not posterior median ages",
+    "table": "ancestral_probability_tree_with_outgroups_HPD_node_ages.csv"
+  }
+}

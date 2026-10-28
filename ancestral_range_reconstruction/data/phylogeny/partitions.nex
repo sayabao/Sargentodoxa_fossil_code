@@ -1,0 +1,8 @@
+#nexus
+begin sets;
+  charset rbcL = 1-1395;
+  charset matK = 1396-2601;
+  charset ndhF = 2602-4647;
+  charset trnL_F = 4648-5556;
+  charset rps16 = 5557-6399;
+end;

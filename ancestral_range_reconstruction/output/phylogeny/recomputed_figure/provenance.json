@@ -1,0 +1,15 @@
+{
+  "source": "data\\phylogeny\\primary50.treefile",
+  "source_sha256": "9f3bcff071e02e7112e30b8f4c94d715e023c1e9f1812a3a59e5a25be421c372",
+  "tips": 42,
+  "ingroup": 23,
+  "outgroups": 19,
+  "supported_bipartitions": 39,
+  "root": "Euptelea polyandra",
+  "display": "cladogram; lengths not proportional; no branches collapsed",
+  "support_order": "SH-aLRT / UFBoot (%)",
+  "topology_verified_against_source": true,
+  "new_inference_performed": false,
+  "alignment_sites": 6399,
+  "retained_fragments": 199
+}

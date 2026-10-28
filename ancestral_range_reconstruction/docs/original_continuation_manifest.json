@@ -1,0 +1,41 @@
+{
+  "jobs": [
+    {
+      "label": "Walbeck_minimum_posterior_repeat1",
+      "scenario": "Walbeck_minimum",
+      "mode": "posterior",
+      "repeat": 1,
+      "xml": "D:\\2 Project\\Sargentodoxa_fossil_part\\reviews\\1st\\r1_2_phylogeny\\inputs\\beast\\trial_017_targeted_posterior_v3\\Walbeck_minimum_posterior_repeat1.xml",
+      "sha256": "c22c03bda70d8f88f0d83ef824b609a8a0d61d4c967e84f0471f0d0e9a7fa642",
+      "workdir": "D:\\2 Project\\Sargentodoxa_fossil_part\\reviews\\1st\\r1_2_phylogeny\\outputs\\beast\\trial_017_targeted_posterior_v3\\Walbeck_minimum_posterior_repeat1",
+      "seed": 20262900,
+      "chain_length": 18000000,
+      "additional_iterations": 2000000,
+      "continuation_of": "trial_014_extended_posterior",
+      "original_trace_sha256": "53b61f8a5fe54adee40a3e7cb8defe26de1c2c51ec3deac4d249fed30b88dbd2",
+      "state_and_tuning_restored": true,
+      "backend": "beagle_cpu_sse_double",
+      "threads": 4,
+      "target_model_unchanged": true
+    },
+    {
+      "label": "Walbeck_minimum_posterior_repeat2",
+      "scenario": "Walbeck_minimum",
+      "mode": "posterior",
+      "repeat": 2,
+      "xml": "D:\\2 Project\\Sargentodoxa_fossil_part\\reviews\\1st\\r1_2_phylogeny\\inputs\\beast\\trial_017_targeted_posterior_v3\\Walbeck_minimum_posterior_repeat2.xml",
+      "sha256": "6dbd4b515c74ca206d4f337feda2b3dcb4ccb79f31702eb8892794c29f0d74cf",
+      "workdir": "D:\\2 Project\\Sargentodoxa_fossil_part\\reviews\\1st\\r1_2_phylogeny\\outputs\\beast\\trial_017_targeted_posterior_v3\\Walbeck_minimum_posterior_repeat2",
+      "seed": 20262901,
+      "chain_length": 18000000,
+      "additional_iterations": 2000000,
+      "continuation_of": "trial_014_extended_posterior",
+      "original_trace_sha256": "140ee6affa9a82a46d1111600850af0ddbc40347309d3b71cbd9de82c4f18303",
+      "state_and_tuning_restored": true,
+      "backend": "beagle_cpu_sse_double",
+      "threads": 4,
+      "target_model_unchanged": true
+    }
+  ],
+  "note": "Six original independent replicates, full 42-tip data, continued from 16M to 18M with unchanged posterior and all original operators plus a validated targeted constant-distance proposal. Tree sidecar audit remains required after restoration. Pilot arms are not merged. Uniform 1000-iteration logs retained."
+}
