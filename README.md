@@ -27,3 +27,12 @@ The molecular tree corresponds to Fig. S5, and the dated ancestral-range tree to
 The manuscript uses very low (0–0.1), low (0.1–0.3), intermediate (0.3–0.7) and high (0.7–1), corresponding to Least, Slight, Moderate and High in the niche-modelling output. Figure numbers, legends and labels have changed; the ENM numerical results have not. 
 
 Module READMEs provide software requirements and execution commands.
+
+## Citation and license
+
+Citation metadata are provided in [CITATION.cff](CITATION.cff). Original repository
+content is licensed under the [MIT License](LICENSE); third-party inputs retain
+their original terms and attribution requirements.
+
+Full WorldClim/HadCM3 input rasters and BEAST posterior chains are not bundled.
+See the module READMEs for data requirements and reproduction commands.

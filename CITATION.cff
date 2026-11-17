@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite this repository and the associated article."
+type: software
+title: "Code and data for: Deep-time biogeographic history of the East Asian endemic Sargentodoxa (Lardizabalaceae): fossil revision, ancestral-range reconstruction and niche modelling"
+authors:
+  - family-names: Song
+    given-names: Hanzhang
+  - family-names: Del Rio
+    given-names: Cédric
+  - family-names: Martinetto
+    given-names: Edoardo
+  - family-names: Kowalski
+    given-names: Rafał
+  - family-names: Momohara
+    given-names: Arata
+  - family-names: Quan
+    given-names: Cheng
+  - family-names: Jin
+    given-names: Jianhua
+  - family-names: Wu
+    given-names: Xinkai
+repository-code: "https://github.com/sayabao/Sargentodoxa_fossil_code"
+license: MIT
+abstract: "Analysis scripts, input data and processed results for Sargentodoxa niche modelling, molecular phylogeny, divergence-time estimation and fossil-informed ancestral-range reconstruction."
